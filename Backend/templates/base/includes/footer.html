@@ -1,4 +1,22 @@
 {% load static %}
 <footer class="site-footer">
-    <p>&copy; {% now "Y" %} CESFAM Santa Rosa — Intranet</p>
+    <div class="footer-info">
+        <h4>CESFAM Santa Rosa</h4>
+        <p>Centro de Salud Familiar<br>
+        Av. Pedir Dirección ejemplo 1234<br>
+        Temuco, Región de La Araucanía – Chile<br>
+        Teléfono: <a href="tel:+569XXXXXXXX">+56 9 XXXXXXXX</a><br>
+        Email: <a href="mailto:contacto@cesfamsantarosa.cl">contacto@cesfamsantarosa.cl</a></p>
+
+        <div class="footer-social">
+        <a href="https://facebook.com/cesfamsantarosa" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://instagram.com/cesfamsantarosa" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://linkedin.com/organization/cesfamsantarosa" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="{#{% url 'manual' %}#}"><i class="fa-solid fa-book"></i></a>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; {% now "Y" %} CESFAM Santa Rosa — Intranet | Todos los derechos reservados</p>
+    </div>
 </footer>

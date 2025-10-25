@@ -2,18 +2,18 @@
 {% load static %}
 
 {% block title %}Inicio — Intranet CESFAM{% endblock %}
+{% block body_class %}landing{% endblock %}
 
 
 {% block extra_css %}{% endblock %}
 
 {% block content %}
     <!-- BANNER DE BIENVENIDA -->
-    <section class="welcome-banner ">
+    <section class="welcome-banner no-header">
         <h2>Bienvenido a la Intranet del CESFAM Santa Rosa</h2>
         <p>Plataforma central para la gestión administrativa y comunicación interna del personal del CESFAM.</p>
 
-        <!-- Usa la URL real de login si ya existe -->
-        <a class="btn-login" href="{#{% url 'login' %}#}">Iniciar Sesión</a>
+
     
     </section>
 
