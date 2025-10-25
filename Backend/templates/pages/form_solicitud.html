@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitudes – Intranet CESFAM Santa Rosa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/inicio.css">  
+
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+            <div class="header-container">
+                <div class="logo-section">
+                    <div class="logo">CS</div>
+                    <div class="logo-text">
+                        <h1>Intranet CESFAM Santa Rosa</h1>
+                        <p>Temuco, Chile</p>
+                    </div>
+                </div>
+
+                <nav>
+                    <a href="index.html"><i data-lucide="home"></i><span>Inicio</span></a>
+                    <a href="documentos.html"><i data-lucide="file-text"></i><span>Documentos</span></a>
+                    <a href="calendario.html"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                    <a href="solicitudes.html" class="active"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+                </nav>
+
+                <div class="user-section">
+                    <div class="user-info">
+                        <p>María Torres</p>
+                        <span>Enfermera Coordinadora</span>
+                    </div>
+                    <button class="logout-btn" onclick="cerrarSesion()">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+
+                <button class="menu-toggle" onclick="toggleMenu()">
+                    <i data-lucide="menu" id="menu-icon"></i>
+                </button>
+            </div>
+
+            <div class="mobile-menu" id="mobile-menu">
+                <nav>
+                    <a href="index.html"><i data-lucide="home"></i><span>Inicio</span></a>
+                    <a href="documentos.html"><i data-lucide="file-text"></i><span>Documentos y Formularios</span></a>
+                    <a href="calendario.html"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                    <a href="solicitudes.html" class="active"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+
+                </nav>
+                <div class="mobile-user">
+                    <p style="font-weight: 500; margin-bottom: 0.5rem;">María Torres</p>
+                    <span style="font-size: 0.875rem; color: #666;">Enfermera Coordinadora</span>
+                    <button class="logout-btn" onclick="cerrarSesion()" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="log-out"></i><span>Cerrar Sesión</span>
+                    </button>
+                </div>
+            </div>
+    </header>
+
+    <main>
+        <div class="solicitud-container">
+        <h2>Solicitar Día Administrativo / Vacaciones</h2>
+        
+        <!-- Formulario de Solicitud -->
+        <div class="form-group">
+            <label>Tipo de Solicitud:</label>
+            <select id="solicitudTipo">
+            <option value="Día Administrativo">Día Administrativo</option>
+            <option value="Vacaciones">Vacaciones</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Fecha Inicio:</label>
+            <input type="date" id="fechaInicio">
+        </div>
+        <div class="form-group">
+            <label>Fecha Fin:</label>
+            <input type="date" id="fechaFin">
+        </div>
+        <div class="form-group">
+            <label>Motivo (opcional):</label>
+            <textarea id="motivo" rows="2" placeholder="Describa el motivo..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="agregarSolicitud()">Enviar Solicitud</button>
+    </main>
+
+    <footer>
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-section">
+                        <h4>CESFAM Santa Rosa</h4>
+                        <p>Centro de Salud Familiar<br>Temuco, Región de La Araucanía<br>Chile</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Enlaces Rápidos</h4>
+                        <ul>
+                            <li><a href="#">Contacto</a></li>
+                            <li><a href="#">Soporte Técnico</a></li>
+                            <li><a href="#">Manual de Usuario</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Proyecto</h4>
+                        <p>Desarrollado en colaboración con<br><strong>INACAP</strong><br>Primavera 2025</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
+                </div>
+            </div>
+    </footer>
+
+    <script>
+        function agregarSolicitud(){
+        const tipo = document.getElementById("solicitudTipo").value;
+        const inicio = document.getElementById("fechaInicio").value;
+        const fin = document.getElementById("fechaFin").value;
+        const motivo = document.getElementById("motivo").value;
+
+        if(!inicio || !fin) return alert("Seleccione fechas válidas.");
+
+        const tbody = document.querySelector("#solicitudesTable tbody");
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${tipo}</td>
+            <td>${inicio}</td>
+            <td>${fin}</td>
+            <td>${motivo}</td>
+            <td class="status-Pendiente">Pendiente</td>
+        `;
+        tbody.appendChild(tr);
+
+        // Limpiar formulario
+        document.getElementById("fechaInicio").value = "";
+        document.getElementById("fechaFin").value = "";
+        document.getElementById("motivo").value = "";
+        }
+    </script>
+
+    </body>
+    </html>

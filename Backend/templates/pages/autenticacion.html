@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Intranet CESFAM Santa Rosa - Login</title>
+
+  <!-- Fuentes e íconos externos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Enlace correcto al CSS usando Django -->
+  <link rel="stylesheet" href="{% static 'css/autenticacion.css' %}">
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>Iniciar Sesión</h2>
+    <p>Ingrese su RUT y contraseña para acceder a la intranet del CESFAM Santa Rosa</p>
+    
+    <form id="loginForm">
+      <input type="text" id="rut" placeholder="RUT (sin puntos ni guión)" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <span class="error-message" id="errorMsg">RUT o contraseña incorrecta</span>
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
+
+  <script>
+    // Simulación de login
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    loginForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const rut = document.getElementById('rut').value;
+      const password = document.getElementById('password').value;
+
+      // Datos de ejemplo
+      if(rut === "" && password === ""){
+        alert("¡Ingreso exitoso!");
+        // Redirigir a la página principal después del login
+        window.location.href = "{% url 'inicio' %}";
+      } else {
+        errorMsg.style.display = "block";
+      }
+    });
+  </script>
+
+</body>
+</html>

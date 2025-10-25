@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitudes – Intranet CESFAM Santa Rosa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">CS</div>
+                <div class="logo-text">
+                    <h1>Intranet CESFAM Santa Rosa</h1>
+                    <p>Temuco, Chile</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="index.html"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="documentos.html"><i data-lucide="file-text"></i><span>Documentos</span></a>
+                <a href="calendario.html"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                <a href="solicitudes.html" class="active"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+            </nav>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <p>María Torres</p>
+                    <span>Enfermera Coordinadora</span>
+                </div>
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <nav>
+                <a href="index.html"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="documentos.html"><i data-lucide="file-text"></i><span>Documentos y Formularios</span></a>
+                <a href="calendario.html"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                <a href="solicitudes.html" class="active"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+
+            </nav>
+            <div class="mobile-user">
+                <p style="font-weight: 500; margin-bottom: 0.5rem;">María Torres</p>
+                <span style="font-size: 0.875rem; color: #666;">Enfermera Coordinadora</span>
+                <button class="logout-btn" onclick="cerrarSesion()" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="log-out"></i><span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </div>
+  </header>
+
+  <main>
+    <div class="solicitud-container">
+      <div class="solicitud-header">
+        <h2>Solicitar Día Administrativo / Vacaciones</h2>
+        <a href="form_solicitud.html">
+            <button class="upload-btn">
+            <i></i> Nueva solicitud
+            </button>
+        </a>
+      </div>
+      <!-- Filtros -->
+      <div class="filter-container">
+        <input type="text" id="filterName" placeholder="Buscar por tipo o motivo..." onkeyup="aplicarFiltros()">
+        <input type="date" id="filterFecha" onchange="aplicarFiltros()">
+        <select id="filterEstado" onchange="aplicarFiltros()">
+          <option value="">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Aprobado">Aprobado</option>
+          <option value="Rechazado">Rechazado</option>
+        </select>
+      </div>
+
+      <!-- Tabla de Solicitudes -->
+      <table id="solicitudesTable">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Motivo</th>
+            <th>Estado Jefatura</th>
+            <th>Estado Aministracion</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Día Administrativo</td>
+                <td>2025-10-10</td>
+                <td>2025-10-10</td>
+                <td>Reunión familiar</td>
+                <td class="status-Aprobado">Aprobado</td>
+                <td class="status-Aprobado">Aprobado</td>
+            </tr>
+            <tr>
+                <td>Vacaciones</td>
+                <td>2025-12-20</td>
+                <td>2025-12-25</td>
+                <td>Viaje personal</td>                
+                <td class="status-Aprobado">Aprobado</td>
+                <td class="status-Pendiente">Pendiente</td>
+            </tr>
+            <tr>
+                <td>Vacaciones</td>
+                <td>2025-07-15</td>
+                <td>2025-07-20</td>
+                <td>Viaje personal</td>
+                <td class="status-Rechazado">Rechazado</td>
+                <td >---</td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>CESFAM Santa Rosa</h4>
+                    <p>Centro de Salud Familiar<br>Temuco, Región de La Araucanía<br>Chile</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Soporte Técnico</a></li>
+                        <li><a href="#">Manual de Usuario</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Proyecto</h4>
+                    <p>Desarrollado en colaboración con<br><strong>INACAP</strong><br>Primavera 2025</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
+            </div>
+        </div>
+  </footer>
+
+  <script>
+    function aplicarFiltros(){
+      const nombre = document.getElementById("filterName").value.toLowerCase();
+      const fecha = document.getElementById("filterFecha").value;
+      const estado = document.getElementById("filterEstado").value;
+
+      const filas = document.querySelectorAll("#solicitudesTable tbody tr");
+      filas.forEach(fila=>{
+        const tipo = fila.children[0].textContent.toLowerCase();
+        const inicio = fila.children[1].textContent;
+        const fin = fila.children[2].textContent;
+        const mot = fila.children[3].textContent.toLowerCase();
+        const est = fila.children[4].textContent;
+
+        let mostrar = true;
+        if(nombre && !tipo.includes(nombre) && !mot.includes(nombre)) mostrar=false;
+        if(fecha && !(fecha>=inicio && fecha<=fin)) mostrar=false;
+        if(estado && est!==estado) mostrar=false;
+
+        fila.style.display = mostrar ? "" : "none";
+      });
+    }
+    function subirDocumento() {
+      alert("");
+    }
+    function cerrarSesion(){
+  window.location.href = "inicio.html";
+}
+
+  </script>
+    <!-- Al final del body, antes de </body> -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.258.0/dist/lucide.min.js"></script>
+    <script>
+    lucide.replace();
+    </script>
+
+</body>
+</html>

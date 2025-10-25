@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Interactivo – Intranet CESFAM Santa Rosa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">CS</div>
+                <div class="logo-text">
+                    <h1>Intranet CESFAM Santa Rosa</h1>
+                    <p>Temuco, Chile</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="{% url 'index' %}"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="{% url 'documentos' %}"><i data-lucide="file-text"></i><span>Documentos</span></a>
+                <a href="{% url 'calendario' %}" class="active"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                <a href="{% url 'solicitudes' %}"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+            </nav>
+
+            <div class="user-section">
+                <div class="user-info">
+                    <p>María Torres</p>
+                    <span>Enfermera Coordinadora</span>
+                </div>
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <nav>
+                <a href="{% url 'index' %}"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="{% url 'documentos' %}"><i data-lucide="file-text"></i><span>Documentos y Formularios</span></a>
+                <a href="{% url 'calendario' %}" class="active"><i data-lucide="calendar"></i><span>Calendario</span></a>
+                <a href="{% url 'solicitudes' %}"><i data-lucide="clock"></i><span>Solicitudes</span></a>
+            </nav>
+            <div class="mobile-user">
+                <p style="font-weight: 500; margin-bottom: 0.5rem;">María Torres</p>
+                <span style="font-size: 0.875rem; color: #666;">Enfermera Coordinadora</span>
+                <button class="logout-btn" onclick="cerrarSesion()" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="log-out"></i><span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2 id="monthYear">Octubre 2025</h2>
+                <div class="calendar-nav">
+                    <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> Mes Anterior</button>
+                    <button onclick="changeMonth(1)">Mes Siguiente <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <button class="add-event-btn" onclick="openModal()">+ Agregar Evento</button>
+
+            <div class="weekdays">
+                <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+            </div>
+            <div class="days" id="calendarDays"></div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 id="modalTitle">Agregar Evento</h3>
+            <label>Nombre del evento:</label>
+            <input type="text" id="eventName" placeholder="Ej: Reunión de Jefatura">
+            <label>Fecha:</label>
+            <input type="date" id="eventDate">
+            <label>Tipo:</label>
+            <select id="eventType">
+                <option value="Reunión">Reunión</option>
+                <option value="Capacitación">Capacitación</option>
+                <option value="Feriado">Feriado</option>
+            </select>
+            <button onclick="saveEvent()">Guardar</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>CESFAM Santa Rosa</h4>
+                    <p>Centro de Salud Familiar<br>Temuco, Región de La Araucanía<br>Chile</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Soporte Técnico</a></li>
+                        <li><a href="#">Manual de Usuario</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Proyecto</h4>
+                    <p>Desarrollado en colaboración con<br><strong>INACAP</strong><br>Primavera 2025</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <script>
+        let events = [
+            {id:1,date:"2025-10-15",name:"Reunión de Jefaturas",type:"Reunión"},
+            {id:2,date:"2025-10-20",name:"Capacitación Primeros Auxilios",type:"Capacitación"},
+            {id:3,date:"2025-10-25",name:"Feriado Nacional",type:"Feriado"}
+        ];
+
+        let currentMonth = 9; // Octubre
+        let currentYear = 2025;
+        let editId = null;
+
+        function generateCalendar(month, year){
+            const calendarDays = document.getElementById("calendarDays");
+            calendarDays.innerHTML = "";
+            const firstDay = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month+1, 0).getDate();
+            document.getElementById("monthYear").textContent = new Date(year, month).toLocaleString('es-ES',{month:'long', year:'numeric'});
+
+            let start = (firstDay === 0) ? 6 : firstDay-1;
+
+            for(let i=0;i<start;i++) calendarDays.appendChild(document.createElement("div"));
+
+            for(let day=1;day<=totalDays;day++){
+                const dayDiv = document.createElement("div");
+                const dayNumber = document.createElement("div");
+                dayNumber.classList.add("day-number");
+                dayNumber.textContent = day;
+                dayDiv.appendChild(dayNumber);
+
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+                events.filter(ev=>ev.date===dateStr).forEach(ev=>{
+                    const evDiv = document.createElement("div");
+                    evDiv.classList.add("event");
+                    evDiv.textContent = ev.name;
+                    const delBtn = document.createElement("button");
+                    delBtn.textContent="x";
+                    delBtn.onclick = (e)=>{ e.stopPropagation(); deleteEvent(ev.id); };
+                    evDiv.appendChild(delBtn);
+                    evDiv.onclick = ()=>{ openModal(ev); };
+                    dayDiv.appendChild(evDiv);
+                });
+
+                calendarDays.appendChild(dayDiv);
+            }
+        }
+
+        function changeMonth(delta){
+            currentMonth += delta;
+            if(currentMonth < 0){currentMonth=11; currentYear--;}
+            if(currentMonth > 11){currentMonth=0; currentYear++;}
+            generateCalendar(currentMonth,currentYear);
+        }
+
+        function openModal(event=null){
+            document.getElementById("eventModal").classList.add("active");
+            if(event){
+                editId = event.id;
+                document.getElementById("modalTitle").textContent="Editar Evento";
+                document.getElementById("eventName").value = event.name;
+                document.getElementById("eventDate").value = event.date;
+                document.getElementById("eventType").value = event.type;
+            }else{
+                editId = null;
+                document.getElementById("modalTitle").textContent="Agregar Evento";
+                document.getElementById("eventName").value="";
+                document.getElementById("eventDate").value="";
+                document.getElementById("eventType").value="Reunión";
+            }
+        }
+
+        function closeModal(){
+            document.getElementById("eventModal").classList.remove("active");
+        }
+
+        function saveEvent(){
+            const name = document.getElementById("eventName").value;
+            const date = document.getElementById("eventDate").value;
+            const type = document.getElementById("eventType").value;
+            if(!name || !date) return alert("Complete todos los campos.");
+
+            if(editId){
+                const ev = events.find(e=>e.id===editId);
+                ev.name=name; ev.date=date; ev.type=type;
+            }else{
+                const id = events.length ? Math.max(...events.map(e=>e.id))+1 : 1;
+                events.push({id,date,name,type});
+            }
+            closeModal();
+            generateCalendar(currentMonth,currentYear);
+        }
+
+        function deleteEvent(id){
+            if(confirm("¿Eliminar este evento?")){
+                events = events.filter(e=>e.id!==id);
+                generateCalendar(currentMonth,currentYear);
+            }
+        }
+
+        function cerrarSesion(){
+            window.location.href = "{% url 'index' %}";
+        }
+
+        function toggleMenu(){
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
+
+        generateCalendar(currentMonth,currentYear);
+    </script>
+
+</body>
+</html>

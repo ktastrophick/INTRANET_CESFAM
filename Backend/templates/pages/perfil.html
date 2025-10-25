@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Mi Perfil — Intranet CESFAM{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+    <section class="perfil-header">
+    <div class="perfil-id">
+        <img class="avatar" src="{% static 'assets/images/cesfam.png' %}" alt="Avatar">
+        <div>
+        <h2 class="nombre">{{ request.user.get_full_name|default:"María Torres" }}</h2>
+        <p class="cargo">Enfermera Coordinadora</p>
+        <p class="meta">
+            <i class="fa-solid fa-envelope"></i> {{ request.user.email|default:"maria.torres@cesfam.cl" }}
+            <span class="sep">•</span>
+            <i class="fa-solid fa-building-user"></i> CESFAM Santa Rosa — Temuco
+        </p>
+        </div>
+    </div>
+
+    <div class="perfil-acciones">
+        <a class="btn btn-outline" href="{% url 'perfil_editar' %}"><i class="fa-regular fa-pen-to-square"></i> Editar perfil</a>
+        <a class="btn btn-primary" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+    </div>
+    </section>
+
+    <section class="perfil-atajos">
+    <a class="atajo" href="{% url 'documentos' %}">
+        <i class="fa-solid fa-file-lines"></i>
+        <div><strong>Documentos</strong><span>Ver y descargar</span></div>
+    </a>
+    <a class="atajo" href="{% url 'calendario' %}">
+        <i class="fa-solid fa-calendar-day"></i>
+        <div><strong>Calendario</strong><span>Eventos y turnos</span></div>
+    </a>
+    <a class="atajo" href="{% url 'solicitudes' %}">
+        <i class="fa-solid fa-clock"></i>
+        <div><strong>Solicitudes</strong><span>Permisos y licencias</span></div>
+    </a>
+    </section>
+
+    <section class="perfil-grid">
+    <!-- Métricas -->
+    <div class="card kpis">
+        <h3 class="card-title"><i class="fa-solid fa-chart-simple"></i> Resumen</h3>
+        <div class="kpi-grid">
+        <div class="kpi">
+            <span class="kpi-num">2</span>
+            <span class="kpi-label">Solicitudes en curso</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-num">3</span>
+            <span class="kpi-label">Eventos hoy</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-num">5</span>
+            <span class="kpi-label">Docs recientes</span>
+        </div>
+        </div>
+    </div>
+
+    <!-- Documentos recientes -->
+    <div class="card">
+        <h3 class="card-title"><i class="fa-regular fa-folder-open"></i> Documentos recientes</h3>
+        <ul class="list">
+        <li>
+            <i class="fa-regular fa-file-lines"></i>
+            <span>Protocolo de vacunación campaña invierno.pdf</span>
+            <a class="link" href="{% url 'documentos' %}">Abrir</a>
+        </li>
+        <li>
+            <i class="fa-regular fa-file-lines"></i>
+            <span>Turnos enfermería — semana actual.xlsx</span>
+            <a class="link" href="{% url 'documentos' %}">Abrir</a>
+        </li>
+        <li>
+            <i class="fa-regular fa-file-lines"></i>
+            <span>Formulario de solicitud de permisos.docx</span>
+            <a class="link" href="{% url 'documentos' %}">Abrir</a>
+        </li>
+        </ul>
+    </div>
+
+    <!-- Próximos eventos -->
+    <div class="card">
+        <h3 class="card-title"><i class="fa-regular fa-calendar"></i> Próximos eventos</h3>
+        <ul class="list">
+        <li>
+            <i class="fa-regular fa-clock"></i>
+            <span>Reunión sector rural — 09:30</span>
+            <a class="link" href="{% url 'calendario' %}">Ver</a>
+        </li>
+        <li>
+            <i class="fa-regular fa-clock"></i>
+            <span>Capacitación RCP — 15:00</span>
+            <a class="link" href="{% url 'calendario' %}">Ver</a>
+        </li>
+        <li>
+            <i class="fa-regular fa-clock"></i>
+            <span>Entrega informes — viernes</span>
+            <a class="link" href="{% url 'calendario' %}">Ver</a>
+        </li>
+        </ul>
+    </div>
+
+    <!-- Mis solicitudes -->
+    <div class="card">
+        <h3 class="card-title"><i class="fa-regular fa-paper-plane"></i> Mis solicitudes</h3>
+        <ul class="list chips">
+        <li>
+            <i class="fa-regular fa-file"></i>
+            <span>Permiso administrativo</span>
+            <span class="chip chip-warning">En revisión</span>
+        </li>
+        <li>
+            <i class="fa-regular fa-file"></i>
+            <span>Licencia médica</span>
+            <span class="chip chip-success">Aprobada</span>
+        </li>
+        <li>
+            <i class="fa-regular fa-file"></i>
+            <span>Capacitación externa</span>
+            <span class="chip chip-info">Pendiente</span>
+        </li>
+        </ul>
+        <div class="card-actions">
+        <a class="btn btn-outline" href="{% url 'solicitudes' %}"><i class="fa-solid fa-list-check"></i> Gestionar solicitudes</a>
+        </div>
+    </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

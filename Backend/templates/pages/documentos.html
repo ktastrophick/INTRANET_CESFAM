@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentos – Intranet CESFAM Santa Rosa</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">CS</div>
+        <div class="logo-text">
+          <h1>Intranet CESFAM Santa Rosa</h1>
+          <p>Temuco, Chile</p>
+        </div>
+      </div>
+
+      <nav>
+        <a href="{% url 'index' %}">
+          <i class="bi bi-house-fill"></i>
+          <span>Inicio</span>
+        </a>
+        <a href="{% url 'documentos' %}" class="active">
+          <i class="bi bi-file-text"></i>
+          <span>Documentos</span>
+        </a>
+        <a href="{% url 'calendario' %}">
+          <i class="bi bi-calendar-event"></i>
+          <span>Calendario</span>
+        </a>
+        <a href="{% url 'solicitudes' %}">
+          <i class="bi bi-clock-history"></i>
+          <span>Solicitudes</span>
+        </a>
+      </nav>
+
+      <div class="user-section">
+        <div class="user-info" onclick="toggleUserMenu()">
+          <p>María Torres <i class="bi bi-chevron-down" id="user-chevron"></i></p>
+          <span>Enfermera Coordinadora</span>
+        </div>
+        
+        <div class="user-menu" id="user-menu">
+          <a href="{% url 'perfil' %}">
+            <button class="logout-btn">
+              <i class="bi bi-person"></i> Ver perfil
+            </button>
+          </a>
+
+          <a href="{% url 'login' %}">
+            <button class="logout-btn">
+              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="bi bi-list" id="menu-icon"></i>
+      </button>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <nav>
+        <a href="{% url 'index' %}">
+          <i class="bi bi-house-fill"></i>
+          <span>Inicio</span>
+        </a>
+        <a href="{% url 'documentos' %}" class="active">
+          <i class="bi bi-file-text"></i>
+          <span>Documentos y Formularios</span>
+        </a>
+        <a href="{% url 'calendario' %}">
+          <i class="bi bi-calendar-event"></i>
+          <span>Calendario</span>
+        </a>
+        <a href="{% url 'solicitudes' %}">
+          <i class="bi bi-clock-history"></i>
+          <span>Solicitudes</span>
+        </a>
+      </nav>
+      <div class="mobile-user">
+        <p style="font-weight: 500; margin-bottom: 0.5rem;">María Torres</p>
+        <span style="font-size: 0.875rem; color: #666;">Enfermera Coordinadora</span>
+        <button class="logout-btn" onclick="cerrarSesion()" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main>
+    <div class="documentos-container">
+      <div class="documentos-header">
+        <h2>Gestión de Documentos Institucionales</h2>
+        <button class="upload-btn" onclick="subirDocumento()">
+          <i class="fas fa-upload"></i> Subir Documento
+        </button>
+      </div>
+
+      <div class="filters">
+        <input type="text" id="filtroNombre" placeholder="Buscar por nombre...">
+        <select id="filtroTipo">
+          <option value="">Tipo de archivo</option>
+          <option value="pdf">PDF</option>
+          <option value="word">Word</option>
+          <option value="excel">Excel</option>
+        </select>
+        <input type="date" id="filtroFecha">
+        <button onclick="filtrar()">Filtrar</button>
+        <button onclick="limpiarFiltros()">Limpiar</button>
+      </div>
+
+      <table id="tablaDocumentos">
+        <thead>
+          <tr>
+            <th>Nombre del Documento</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Funcionario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Reglamento Interno 2025</td>
+            <td>PDF</td>
+            <td>2025-08-12</td>
+            <td>Carolina Soto</td>
+            <td><button class="action-btn" title="Descargar"><i class="fas fa-download"></i></button></td>
+          </tr>
+          <tr>
+            <td>Formulario Solicitud Vacaciones</td>
+            <td>Word</td>
+            <td>2025-09-18</td>
+            <td>Juan Pérez</td>
+            <td><button class="action-btn" title="Descargar"><i class="fas fa-download"></i></button></td>
+          </tr>
+          <tr>
+            <td>Informe de Actividades Mensual</td>
+            <td>Excel</td>
+            <td>2025-09-05</td>
+            <td>María López</td>
+            <td><button class="action-btn" title="Descargar"><i class="fas fa-download"></i></button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>CESFAM Santa Rosa</h4>
+          <p>Centro de Salud Familiar<br>Temuco, Región de La Araucanía<br>Chile</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces Rápidos</h4>
+          <ul>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Soporte Técnico</a></li>
+            <li><a href="#">Manual de Usuario</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Proyecto</h4>
+          <p>Desarrollado en colaboración con<br><strong>INACAP</strong><br>Primavera 2025</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Icons (si usas Bootstrap) o Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- JavaScript -->
+  <script>
+    // Inicializar iconos si usas Lucide
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+
+    // Toggle menú móvil
+    function toggleMenu() {
+      var mobileMenu = document.getElementById('mobile-menu');
+      var menuIcon = document.getElementById('menu-icon');
+      
+      mobileMenu.classList.toggle('active');
+      
+      if (mobileMenu.classList.contains('active')) {
+        if (typeof lucide !== 'undefined') {
+          menuIcon.setAttribute('data-lucide', 'x');
+          lucide.createIcons();
+        } else {
+          menuIcon.className = 'bi bi-x-lg';
+        }
+      } else {
+        if (typeof lucide !== 'undefined') {
+          menuIcon.setAttribute('data-lucide', 'menu');
+          lucide.createIcons();
+        } else {
+          menuIcon.className = 'bi bi-list';
+        }
+      }
+    }
+
+    // Cerrar sesión
+    function cerrarSesion() {
+      window.location.href = "{% url 'login' %}";
+    }
+
+    // Toggle menú de usuario
+    function toggleUserMenu() {
+      const menu = document.getElementById("user-menu");
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+
+    // Cerrar el menú de usuario si se hace clic fuera
+    document.addEventListener("click", function(event){
+      const userSection = document.querySelector(".user-section");
+      if(!userSection.contains(event.target)){
+        document.getElementById("user-menu").style.display = "none";
+      }
+    });
+
+    // Funciones de documentos
+    function subirDocumento() {
+      alert("Función de subida simulada. Aquí se integrará el formulario real en el futuro.");
+    }
+
+    function filtrar() {
+      const nombre = document.getElementById('filtroNombre').value.toLowerCase();
+      const tipo = document.getElementById('filtroTipo').value.toLowerCase();
+      const fecha = document.getElementById('filtroFecha').value;
+      const filas = document.querySelectorAll('#tablaDocumentos tbody tr');
+
+      filas.forEach(fila => {
+        const nombreDoc = fila.children[0].textContent.toLowerCase();
+        const tipoDoc = fila.children[1].textContent.toLowerCase();
+        const fechaDoc = fila.children[2].textContent;
+
+        const coincideNombre = nombre === '' || nombreDoc.includes(nombre);
+        const coincideTipo = tipo === '' || tipoDoc.includes(tipo);
+        const coincideFecha = fecha === '' || fechaDoc === fecha;
+
+        fila.style.display = (coincideNombre && coincideTipo && coincideFecha) ? '' : 'none';
+      });
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtroNombre').value = '';
+      document.getElementById('filtroTipo').value = '';
+      document.getElementById('filtroFecha').value = '';
+      filtrar();
+    }
+  </script>
+</body>
+</html>

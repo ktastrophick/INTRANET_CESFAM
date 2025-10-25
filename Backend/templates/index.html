@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intranet CESFAM Santa Rosa - Temuco</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">CS</div>
+                <div class="logo-text">
+                    <h1>Intranet CESFAM Santa Rosa</h1>
+                    <p>Temuco, Chile</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="{% url 'index' %}" class="active">
+                    <i data-lucide="home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="{% url 'documentos' %}">
+                    <i data-lucide="file-text"></i>
+                    <span>Documentos</span>
+                </a>
+                <a href="{% url 'calendario' %}">
+                    <i data-lucide="calendar"></i>
+                    <span>Calendario</span>
+                </a>
+                <a href="{% url 'solicitudes' %}">
+                    <i data-lucide="clock"></i>
+                    <span>Solicitudes</span>
+                </a>
+            </nav>
+
+            <div class="user-section">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <p>María Torres <i data-lucide="chevron-down" id="user-chevron"></i></p>
+                    <span>Enfermera Coordinadora</span>
+                </div>
+                
+                <div class="user-menu" id="user-menu">
+                    <a href="{% url 'perfil' %}">
+                        <button class="logout-btn">Ver perfil</button>
+                    </a>
+
+                    <a href="{% url 'login' %}">
+                        <button class="logout-btn">
+                            <i></i>Cerrar Sesión
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <nav>
+                <a href="{% url 'index' %}" class="active">
+                    <i data-lucide="home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="{% url 'documentos' %}">
+                    <i data-lucide="file-text"></i>
+                    <span>Documentos y Formularios</span>
+                </a>
+                <a href="{% url 'calendario' %}">
+                    <i data-lucide="calendar"></i>
+                    <span>Calendario</span>
+                </a>
+                <a href="{% url 'solicitudes' %}">
+                    <i data-lucide="clock"></i>
+                    <span>Solicitudes</span>
+                </a>
+            </nav>
+            <div class="mobile-user">
+                <p style="font-weight: 500; margin-bottom: 0.5rem;">María Torres</p>
+                <span style="font-size: 0.875rem; color: #666;">Enfermera Coordinadora</span>
+                <button class="logout-btn" onclick="cerrarSesion()" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="log-out"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="welcome-banner">
+            <h2>¡Bienvenido/a, María Torres!</h2>
+            <p>Su espacio de gestión y comunicación interna del CESFAM Santa Rosa</p>
+        </div>
+
+        <div class="main-grid">
+            <div>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3>Accesos Rápidos</h3>
+                    <div class="quick-access-grid">
+                        <a href="{% url 'solicitudes' %}" class="quick-access-item blue">
+                            <div class="quick-access-icon blue">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="quick-access-text">
+                                <p>Solicitar Día Administrativo</p>
+                                <span>Gestión rápida</span>
+                            </div>
+                            <i data-lucide="chevron-right" style="color: #999;"></i>
+                        </a>
+
+                        <a href="#comunicados" class="quick-access-item teal">
+                            <div class="quick-access-icon teal">
+                                <i data-lucide="bell"></i>
+                            </div>
+                            <div class="quick-access-text">
+                                <p>Ver Comunicados</p>
+                                <span>Últimos anuncios</span>
+                            </div>
+                            <i data-lucide="chevron-right" style="color: #999;"></i>
+                        </a>
+
+                        <a href="{% url 'calendario' %}" class="quick-access-item purple">
+                            <div class="quick-access-icon purple">
+                                <i data-lucide="calendar"></i>
+                            </div>
+                            <div class="quick-access-text">
+                                <p>Consultar Calendario</p>
+                                <span>Próximos eventos</span>
+                            </div>
+                            <i data-lucide="chevron-right" style="color: #999;"></i>
+                        </a>
+
+                        <a href="{% url 'documentos' %}" class="quick-access-item green">
+                            <div class="quick-access-icon green">
+                                <i data-lucide="download"></i>
+                            </div>
+                            <div class="quick-access-text">
+                                <p>Descargar Formularios</p>
+                                <span>Documentación</span>
+                            </div>
+                            <i data-lucide="chevron-right" style="color: #999;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3>Mi Resumen Personal</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p>Días Administrativos</p>
+                            <div class="number">3</div>
+                            <span>días disponibles</span>
+                        </div>
+                        <div class="summary-item teal">
+                            <p>Días de Vacaciones</p>
+                            <div class="number">10</div>
+                            <span>días disponibles</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="comunicados">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0;">Comunicados Recientes</h3>
+                        <a href="#" class="view-all" style="margin: 0;">Ver todos</a>
+                    </div>
+                    
+                    <a href="#" class="comunicado-item">
+                        <p>Actualización Protocolo COVID-19</p>
+                        <span>02 Oct 2025 • Salud</span>
+                    </a>
+
+                    <a href="#" class="comunicado-item">
+                        <p>Reunión General de Equipo - 10 de Octubre</p>
+                        <span>01 Oct 2025 • Administrativa</span>
+                    </a>
+
+                    <a href="#" class="comunicado-item">
+                        <p>Capacitación en Sistema SOME Digital</p>
+                        <span>28 Sep 2025 • Capacitación</span>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3>Próximas Actividades</h3>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>10</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Reunión General de Equipo</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                09:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>15</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Capacitación SOME Digital</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                14:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>20</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Evaluación Trimestral</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                10:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'calendario' %}" class="view-all">Ver calendario completo</a>
+                </div>
+
+                <div class="support-card">
+                    <h3>¿Necesitas ayuda?</h3>
+                    <p>Contacta con soporte técnico para resolver tus dudas</p>
+                    <button class="support-btn">
+                        <i data-lucide="mail"></i>
+                        <span>Contactar Soporte</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>CESFAM Santa Rosa</h4>
+                    <p>
+                        Centro de Salud Familiar<br>
+                        Temuco, Región de La Araucanía<br>
+                        Chile
+                    </p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Soporte Técnico</a></li>
+                        <li><a href="#">Manual de Usuario</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Proyecto</h4>
+                    <p>
+                        Desarrollado en colaboración con<br>
+                        <strong>INACAP</strong><br>
+                        Primavera 2025
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lucide Icons Script -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- JavaScript Functions -->
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Toggle menú móvil
+        function toggleMenu() {
+            var mobileMenu = document.getElementById('mobile-menu');
+            var menuIcon = document.getElementById('menu-icon');
+            
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                menuIcon.setAttribute('data-lucide', 'x');
+            } else {
+                menuIcon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Cerrar sesión
+        function cerrarSesion(){
+            window.location.href = "{% url 'login' %}";
+        }
+
+        // Toggle menú de usuario
+        function toggleUserMenu() {
+            const menu = document.getElementById("user-menu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Cerrar el menú de usuario si se hace clic fuera
+        document.addEventListener("click", function(event){
+            const userSection = document.querySelector(".user-section");
+            if(!userSection.contains(event.target)){
+                document.getElementById("user-menu").style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
