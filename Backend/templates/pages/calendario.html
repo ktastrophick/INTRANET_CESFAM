@@ -23,7 +23,7 @@
             </div>
 
             <nav>
-                <a href="{% url 'index' %}"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="{% url 'inicio' %}"><i data-lucide="home"></i><span>Inicio</span></a>
                 <a href="{% url 'documentos' %}"><i data-lucide="file-text"></i><span>Documentos</span></a>
                 <a href="{% url 'calendario' %}" class="active"><i data-lucide="calendar"></i><span>Calendario</span></a>
                 <a href="{% url 'solicitudes' %}"><i data-lucide="clock"></i><span>Solicitudes</span></a>
@@ -46,7 +46,7 @@
 
         <div class="mobile-menu" id="mobile-menu">
             <nav>
-                <a href="{% url 'index' %}"><i data-lucide="home"></i><span>Inicio</span></a>
+                <a href="{% url 'inicio' %}"><i data-lucide="home"></i><span>Inicio</span></a>
                 <a href="{% url 'documentos' %}"><i data-lucide="file-text"></i><span>Documentos y Formularios</span></a>
                 <a href="{% url 'calendario' %}" class="active"><i data-lucide="calendar"></i><span>Calendario</span></a>
                 <a href="{% url 'solicitudes' %}"><i data-lucide="clock"></i><span>Solicitudes</span></a>
@@ -231,7 +231,7 @@
         }
 
         function cerrarSesion(){
-            window.location.href = "{% url 'index' %}";
+            window.location.href = "{% url 'inicio' %}";
         }
 
         function toggleMenu(){

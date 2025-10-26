@@ -6,17 +6,17 @@ from .models import Avisos, Calendario, Cargo, Departamento, EstadoSolicitud, In
 def inicio(request):
     return render(request, 'pages/inicio.html')
 
-@login_required
+#@login_required
 def documentos(request):
     return render(request, 'pages/documentos.html')
 
-@login_required
+#@login_required
 def calendario(request):
     return render(request, 'pages/calendario.html')
 
-@login_required
+#@login_required
 def solicitudes(request):
-    return render(request, 'solicitudes.html')
+    return render(request, 'pages/solicitudes.html')
 
 #@login_required
 def perfil(request):
