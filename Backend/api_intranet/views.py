@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.contrib import messages
+from .models import Avisos, Calendario, Cargo, Departamento, EstadoSolicitud, InicioRegistrado 
 
 def inicio(request):
     return render(request, 'pages/inicio.html')
@@ -19,3 +21,4 @@ def solicitudes(request):
 @login_required
 def perfil(request):
     return render(request, 'perfil.html')
+
