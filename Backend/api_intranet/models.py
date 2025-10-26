@@ -153,3 +153,14 @@ class Usuario(models.Model):
     class Meta:
         managed = True
         db_table = 'usuario'
+
+class Perfil(models.Model):
+    id_perfil = models.AutoField(primary_key=True)
+    foto_perfil = models.CharField(max_length=255, blank=True, null=True)
+    descripcion = models.CharField(max_length=255, blank=True, null=True)
+    id_usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, db_column='id_usuario', blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = True
+        db_table = 'perfil'
