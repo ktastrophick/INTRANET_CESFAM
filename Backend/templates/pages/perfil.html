@@ -1,3 +1,6 @@
+{% extends "base/base.html" %}
+{% block content %}
+    <!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,25 +14,6 @@
 </head>
 
 <body>
-
-    <!-- HEADER -->
-    <header>
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo">CS</div>
-                <div class="logo-text">
-                    <h1>Intranet CESFAM Santa Rosa</h1>
-                    <p>Temuco, Chile</p>
-                </div>
-            </div>
-
-            <nav>
-                <a href="index.html"><i data-lucide="home"></i><span>Inicio</span></a>
-                <a href="documentos.html"><i data-lucide="file-text"></i><span>Documentos</span></a>
-                <a href="calendario.html"><i data-lucide="calendar"></i><span>Calendario</span></a>
-                <a href="solicitudes.html"><i data-lucide="clock"></i><span>Solicitudes</span></a>
-                <a href="perfil.html" class="active"><i data-lucide="user"></i><span>Perfil</span></a>
-            </nav>
 
             <div class="user-section">
                 <div class="user-info">
@@ -103,7 +87,7 @@
             </div>
         </div>
     </footer>
-
+{% endblock %}
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
 </body>
