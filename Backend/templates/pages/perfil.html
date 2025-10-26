@@ -13,7 +13,7 @@
 </head>
 
 <body>
-
+    <header>
             <div class="user-section">
                 <div class="user-info">
                     <p><?php echo $usuario['nombre']; ?></p>
@@ -23,11 +23,11 @@
                     <i data-lucide="log-out"></i>
                 </button>
             </div>
-
+            <div>
             <button class="menu-toggle" onclick="toggleMenu()">
                 <i data-lucide="menu" id="menu-icon"></i>
             </button>
-        </div>
+            </div>
     </header>
 
     <!-- MAIN -->
@@ -87,6 +87,7 @@
         </div>
     </footer>
 {% endblock %}
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
 </body>
