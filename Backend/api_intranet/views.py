@@ -6,7 +6,7 @@ from .models import Avisos, Calendario, Cargo, Departamento, EstadoSolicitud, In
 def inicio(request):
     return render(request, 'pages/inicio.html')
 
-@login_required
+#@login_required
 def documentos(request):
     return render(request, 'pages/documentos.html')
 
