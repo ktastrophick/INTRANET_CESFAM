@@ -16,14 +16,14 @@
       {% csrf_token %}
 
       <label for="id_username">Usuario (RUT sin puntos ni guion)</label>
-      {{ form.username|add_class:"" }}
+      {{ form.username}}
       {% if form.username.errors %}
       <div class="form-error">{{ form.username.errors.0 }}</div>
       {% endif %}
 
       <label for="id_password">Contraseña</label>
       <div style="position:relative">
-        {{ form.password|add_class:"" }}
+        {{ form.password }}
       </div>
       {% if form.password.errors %}
         <div class="form-error">{{ form.password.errors.0 }}</div>

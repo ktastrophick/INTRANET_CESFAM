@@ -1,14 +1,13 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% block title %}Mi Perfil — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
 {% endblock %}
 
 {% block content %}
     <section class="perfil-header">
     <div class="perfil-id">
-        <img class="avatar" src="{% static 'assets/images/cesfam.png' %}" alt="Avatar">
+        <img class="avatar" src="" alt="Avatar">
         <div>
         <h2 class="nombre">{{ request.user.get_full_name|default:"María Torres" }}</h2>
         <p class="cargo">Enfermera Coordinadora</p>
@@ -21,7 +20,7 @@
     </div>
 
     <div class="perfil-acciones">
-        <a class="btn btn-outline" href="{% url 'perfil_editar' %}"><i class="fa-regular fa-pen-to-square"></i> Editar perfil</a>
+        <a class="btn btn-outline" href="{#{% url 'perfil_editar' %}#}"><i class="fa-regular fa-pen-to-square"></i> Editar perfil</a>
         <a class="btn btn-primary" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
     </div>
     </section>

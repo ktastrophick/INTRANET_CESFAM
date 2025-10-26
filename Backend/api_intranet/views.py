@@ -8,17 +8,17 @@ def inicio(request):
 
 @login_required
 def documentos(request):
-    return render(request, 'documentos.html')
+    return render(request, 'pages/documentos.html')
 
 @login_required
 def calendario(request):
-    return render(request, 'calendario.html')
+    return render(request, 'pages/calendario.html')
 
 @login_required
 def solicitudes(request):
     return render(request, 'solicitudes.html')
 
-@login_required
+#@login_required
 def perfil(request):
-    return render(request, 'perfil.html')
+    return render(request, 'pages/perfil.html')
 
