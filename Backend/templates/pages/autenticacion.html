@@ -1,7 +1,13 @@
 {% extends "base/base.html" %}
+{% load static %}
+
+
+{% block body_class %}login landing{% endblock %}
+
 {% block content %}
+
 <section class="page-content">
-  <div class="login-wrapper" role="form" aria-label="Formulario de inicio de sesión">
+  <div class="login-container" role="form" aria-label="Formulario de inicio de sesión">
     <h2>Iniciar sesión</h2>
     <p>Accede con tu usuario y contraseña institucional.</p>
 
@@ -12,44 +18,49 @@
       </div>
     {% endif %}
 
-    <form method="post" action= "{% url 'login'%}" class="login-form">
+    <form method="post" action="{% url 'login' %}" class="login-form">
       {% csrf_token %}
 
       <label for="id_username">Usuario (RUT sin puntos ni guion)</label>
-      {{ form.username}}
+      {{ form.username }}
       {% if form.username.errors %}
-      <div class="form-error">{{ form.username.errors.0 }}</div>
+        <div class="form-error">{{ form.username.errors.0 }}</div>
       {% endif %}
 
       <label for="id_password">Contraseña</label>
-      <div style="position:relative">
+      <div class="password-wrapper">
         {{ form.password }}
+        <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
+          <i class="fa-regular fa-eye" id="toggleIcon"></i>
+        </button>
       </div>
       {% if form.password.errors %}
         <div class="form-error">{{ form.password.errors.0 }}</div>
       {% endif %}
 
-      {# “next” para volver a la página solicitada #}
-      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      {# "next" para volver a la página solicitada #}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
 
       <div class="help-row">
-        <label style="display:flex;gap:.5rem;align-items:center">
-          <input type="checkbox" name="remember" onclick="
-            const ch=this.form.querySelector('[name=session_exp]');
-            if(ch){ ch.value = this.checked ? 'keep' : '' }"> Mantener sesión iniciada
+        <label class="remember-label">
+          <input type="checkbox" name="remember" id="rememberCheckbox">
+          <span>Mantener sesión iniciada</span>
         </label>
-        <a href="#" class="small-link">¿Olvidaste tu contraseña?</a>
+        <a href="{#{% url 'password_reset' %}#}" class="small-link">¿Olvidaste tu contraseña?</a>
       </div>
 
       <button class="login-btn" type="submit">Ingresar</button>
-      <input type="hidden" name="session_exp" value="">
+      <input type="hidden" name="session_exp" id="sessionExp" value="">
     </form>
   </div>
 </section>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Mostrar/ocultar password (opcional si quieres añadir un ojo)
+<script src="{% static 'js/autenticacion.js' %}"></script>
 </script>
 {% endblock %}

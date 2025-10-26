@@ -3,7 +3,6 @@
     <div class="header-container">
         <!-- Logo + título -->
         <div class="logo-section">
-        <!-- Opción A: imagen -->
         <div class="logo">
             <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
         </div>
@@ -41,12 +40,11 @@
 
             <div class="dropdown" id="userDropdown" role="menu" aria-label="Menú de usuario">
             <a href="{% url 'perfil' %}"><i class="fa-regular fa-user"></i> Ver perfil</a>
-            <a href="{#{% url 'logout' %}#}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+            <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
             </div>
         </div>
         {% else %}
-              
-        <a class="btn-login" href="{#{% url 'login' %}#}">
+        <a class="btn-login" href="{% url 'inicio' %}">
             <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
         </a>
         {% endif %}
@@ -76,10 +74,14 @@
 
         {% if request.user.is_authenticated %}
         <div class="mobile-user">
-            <p class="mobile-user-name">{{ request.user.get_full_name|default:"María Torres" }}</p>
-            <span class="mobile-user-role">Enfermera Coordinadora</span>
-            <a class="logout-btn" href="{#{% url 'logout' %}#}">
-            <i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span>
+            <a class="btn-login" href="{% url 'inicio' %}">
+            <i class="fa-solid fa-house"></i> Inicio
+            </a>
+        </div>
+        {% else %}
+        <div class="mobile-user">
+            <a class="btn-login" href="{% url 'login' %}">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
             </a>
         </div>
         {% endif %}
