@@ -1,7 +1,6 @@
 {% load static %}
 <head>
     <meta charset="utf-8" />
-    
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
 
@@ -18,9 +17,6 @@
     <!-- CSS base -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
-    {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
-    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
-    <link rel="stylesheet" href="{% static 'css/autenticacion.css' %}">
-    {% endblock %}
+    <!-- Cada página decide sus CSS -->
+    {% block extra_css %}{% endblock %}
 </head>

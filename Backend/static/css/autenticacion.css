@@ -82,3 +82,11 @@ body.login  .form-error {
     text-align: center;
     margin-top: 1rem;
 }
+
+body.login .site-footer {
+    background: none;
+    border: none;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+}

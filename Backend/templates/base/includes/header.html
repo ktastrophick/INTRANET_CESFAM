@@ -1,61 +1,51 @@
 {% load static %}
-
-<!-- HEADER COMÚN A TODAS LAS PÁGINAS -->
-
 <header class="site-header">
     <div class="header-container">
-
         <!-- Logo + título -->
-
         <div class="logo-section">
-            <div class="logo">
-                <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
-            </div>
-            <div class="logo-text">
-                <h1>Intranet CESFAM Santa Rosa</h1>
-                <p>Temuco, Chile</p>
-            </div>
+        <div class="logo">
+            <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
+        </div>
+        <div class="logo-text">
+            <h1>Intranet CESFAM Santa Rosa</h1>
+            <p>Temuco, Chile</p>
+        </div>
         </div>
 
+        {% if request.resolver_match.url_name != 'login' %}
         <!-- NAV -->
-
         <nav class="main-nav" aria-label="Navegación principal">
             <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
-                <i class="fa-solid fa-house"></i><span>Inicio</span>
+            <i class="fa-solid fa-house"></i><span>Inicio</span>
             </a>
             <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
-                <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
+            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
             </a>
             <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
-                <i class="fa-solid fa-calendar"></i><span>Calendario</span>
+            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
             </a>
             <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
-                <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
             </a>
         </nav>
 
-        <!-- Usuario (condicional) -->
-
+        <!-- Usuario -->
         {% if request.user.is_authenticated %}
-
-        <div class="user-section" id="userDropdownToggle" role="button" aria-haspopup="true" aria-expanded="false">
+            <div class="user-section" id="userDropdownToggle">
             <div class="user-info">
                 <p>{{ request.user.first_name|default:"María" }} {{ request.user.last_name }}</p>
                 <span>Enfermera Coordinadora</span>
             </div>
-
             <i class="fa-solid fa-chevron-down"></i>
-
-            <div class="dropdown" id="userDropdown" role="menu" aria-label="Menú de usuario">
+            <div class="dropdown" id="userDropdown">
                 <a href="{% url 'perfil' %}"><i class="fa-regular fa-user"></i> Ver perfil</a>
                 <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
             </div>
-        </div>
-
+            </div>
         {% else %}
-        <a class="btn-login" href="{% url 'inicio' %}">
+            <a class="btn-login" href="{% url 'login' %}">
             <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
-        </a>
+            </a>
         {% endif %}
 
         <!-- Toggle móvil -->
@@ -64,38 +54,26 @@
             <i class="fa-solid fa-bars" id="menu-icon"></i>
             </button>
         </div>
-
-        <!-- Menú móvil -->
-    
-        <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-            <nav aria-label="Navegación móvil">
-                <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
-                    <i class="fa-solid fa-house"></i><span>Inicio</span>
-                </a>
-                <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
-                    <i class="fa-solid fa-file-lines"></i><span>Documentos y Formularios</span>
-                </a>
-                <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
-                    <i class="fa-solid fa-calendar"></i><span>Calendario</span>
-                </a>
-                <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
-                    <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
-                </a>
-            </nav>
-
-            {% if request.user.is_authenticated %}
-            <div class="mobile-user">
-                <a class="btn-login" href="{% url 'inicio' %}">
-                <i class="fa-solid fa-house"></i> Inicio
-                </a>
-            </div>
-            {% else %}
-            <div class="mobile-user">
-                <a class="btn-login" href="{% url 'login' %}">
-                <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
-                </a>
-            <div>
-        </div>
-            {% endif %}
+        {% endif %}
     </div>
+
+    <!-- Menú móvil -->
+    {% if request.resolver_match.url_name != 'login' %}
+        <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <nav aria-label="Navegación móvil">
+            <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i><span>Inicio</span>
+            </a>
+            <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
+            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
+            </a>
+            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
+            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
+            </a>
+            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+            </a>
+        </nav>
+        </div>
+    {% endif %}
 </header>

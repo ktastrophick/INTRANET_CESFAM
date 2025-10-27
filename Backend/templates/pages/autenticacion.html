@@ -3,6 +3,10 @@
 
 
 {% block body_class %}login landing{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/autenticacion.css' %}">
+{% endblock %}
+
 
 {% block content %}
 
@@ -30,9 +34,7 @@
       <label for="id_password">Contraseña</label>
       <div class="password-wrapper">
         {{ form.password }}
-        <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
-          <i class="fa-regular fa-eye" id="toggleIcon"></i>
-        </button>
+
       </div>
       {% if form.password.errors %}
         <div class="form-error">{{ form.password.errors.0 }}</div>
@@ -60,7 +62,5 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    <script src="{% static 'js/autenticacion.js' %}"></script>
-  </script>
+  <script src="{% static 'js/autenticacion.js' %}"></script>
 {% endblock %}

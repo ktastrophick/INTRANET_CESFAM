@@ -4,16 +4,15 @@
 
 <html lang="es" data-theme="light">
     {% include "base/includes/head.html" %}
+    {% block extra_css %}{% endblock %}
     <body class="{% block body_class %}{% endblock %}">
-        {% include "base/includes/header.html" %}
-
-
+        {% if not body_class == 'login landing' %}
+            {% include "base/includes/header.html" %}
+        {% endif%}
         <main class="page-content">
-        {% block content %}{% endblock %}
+            {% block content %}{% endblock %}
         </main>
-
         {% include "base/includes/footer.html" %}
-
         <!-- JS global -->
         <script src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}

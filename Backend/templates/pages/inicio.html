@@ -5,8 +5,9 @@
 {% block title %}Inicio — Intranet CESFAM{% endblock %}
 {% block body_class %}landing{% endblock %}
 
-{% block extra_css %}{% endblock %}
-
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+{% endblock %}
 {% block content %}
     <!-- BANNER DE BIENVENIDA -->
     <section class="welcome-banner no-header">
@@ -30,10 +31,10 @@
         </article>
     </section>
 {% endblock %}
+
 {% block extra_js %}
     <script>
         //const btn = document.getElementById('goLoginBtn');
         //if (btn) btn.addEventListener('click', () => location.href = '/accounts/login/');
-        <script src="{% static 'js/main.js' %}"></script>
     </script>
 {% endblock %}

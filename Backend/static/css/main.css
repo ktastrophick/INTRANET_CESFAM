@@ -75,18 +75,13 @@ body {
 }
 
 .logo img {
-    width: 48px;
-    /* Tamaño equilibrado */
-    height: 48px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    /* Ajusta dentro del recuadro */
     border-radius: 50%;
-    /* Redondeado perfecto */
     border: 2px solid #ffffff22;
-    /* Borde suave translúcido */
     background-color: #ffffff;
-    /* Fondo neutro */
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 8px rgba(0,0,0,.15);
 }
 
 .logo-text h1 {
