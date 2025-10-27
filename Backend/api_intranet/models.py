@@ -164,3 +164,23 @@ class Perfil(models.Model):
     class Meta:
         managed = True
         db_table = 'perfil'
+
+class Evento(models.Model):
+    id_evento = models.AutoField(primary_key=True)
+    titulo = models.CharField(max_length=120)
+    fecha = models.DateField()
+    descripcion = models.CharField(max_length=500, blank=True, null=True)
+    # Opcionales para integrarse a tu BD existente
+    tipo = models.ForeignKey('TipoCalendario', models.DO_NOTHING, db_column='id_tipoc', blank=True, null=True)
+    usuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_usuario', blank=True, null=True)
+    color = models.CharField(max_length=7, blank=True, null=True, help_text="Hex (#3A8DFF)")
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        managed = True
+        db_table = 'evento'
+
+
+def __str__(self):
+    return f"{self.titulo} ({self.fecha})"

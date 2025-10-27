@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-*&j#7&0l&bl2o+zruvz#21yfu2t!&bi)jz=5_9pnc3j$zmo*f%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ '127.0.0.1', 'localhost','www.intranetcesfamsantarosa.cl',] 
+ALLOWED_HOSTS += ['*']  # Permitir todos los hosts (solo para desarrollo)
 
 
 # Application definition

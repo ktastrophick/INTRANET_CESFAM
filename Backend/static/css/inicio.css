@@ -111,10 +111,6 @@ body.landing .main-nav a[href*="login"] {
     display: inline-flex !important;
 }
 
-/* Oculta el menú hamburguesa en landing */
-body.landing .menu-toggle {
-    display: none !important;
-}
 
 /* Si tu header tiene el bloque de usuario (cuando no hay login), escóndelo también aquí */
 body.landing .user-section {

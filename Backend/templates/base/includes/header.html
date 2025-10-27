@@ -34,52 +34,23 @@
 
         <!-- Usuario -->
         {% if request.user.is_authenticated %}
-            <div class="user-section" id="userDropdownToggle">
+            <div class="user-section">
             <div class="user-info">
-                <p>{{ request.user.first_name|default:"María" }} {{ request.user.last_name }}</p>
-                <span>Enfermera Coordinadora</span>
+                <p>{{ request.user.get_full_name|default:request.user.username }}</p>
+                <span>{{ request.user.cargo|default:"Funcionario/a" }}</span>
             </div>
-            <i class="fa-solid fa-chevron-down"></i>
-            <div class="dropdown" id="userDropdown">
-                <a href="{% url 'perfil' %}"><i class="fa-regular fa-user"></i> Ver perfil</a>
-                <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
-            </div>
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                </button>
+            </form>
             </div>
         {% else %}
             <a class="btn-login" href="{% url 'login' %}">
             <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
             </a>
         {% endif %}
-
-        <!-- Toggle móvil -->
-        <div>
-            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
-            <i class="fa-solid fa-bars" id="menu-icon"></i>
-            </button>
-        </div>
         {% endif %}
     </div>
-
-    <!-- Menú móvil -->
-    {% if request.resolver_match.url_name != 'login' %}
-        <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-        <nav aria-label="Navegación móvil">
-            <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
-            <i class="fa-solid fa-house"></i><span>Inicio</span>
-            </a>     
-            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
-            <i class="fa-solid fa-user"></i><span>Mi Perfil</span>
-            </a>
-            <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
-            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
-            </a>
-            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
-            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
-            </a>
-            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
-            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
-            </a>
-        </nav>
-        </div>
-    {% endif %}
 </header>
