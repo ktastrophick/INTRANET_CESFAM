@@ -127,6 +127,12 @@ body {
     color: var(--white);
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
+.main-nav a[href*="perfil"] i {
+    color: #66b2ff;
+}
+.main-nav a[href*="perfil"]:hover {
+    background-color: rgba(102,178,255,0.1);
+}
 
 /* Usuario */
 .user-section {
