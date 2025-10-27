@@ -18,9 +18,7 @@
             <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
             <i class="fa-solid fa-house"></i><span>Inicio</span>
             </a>
-            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
-            <i class="fa-solid fa-user"></i><span>Mi Perfil</span>
-            </a>
+
             <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
             <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
             </a>
@@ -30,10 +28,16 @@
             <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
             <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
             </a>
-        </nav>
+            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+            <i class="fa-solid fa-clock"></i><span>Funcionarios</span>
+            </a>            
+            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i><span></span>
+            </a>
+        
 
         <!-- Usuario -->
-        {% if request.user.is_authenticated %}
+        <!-- {% if request.user.is_authenticated %} -->
             <div class="user-section">
             <div class="user-info">
                 <p>{{ request.user.get_full_name|default:request.user.username }}</p>
@@ -50,7 +54,8 @@
             <a class="btn-login" href="{% url 'login' %}">
             <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
             </a>
+        <!-- {% endif %}-->
         {% endif %}
-        {% endif %}
+    </nav>
     </div>
 </header>
