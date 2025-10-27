@@ -1,91 +1,125 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil -- Intranet CESFAM Santa Rosa</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/inicio.css">
-    <link rel="stylesheet" href="../static/css/perfil.css">
-</head>
+{% extends "base/base.html" %}
+{% load static %}
 
-<body>
+{% block title %}Mi Perfil — Intranet CESFAM{% endblock %}
 
-            <div class="user-section">
-                <div class="user-info">
-                    <p><?php echo $usuario['nombre']; ?></p>
-                    <span><?php echo $usuario['cargo']; ?></span>
-                </div>
-                <button class="logout-btn" onclick="cerrarSesion()">
-                    <i data-lucide="log-out"></i>
-                </button>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+    {% endblock %}
+
+    {% block content %}
+    <section class="page-content">
+    <div class="perfil-container">
+        <h2>Mi Perfil</h2>
+
+        <div class="perfil-card">
+        <div class="perfil-info">
+            <div class="foto-perfil" aria-label="Foto de perfil">
+            <i class="fa-solid fa-user-circle"></i>
             </div>
 
-            <button class="menu-toggle" onclick="toggleMenu()">
-                <i data-lucide="menu" id="menu-icon"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN -->
-    <main>
-        <div class="perfil-container">
-            <h2>Mi Perfil</h2>
-
-            <div class="perfil-card">
-                <div class="perfil-info">
-                    <div class="foto-perfil">
-                        <i class="fa-solid fa-user-circle"></i>
-                    </div>
-
-                    <div class="datos">
-                        <p><strong>Nombre:</strong> <?php echo $usuario['nombre']; ?></p>
-                        <p><strong>RUT:</strong> <?php echo $usuario['rut'] . '-' . $usuario['dv']; ?></p>
-                        <p><strong>Correo:</strong> <?php echo $usuario['correo']; ?></p>
-                        <p><strong>Teléfono:</strong> <?php echo $usuario['telefono']; ?></p>
-                        <p><strong>Departamento:</strong> <?php echo $usuario['departamento']; ?></p>
-                        <p><strong>Cargo:</strong> <?php echo $usuario['cargo']; ?></p>
-                        <p><strong>Rol:</strong> <?php echo $usuario['rol']; ?></p>
-                    </div>
-                </div>
-
-                <div class="acciones">
-                    <button class="editar-btn"><i class="fa-solid fa-pen"></i> Editar Perfil</button>
-                    <button class="password-btn"><i class="fa-solid fa-lock"></i> Cambiar Contraseña</button>
-                </div>
+            <div class="datos">
+            <p><strong>Nombre:</strong> {#{{ usuario.nombre|default:request.user.get_full_name }}#}</p>
+            <p><strong>RUT:</strong> {{ usuario.rut }}{% if usuario.dv %}-{{ usuario.dv }}{% endif %}</p>
+            <p><strong>Correo:</strong> {#{{ usuario.correo|default:request.user.email }}#}</p>
+            <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"—" }}</p>
+            <p><strong>Departamento:</strong> {{ usuario.departamento|default:"—" }}</p>
+            <p><strong>Cargo:</strong> {{ usuario.cargo|default:"—" }}</p>
+            <p><strong>Rol:</strong> {{ usuario.rol|default:"Funcionario" }}</p>
             </div>
         </div>
-    </main>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>CESFAM Santa Rosa</h4>
-                    <p>Centro de Salud Familiar<br>Temuco, Región de La Araucanía<br>Chile</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Enlaces Rápidos</h4>
-                    <ul>
-                        <li><a href="#">Contacto</a></li>
-                        <li><a href="#">Soporte Técnico</a></li>
-                        <li><a href="#">Manual de Usuario</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Proyecto</h4>
-                    <p>Desarrollado en colaboración con<br><strong>INACAP</strong><br>Primavera 2025</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2025 CESFAM Santa Rosa - Todos los derechos reservados</p>
-            </div>
+        <div class="acciones">
+            <a class="editar-btn" href="{#{% url 'perfil_editar' %}#}">
+            <i class="fa-solid fa-pen"></i> Editar Perfil
+            </a>
+            <a class="password-btn" href="{#{% url 'password_change' %}#}">
+            <i class="fa-solid fa-lock"></i> Cambiar Contraseña
+            </a>
         </div>
-    </footer>
+        </div>
+        {# --- Accesos rápidos --- #}
+    <div class="card perfil-card-extra">
+    <h3>Accesos Rápidos</h3>
+    <div class="quick-access-grid">
+        <a href="{% url 'solicitudes' %}" class="quick-access-item blue">
+        <div class="quick-access-icon blue"><i class="fa-solid fa-clock"></i></div>
+        <div class="quick-access-text">
+            <p>Solicitar Día Administrativo</p>
+            <span>Gestión rápida</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </a>
+
+        <a href="{% url 'documentos' %}" class="quick-access-item green">
+        <div class="quick-access-icon green"><i class="fa-solid fa-download"></i></div>
+        <div class="quick-access-text">
+            <p>Descargar Formularios</p>
+            <span>Documentación</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </a>
+
+        <a href="{% url 'calendario' %}" class="quick-access-item purple">
+        <div class="quick-access-icon purple"><i class="fa-solid fa-calendar"></i></div>
+        <div class="quick-access-text">
+            <p>Consultar Calendario</p>
+            <span>Próximos eventos</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </a>
+    </div>
+    </div>
+
+    {# --- Mi resumen personal (KPIs) --- #}
+    <div class="card perfil-card-extra">
+    <h3>Mi Resumen Personal</h3>
+    <div class="summary-grid">
+        <div class="summary-item">
+        <p>Días Administrativos</p>
+        <div class="number">{{ dias_admin_disponibles|default:3 }}</div>
+        <span>días disponibles</span>
+        </div>
+        <div class="summary-item teal">
+        <p>Días de Vacaciones</p>
+        <div class="number">{{ dias_vacaciones_disponibles|default:10 }}</div>
+        <span>días disponibles</span>
+        </div>
+    </div>
+    </div>
+
+    {# --- Próximas actividades (mini) --- #}
+    <div class="card perfil-card-extra">
+    <h3>Próximas Actividades</h3>
+
+    {#{% for ev in proximos_eventos|default:list %}#}
+        <div class="calendar-item">
+        <div class="calendar-date">
+            <p>{{ ev.mes_corto|default:"OCT" }}</p>
+            <span>{{ ev.dia|default:"10" }}</span>
+        </div>
+        <div class="calendar-info">
+            <p>{{ ev.titulo|default:"Reunión General de Equipo" }}</p>
+            <span><i class="fa-regular fa-clock"></i> {{ ev.hora|default:"09:00" }} hrs</span>
+        </div>
+        </div>
+    {#{% empty %}#}
+        <p style="color:#666">No hay actividades próximas.</p>
+    {#{% endfor %}#}
+
+    <a href="{% url 'calendario' %}" class="view-all">Ver calendario completo</a>
+    </div>
+
+    {# --- (Opcional) Soporte --- #}
+    <div class="support-card perfil-card-extra">
+    <h3>¿Necesitas ayuda?</h3>
+    <p>Contacta con soporte técnico para resolver tus dudas</p>
+    <a class="support-btn" href="mailto:sda.santarosa@temuco.cl">
+        <i class="fa-regular fa-envelope"></i>
+        <span>Contactar Soporte</span>
+    </a>
+    </div>
+
+    </div>
+</section>
 {% endblock %}
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons();</script>
-</body>
-</html>
