@@ -1,0 +1,219 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Licencias — Intranet CESFAM{% endblock %}
+
+{% block extra_css %}
+<style>
+.licencias-container {
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    padding:2rem;
+}
+
+.licencias-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1.5rem;
+}
+
+.licencias-header h2 {
+    font-size:1.5rem;
+    font-weight:700;
+    color:#1a1a1a;
+}
+
+.upload-btn {
+    background:linear-gradient(135deg,#66b2ff 0%,#7fffd4 100%);
+    color:#fff;
+    border:none;
+    padding:.75rem 1.5rem;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:500;
+    transition:transform .3s,opacity .3s;
+}
+
+.upload-btn:hover {
+    opacity:.9;
+    transform:translateY(-2px);
+}
+
+.filters {
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    background:#f5f5f5;
+    border-radius:12px;
+    padding:1rem;
+    margin-bottom:1.5rem;
+}
+
+.filters input,
+.filters select {
+    padding:.6rem;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:.9rem;
+    flex:1;
+    min-width:180px;
+}
+
+.filters button {
+    background:#66b2ff;
+    color:#fff;
+    border:none;
+    padding:.6rem 1.2rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:500;
+    transition:background .3s;
+}
+
+.filters button:hover {
+    background:#4a9eea;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+th, td {
+    padding:1rem;
+    text-align:left;
+    border-bottom:1px solid #eee;
+}
+
+th {
+    background:#2563eb;
+    color:#fff;
+    font-weight:600;
+}
+
+tr:hover {
+    background:#f5faff;
+}
+
+.action-btn {
+    background:none;
+    border:none;
+    color:#66b2ff;
+    font-size:1.1rem;
+    cursor:pointer;
+    transition:color .3s;
+    margin-right:0.5rem;
+}
+
+.action-btn:hover {
+    color:#1e88e5;
+}
+
+@media (max-width: 768px){
+    .filters {flex-direction:column}
+    th,td{font-size:.85rem}
+    .licencias-header{flex-direction:column;align-items:flex-start;gap:1rem}
+    .upload-btn{width:100%}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-content">
+    <div class="licencias-container">
+        <div class="licencias-header">
+            <h2>Gestión de Licencias</h2>
+            <a href="{% url 'form_licencia' %}">
+                <button class="upload-btn"><i class="fa-solid fa-plus"></i> Agregar Licencia</button>
+            </a>
+        </div>
+
+        <div class="filters">
+            <input type="text" id="filtroNombre" placeholder="Buscar por nombre de funcionario…">
+            <input type="date" id="filtroFechaInicio">
+            <input type="date" id="filtroFechaFin">
+            <button id="btnFiltrar">Filtrar</button>
+            <button id="btnLimpiar">Limpiar</button>
+        </div>
+
+        <table id="tablaLicencias">
+            <thead>
+                <tr>
+                    <th>Funcionario</th>
+                    <th>Día Inicio</th>
+                    <th>Día Fin</th>
+                    <th>Documento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for licencia in licencias %}
+                <tr>
+                    <td>{{ licencia.id_usuario.nombre|default:licencia.id_usuario.get_full_name }}</td>
+                    <td>{{ licencia.dia_inicio }}</td>
+                    <td>{{ licencia.dia_fin }}</td>
+                    <td>{{ licencia.imagen|default:"—" }}</td>
+                    <td>
+                        {% if licencia.imagen %}
+                        <a href="{{ licencia.imagen.url }}" download>
+                            <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
+                        </a>
+                        {% endif %}
+                        <form method="post" action="{% url 'eliminar_licencia' licencia.id_licencia %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center;color:#666;">No hay licencias registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function filtrar() {
+    const nombre = $('#filtroNombre').value.toLowerCase();
+    const fechaInicio = $('#filtroFechaInicio').value;
+    const fechaFin = $('#filtroFechaFin').value;
+
+    $$('#tablaLicencias tbody tr').forEach(tr => {
+        const funcionario = tr.children[0].textContent.toLowerCase();
+        const diaIni = tr.children[1].textContent;
+        const diaFin = tr.children[2].textContent;
+
+        let okNombre = !nombre || funcionario.includes(nombre);
+        let okFecha = true;
+        if(fechaInicio && diaIni < fechaInicio) okFecha = false;
+        if(fechaFin && diaFin > fechaFin) okFecha = false;
+
+        tr.style.display = (okNombre && okFecha) ? '' : 'none';
+    });
+}
+
+function limpiarFiltros(){
+    $('#filtroNombre').value='';
+    $('#filtroFechaInicio').value='';
+    $('#filtroFechaFin').value='';
+    filtrar();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    $('#btnFiltrar').addEventListener('click', filtrar);
+    $('#btnLimpiar').addEventListener('click', limpiarFiltros);
+});
+</script>
+{% endblock %}

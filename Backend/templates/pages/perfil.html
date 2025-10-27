@@ -41,34 +41,14 @@
         {# --- Accesos rápidos --- #}
     <div class="card perfil-card-extra">
     <h3>Accesos Rápidos</h3>
-    <div class="quick-access-grid">
-        <a href="{% url 'solicitudes' %}" class="quick-access-item blue">
-        <div class="quick-access-icon blue"><i class="fa-solid fa-clock"></i></div>
+    <a href="{% url 'licencias' %}" class="quick-access-item orange">
+        <div class="quick-access-icon orange"><i class="fa-solid fa-file-lines"></i></div>
         <div class="quick-access-text">
-            <p>Solicitar Día Administrativo</p>
-            <span>Gestión rápida</span>
+            <p>Mis Licencias</p>
+            <span>Revisar y gestionar</span>
         </div>
         <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-        </a>
-
-        <a href="{% url 'documentos' %}" class="quick-access-item green">
-        <div class="quick-access-icon green"><i class="fa-solid fa-download"></i></div>
-        <div class="quick-access-text">
-            <p>Descargar Formularios</p>
-            <span>Documentación</span>
-        </div>
-        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-        </a>
-
-        <a href="{% url 'calendario' %}" class="quick-access-item purple">
-        <div class="quick-access-icon purple"><i class="fa-solid fa-calendar"></i></div>
-        <div class="quick-access-text">
-            <p>Consultar Calendario</p>
-            <span>Próximos eventos</span>
-        </div>
-        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-        </a>
-    </div>
+    </a>
     </div>
 
     {# --- Mi resumen personal (KPIs) --- #}

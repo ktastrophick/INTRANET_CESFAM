@@ -181,6 +181,13 @@ class Evento(models.Model):
         managed = True
         db_table = 'evento'
 
+class Documento(models.Model):
+    id_documento = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    archivo = models.FileField(upload_to='documentos/')
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+    subido_por = models.ForeignKey(Usuario, on_delete=models.CASCADE)
 
 def __str__(self):
     return f"{self.titulo} ({self.fecha})"

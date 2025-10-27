@@ -82,6 +82,25 @@
     td.status-Pendiente{color:#ff9800;font-weight:600;}
     td.status-Aprobado{color:#4caf50;font-weight:600;}
     td.status-Rechazado{color:#dc2626;font-weight:600;}
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-right: 6px;
+      font-size: 1rem;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .action-btn.download { color: #4caf50; }
+    .action-btn.download:hover { background: rgba(76,175,80,0.1); }
+
+    .action-btn.message { color: #2196f3; }
+    .action-btn.message:hover { background: rgba(33,150,243,0.1); }
+
+    .action-btn.delete { color: #dc2626; }
+    .action-btn.delete:hover { background: rgba(220,38,38,0.1); }
   </style>
 {% endblock %}
 
@@ -106,44 +125,64 @@
         </select>
       </div>
 
-      <table id="solicitudesTable">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Motivo</th>
-            <th>Estado Jefatura</th>
-            <th>Estado Administración</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Día Administrativo</td>
-            <td>2025-10-10</td>
-            <td>2025-10-10</td>
-            <td>Reunión familiar</td>
-            <td class="status-Aprobado">Aprobado</td>
-            <td class="status-Aprobado">Aprobado</td>
-          </tr>
-          <tr>
-            <td>Vacaciones</td>
-            <td>2025-12-20</td>
-            <td>2025-12-25</td>
-            <td>Viaje personal</td>
-            <td class="status-Aprobado">Aprobado</td>
-            <td class="status-Pendiente">Pendiente</td>
-          </tr>
-          <tr>
-            <td>Vacaciones</td>
-            <td>2025-07-15</td>
-            <td>2025-07-20</td>
-            <td>Viaje personal</td>
-            <td class="status-Rechazado">Rechazado</td>
-            <td>---</td>
-          </tr>
-        </tbody>
-      </table>
+<table id="solicitudesTable">
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Fin</th>
+      <th>Motivo</th>
+      <th>Estado Jefatura</th>
+      <th>Estado Administración</th>
+      <th>Acciones</th> <!-- Nueva columna -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Día Administrativo</td>
+      <td>2025-10-10</td>
+      <td>2025-10-10</td>
+      <td>Reunión familiar</td>
+      <td class="status-Aprobado">Aprobado</td>
+      <td class="status-Aprobado">Aprobado</td>
+      <td>
+        <button class="action-btn download" title="Descargar"><i class="fa-solid fa-download"></i></button>
+      </td>
+    </tr>
+    <tr>
+      <td>Vacaciones</td>
+      <td>2025-12-20</td>
+      <td>2025-12-25</td>
+      <td>Viaje personal</td>
+      <td class="status-Aprobado">Aprobado</td>
+      <td class="status-Pendiente">Pendiente</td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>Vacaciones</td>
+      <td>2025-07-15</td>
+      <td>2025-07-20</td>
+      <td>Viaje personal</td>
+      <td class="status-Rechazado">Rechazado</td>
+      <td>---</td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>Vacaciones</td>
+      <td>2025-12-20</td>
+      <td>2025-12-25</td>
+      <td>Viaje personal</td>
+      <td class="status-Pendiente">Pendiente</td>
+      <td class="status-Aprobado"></td>
+      <td>
+        <button class="action-btn delete" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
   </section>
 {% endblock %}
