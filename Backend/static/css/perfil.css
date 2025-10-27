@@ -48,4 +48,8 @@
 /* Support */
 .support-card{ background:#fff; border:1px solid #eee; border-radius:12px; padding:1rem }
 .support-btn{ display:inline-flex; align-items:center; gap:.5rem; background:#66b2ff; color:#fff; padding:.6rem 1rem; border-radius:10px; text-decoration:none }
+<<<<<<< HEAD
 .support-btn:hover{ filter:brightness(.95) }
+=======
+.support-btn:hover{ filter:brightness(.95) }
+>>>>>>> 28b9c7cff07eb8f07725a2dbb42a59f45681b0ea
