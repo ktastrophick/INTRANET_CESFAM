@@ -17,3 +17,6 @@ def lista_funcionarios(request: HttpRequest) -> HttpResponse:
     )
 def form_funcionario(request: HttpRequest) -> HttpResponse:
     return render(request, 'pages/form_funcionario.html')
+
+def lista_funcionarios_func(request: HttpRequest) -> HttpResponse:
+    return render(request, 'pages/lista_funcionarios_func.html')

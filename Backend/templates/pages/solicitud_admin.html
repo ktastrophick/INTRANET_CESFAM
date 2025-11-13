@@ -112,9 +112,6 @@
         <a href="{% url 'form_solicitud' %}">
           <button class="upload-btn"><i class="fa-solid fa-plus"></i> Nueva solicitud</button>
         </a>
-        <a href="{% url 'solicitud_admin' %}">
-          <button class="upload-btn"><i class="fa-solid"></i> tabla admin</button>
-        </a>
       </div>
 
       <div class="filter-container">
@@ -135,8 +132,7 @@
       <th>Fecha Inicio</th>
       <th>Fecha Fin</th>
       <th>Motivo</th>
-      <th>Estado Jefatura</th>
-      <th>Estado Administración</th>
+      <th>Estado</th>
       <th>Acciones</th> <!-- Nueva columna -->
     </tr>
   </thead>
@@ -147,40 +143,50 @@
       <td>2025-10-10</td>
       <td>Reunión familiar</td>
       <td class="status-Aprobado">Aprobado</td>
-      <td class="status-Aprobado">Aprobado</td>
-      <td>
-        <button class="action-btn download" title="Descargar"><i class="fa-solid fa-download"></i></button>
-      </td>
+
     </tr>
+    <tr>
+    <td>Vacaciones</td>
+    <td>2025-12-20</td>
+    <td>2025-12-25</td>
+    <td>Viaje personal</td>
+    <td class="status-Pendiente">Pendiente</td>
+    <td>
+        <button class="action-btn" style="color:#4caf50;" title="Aprobar">
+        <i class="fa-solid fa-check"></i>
+        </button>
+        <button class="action-btn" style="color:#dc2626;" title="Rechazar">
+        <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="action-btn delete" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+    </td>
+    </tr>
+
+
     <tr>
       <td>Vacaciones</td>
       <td>2025-12-20</td>
       <td>2025-12-25</td>
       <td>Viaje personal</td>
-      <td class="status-Aprobado">Aprobado</td>
       <td class="status-Pendiente">Pendiente</td>
-      <td>
-      </td>
-    </tr>
+        <td>
+            <button class="action-btn" style="color:#4caf50;" title="Aprobar">
+            <i class="fa-solid fa-check"></i>
+            </button>
+            <button class="action-btn" style="color:#dc2626;" title="Rechazar">
+            <i class="fa-solid fa-xmark"></i>
+            </button>
+            <button class="action-btn delete" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+        </td>
+    </tr>    
     <tr>
       <td>Vacaciones</td>
       <td>2025-07-15</td>
       <td>2025-07-20</td>
       <td>Viaje personal</td>
       <td class="status-Rechazado">Rechazado</td>
-      <td>---</td>
+      <td></td>
       <td>
-      </td>
-    </tr>
-    <tr>
-      <td>Vacaciones</td>
-      <td>2025-12-20</td>
-      <td>2025-12-25</td>
-      <td>Viaje personal</td>
-      <td class="status-Pendiente">Pendiente</td>
-      <td class="status-Aprobado"></td>
-      <td>
-        <button class="action-btn delete" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
       </td>
     </tr>
   </tbody>
