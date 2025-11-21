@@ -1,155 +1,420 @@
-.page-cal { max-width: 980px; margin: 1.25rem auto 3rem; padding: 0 1rem; }
-.title { font-size: 1.6rem; font-weight: 700; margin: 0 0 1rem; }
+/* ===============================
+   1. Estilos Globales y Layout
+   =============================== */
 
-.card { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 6px 18px rgba(2,36,70,.06); margin-bottom: 14px; }
-.form-card { position: sticky; top: 6px; z-index: 1; }
-.form-grid { display: grid; grid-template-columns: 1.8fr 1fr 0.9fr 2fr auto; gap: 10px; }
-.form-grid input, .form-grid textarea { border: 1px solid #e6ecf1; border-radius: 8px; padding: 8px 10px; font-size: .95rem; }
-.form-grid textarea { min-height: 36px; resize: vertical; }
-
-.btn-primary { background: #2563eb; color: #fff; border: 0; border-radius: 10px; padding: 10px 14px; font-weight: 600; cursor: pointer; }
-.btn-primary:hover { filter: brightness(.95); }
-.btn-light { background: #eef2ff; border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-.btn-ghost { background: transparent; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-
-.list-card .list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.list-card .filters { display: flex; gap: 8px; }
-.items { list-style: none; margin: 0; padding: 0; }
-.item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid #eef2f7; border-radius: 12px; margin-bottom: 8px; }
-.item .left { display: flex; align-items: start; gap: 10px; }
-.badge { width: 12px; height: 12px; border-radius: 4px; margin-top: 6px; }
-.meta .date { display: inline-block; color: #64748b; font-size: .9rem; margin-left: 6px; }
-.meta .desc { color: #334155; font-size: .95rem; margin-top: 4px; }
-.actions button { border: 0; background: #f1f5f9; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
-.actions .danger { background: #fee2e2; }
-
-.empty-state { display: grid; place-items: center; gap: 8px; padding: 28px; color: #64748b; }
-.empty-state .dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; }
-.hint { color: #94a3b8; display: block; margin-top: 6px; }
-@media (max-width: 860px){
-    .form-grid { grid-template-columns: 1fr 1fr; }
-    .btn-primary { grid-column: 1 / -1; 
-    font-family: 'Roboto', sans-serif;}
-    }
-
-    .switcher .tabs { display:flex; gap:8px; margin-bottom:10px; }
-    .switcher .tabs button { border:0; padding:8px 12px; border-radius:8px; background:#eef2ff; cursor:pointer; }
-    .switcher .tabs .active { background:#2563eb; color:#fff; }
-
-    .month-controls { display:flex; align-items:center; gap:10px; margin:8px 0 12px; }
-    #month-label { font-weight:700; letter-spacing:.3px; }
-
-    .month-grid {
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap:6px;
-    user-select:none;
-    }
-    .month-grid .dow {
-    text-align:center; font-weight:700; color:#475569; padding:6px 0;
-    }
-    .day {
-    border:1px solid #eef2f7; border-radius:12px; min-height:100px; padding:8px;
-    display:flex; flex-direction:column; gap:6px; background:#fff;
-    }
-    .day .date {
-    font-size:.9rem; color:#64748b; font-weight:600;
-    }
-    .event-pill {
-    display:block; padding:6px 8px; border-radius:8px; background:#e2e8f0; font-size:.9rem; line-height:1.1rem;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .event-pill .dot {
-    display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle;
-    }
-    .day.out { opacity:.45; }
-    @media (max-width: 860px){
-    .day { min-height:84px; }
-    .switcher .tabs { flex-wrap:wrap; }
-    }
-    .btn-icon { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:4px 10px; cursor:pointer; }
-    .month-grid .dow { background:#f8fafc; border-radius:8px; border:1px solid #eef2f7; }
-
-    .day.today {
-        border: 2px solid #2563eb !important;
-        background-color: #eff6ff; /* Azul muy suave */
-    }
-
-        /* Layout a 2 columnas */
-    .calendar-layout{
-    display:flex;
-    align-items:flex-start;
-    gap:24px;
-
-    }
-
-    .calendar-container, /* que la grilla pueda encoger bien */
-    .event-list-container{ min-width: 0; }
-
-   
-/* 1) Calendario siempre a la vista */
-    .calendar-container{
-    position: sticky;
-    top: 88px;           /* ajusta según altura de tu navbar */
-    align-self: flex-start;
-    }
-
-    /* 2) La lista también puede ser sticky si quieres (opcional) */
-    .event-list-container{
-    position: sticky;
-    top: 88px;           /* comenta esta línea si NO quieres que la lista sea sticky */
-    max-height: calc(100vh - 110px);
-    overflow: auto;
-    }
-
-    /* La grilla mensual debe mantener altura estable */
-    .month-grid { min-height: 520px; }
-
-    /* Celdas cómodas y consistentes */
-    .day { min-height: 110px; }
-
-    /* Quita subrayado del evento (en tu captura se veía subrayado) */
-    .event-pill { text-decoration: none; }
-    .event-pill:hover { filter: brightness(.97); }
-
-    /* Marca de “hoy” (si no la tienes aún) */
-    .day.today {
-    border: 2px solid #2563eb !important;
-    background-color: #eff6ff;
-    } 
-
-    /* Ancho estable para fecha */
-.form-grid input[type="date"] {
-  width: 160px;        /* Fijo: evita “saltos” */
-  flex: 0 0 160px;     /* no crecer / no encoger */
+/* Contenedor principal de la página */
+.page-cal {
+    max-width: 980px;
+    margin: 1.25rem auto 3rem;
+    padding: 0 1rem;
 }
 
-/* Rejilla del form más estable:
-   [Título] [Fecha] [Descripción] [Botón] */
-    .form-grid{
-    grid-template-columns:
-        minmax(220px, 1.8fr)  /* Título */
-        160px                  /* Fecha (fijo) */
-        minmax(220px, 1.4fr)  /* Descripción */
-        auto;                  /* Botón */
-    }
+/* Encabezados */
+.title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+}
 
-    /* Garantiza consistencia en inputs y textarea */
-    .form-grid input, .form-grid textarea {
-    box-sizing: border-box;
+/* Tarjetas (Cards) - Estilo base con sombra */
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 6px 18px rgba(2, 36, 70, .06);
+    margin-bottom: 14px;
+    /* Corrección: Se eliminó 'margin-right: flex' que es inválido */
+}
+
+/* Layout a 2 columnas (Calendario y Lista) */
+.calendar-layout {
+    display: flex;
+    align-items: flex-start; /* Alinea arriba */
+    gap: 24px;
+}
+
+/* Asegura que los contenedores puedan encogerse correctamente */
+.calendar-container,
+.event-list-container {
+    min-width: 0;
+    flex: 1; /* Permite que ambos ocupen espacio de manera flexible */
+}
+
+/* Calendario siempre visible (Sticky) */
+.calendar-container {
+    position: sticky;
+    top: 88px; /* Ajusta según la altura de tu navbar */
+    align-self: flex-start;
+    flex: 0 0 auto; /* No crecer, no encoger, ancho auto (toma el ancho del contenido) */
+}
+
+/* Lista de eventos (Opcional: Sticky con scroll propio) */
+.event-list-container {
+    /* position: sticky; /* Descomentar si se quiere sticky */
+    /* top: 88px; */
+    max-height: calc(100vh - 110px);
+    overflow: auto; /* Permite scroll solo en la lista */
+    padding-bottom: 1px; /* Soluciona posibles problemas de margen/scroll en algunos navegadores */
+}
+
+
+/* ===============================
+   2. Formularios y Botones
+   =============================== */
+
+/* Contenedor del formulario (usado para el form-card) */
+/*.form-card { position: sticky; top: 6px; z-index: 1; }*/
+
+/* Rejilla para los campos del formulario */
+.form-grid {
+    display: grid;
+    /* Rejilla más robusta y estable: [Título] [Fecha] [Descripción] [Botón] */
+    grid-template-columns: minmax(220px, 1.8fr) 160px minmax(220px, 1.4fr) auto;
+    gap: 10px;
+}
+
+/* Estilo base de los inputs y textareas */
+.form-grid input,
+.form-grid textarea {
+    border: 1px solid #e6ecf1;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: .95rem;
+    box-sizing: border-box; /* Fundamental para padding y width: 100% */
     width: 100%;
-    }
+}
 
-    /* En pantallas pequeñas, se apila bien */
-    @media (max-width: 980px){
-    .calendar-layout{ flex-direction: column; }
-    .form-grid{
+/* Ancho fijo para el input de fecha y área de texto */
+.form-grid input[type="date"] {
+    width: 160px;
+    flex: 0 0 160px; /* No crecer/encoger */
+}
+
+.form-grid textarea {
+    min-height: 36px;
+    resize: vertical;
+}
+
+/* --- Botones --- */
+
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s; /* Transición para el hover */
+}
+
+.btn-primary:hover {
+    filter: brightness(.95);
+}
+
+.btn-light {
+    background: #eef2ff;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+/* Botón con ícono */
+.btn-icon {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+
+/* ===============================
+   3. Lista de Elementos (Eventos/Tareas)
+   =============================== */
+
+.list-card .list-head {
+    display: flex;
+    align-items: center; /* Alineación vertical centrada */
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.list-card .filters {
+    display: flex;
+    gap: 8px;
+}
+
+.items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.item .left {
+    display: flex;
+    align-items: flex-start; /* Corregido: 'start' a 'flex-start' */
+    gap: 10px;
+}
+
+.badge {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    margin-top: 6px;
+    flex-shrink: 0; /* Evita que el badge se encoja */
+}
+
+.meta .date {
+    display: inline-block;
+    color: #64748b;
+    font-size: .9rem;
+    margin-left: 6px;
+}
+
+.meta .desc {
+    color: #334155;
+    font-size: .95rem;
+    margin-top: 4px;
+}
+
+.actions button {
+    border: 0;
+    background: #f1f5f9;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.actions .danger {
+    background: #fee2e2;
+}
+
+
+/* ===============================
+   4. Componente Switcher (Pestañas)
+   =============================== */
+
+.switcher .tabs {
+    display: flex; /* Corrección: 'display: auto' a 'display: flex' */
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.switcher .tabs button {
+    border: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #eef2ff;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.switcher .tabs .active {
+    background: #2563eb;
+    color: #fff;
+}
+
+
+/* ===============================
+   5. Diseño del Calendario Mensual
+   =============================== */
+
+.month-controls {
+    display: flex; /* Corrección: 'display: auto' a 'display: flex' */
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 12px;
+    /* Se eliminan min-height y width inválidos para controles */
+}
+
+#month-label {
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    user-select: none;
+    min-height: 520px; /* Mantiene una altura estable para evitar "saltos" */
+    /* Eliminado width: 0px que es incorrecto */
+}
+
+/* Días de la semana */
+.month-grid .dow {
+    text-align: center;
+    font-weight: 700;
+    color: #475569;
+    padding: 6px 0;
+    /* Se eliminó el comentario con estilos para .dow */
+}
+
+/* Celda individual de día */
+.day {
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    min-height: 110px; /* Altura cómoda y consistente */
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+    transition: background 0.2s; /* Transición para el hover */
+}
+
+/* Efecto hover en el día */
+.day:hover {
+    background: #f8fafc;
+    cursor: pointer;
+}
+
+/* Fecha dentro de la celda */
+.day .date {
+    font-size: .9rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Eventos (píldoras) */
+.event-pill {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    font-size: .9rem;
+    line-height: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none; /* Quita el subrayado */
+    transition: filter 0.2s;
+}
+
+.event-pill:hover {
+    filter: brightness(.97);
+}
+
+.event-pill .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* Días fuera del mes actual */
+.day.out {
+    opacity: .45;
+}
+
+/* Día actual (Hoy) */
+.day.today {
+    border: 2px solid #2563eb !important;
+    background-color: #eff6ff; /* Azul muy suave */
+}
+
+
+/* ===============================
+   6. Estados Vacíos y Pistas
+   =============================== */
+
+.empty-state {
+    display: grid; /* Corrección: 'display: auto' a 'display: grid' */
+    place-items: center;
+    gap: 8px;
+    padding: 28px;
+    color: #64748b;
+}
+
+.empty-state .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+
+.hint {
+    color: #94a3b8;
+    display: block;
+    margin-top: 6px;
+}
+
+
+/* ===============================
+   7. Media Queries (Adaptabilidad)
+   =============================== */
+
+/* Para pantallas medianas o pequeñas (ej: tablet en vertical) */
+@media (max-width: 980px) {
+    /* El layout de calendario y lista se apila */
+    .calendar-layout {
+        flex-direction: column;
+    }
+.calendar-container {
+    position: sticky;
+    top: 88px;
+    align-self: flex-start;
+    /* ✅ SOLUCIÓN B: Permite que crezca flexiblemente (ej: toma 1 parte de 2 en el layout) */
+    flex: 1; 
+}
+
+.event-list-container {
+    /* Si el calendario tiene flex: 1, la lista debería tener flex: 2 para ser más grande */
+    flex: 2; 
+    min-width: 0;
+    max-height: calc(100vh - 110px);
+    overflow: auto;
+    padding-bottom: 1px;
+}
+}
+
+/* Para pantallas pequeñas (ej: móvil) */
+@media (max-width: 860px) {
+    /* La rejilla del formulario se reduce a 2 columnas */
+    .form-grid {
         grid-template-columns: 1fr 1fr;
     }
-    .btn-primary{ grid-column: 1 / -1; }
+    /* El botón principal ocupa todo el ancho */
+    .btn-primary {
+        grid-column: 1 / -1;
+        /* Se eliminó la font-family aquí, debería ir en un estilo global */
     }
-    .day:hover {
-        background: #f8fafc;
-        cursor: pointer;
-        transition: background 0.2s;
+    /* La rejilla del calendario usa una altura mínima menor */
+    .day {
+        min-height: 84px;
     }
+    /* Las pestañas pueden envolverse */
+    .switcher .tabs {
+        flex-wrap: wrap;
+    }
+    /* El input de fecha vuelve a ser flexible */
+    .form-grid input[type="date"] {
+        width: 100%;
+        flex: 1;
+    }
+}

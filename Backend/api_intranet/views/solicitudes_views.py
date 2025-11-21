@@ -6,3 +6,6 @@ def solicitudes(request: HttpRequest) -> HttpResponse:
 
 def form_solicitud(request: HttpRequest) -> HttpResponse:
     return render(request, 'pages/form_solicitud.html')
+
+def solicitud_admin(request: HttpRequest) -> HttpResponse:
+    return render(request, 'pages/solicitud_admin.html')

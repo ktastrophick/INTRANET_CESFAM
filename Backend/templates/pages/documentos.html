@@ -1,13 +1,13 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Licencias — Intranet CESFAM{% endblock %}
+{% block title %}Documentos — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
   <style>
-    .licencias-container{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:2rem}
-    .licencias-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
-    .licencias-header h2{font-size:1.5rem;font-weight:700;color:#1a1a1a}
+    .documentos-container{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:2rem}
+    .documentos-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+    .documentos-header h2{font-size:1.5rem;font-weight:700;color:#1a1a1a}
     .upload-btn{background:linear-gradient(135deg,#66b2ff 0%,#7fffd4 100%);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;cursor:pointer;font-weight:500;transition:transform .3s,opacity .3s}
     .upload-btn:hover{opacity:.9;transform:translateY(-2px)}
     .filters{display:flex;flex-wrap:wrap;gap:1rem;background:#f5f5f5;border-radius:12px;padding:1rem;margin-bottom:1.5rem}
@@ -23,7 +23,7 @@
     @media (max-width: 768px){
       .filters{flex-direction:column}
       th,td{font-size:.85rem}
-      .licencias-header{flex-direction:column;align-items:flex-start;gap:1rem}
+      .documentos-header{flex-direction:column;align-items:flex-start;gap:1rem}
       .upload-btn{width:100%}
     }
   </style>
@@ -31,63 +31,66 @@
 
 {% block content %}
   <section class="page-content">
-    <div class="licencias-container">
-      <div class="licencias-header">
-        <h2>Gestión de Licencias</h2>
+    <div class="documentos-container">
+      <div class="documentos-header">
+        <h2>Gestión de Documentos Institucionales</h2>
 
-        <a href="{% url 'form_licencia' %}">
-          <button class="upload-btn"><i class="fa-solid fa-plus"></i> Agregar Licencia</button>
+        {# Cambia a {% url 'documentos_subir' %} si ya tienes vista de carga #}
+        <a href="{% url 'form_documento' %}">
+          <button class="upload-btn"><i class="fa-solid fa-plus"></i> Subir documento</button>
         </a>
       </div>
 
       <div class="filters">
-        <input type="text" id="filtroFuncionario" placeholder="Buscar por funcionario…">
-        <input type="date" id="filtroInicio" placeholder="Día inicio">
-        <input type="date" id="filtroFin" placeholder="Día fin">
+        <input type="text" id="filtroNombre" placeholder="Buscar por nombre…">
+        <select id="filtroTipo">
+          <option value="">Tipo de archivo</option>
+          <option value="pdf">PDF</option>
+          <option value="word">Word</option>
+          <option value="excel">Excel</option>
+        </select>
+        <input type="date" id="filtroFecha">
         <button id="btnFiltrar">Filtrar</button>
         <button id="btnLimpiar">Limpiar</button>
       </div>
 
-      <table id="tablaLicencias">
+      <table id="tablaDocumentos">
         <thead>
           <tr>
+            <th>Nombre del Documento</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
             <th>Funcionario</th>
-            <th>Día Inicio</th>
-            <th>Día Fin</th>
-            <th>Documento</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {# Ejemplos estáticos de licencias #}
+          {# Demo estático: reemplaza por un loop cuando tengas datos reales #}
           <tr>
-            <td>Juan Pérez</td>
-            <td>2025-10-15</td>
-            <td>2025-10-17</td>
-            <td>licencia_medica.pdf</td>
-            <td>
-              <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-              <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-            </td>
-          </tr>
-          <tr>
+            <td>Reglamento Interno 2025</td>
+            <td>PDF</td>
+            <td>2025-08-12</td>
             <td>Carolina Soto</td>
-            <td>2025-11-01</td>
-            <td>2025-11-03</td>
-            <td>licencia_personal.pdf</td>
             <td>
               <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-              <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
           <tr>
-            <td>María López</td>
-            <td>2025-12-05</td>
-            <td>2025-12-07</td>
-            <td>licencia_medica.pdf</td>
+            <td>Formulario Solicitud Vacaciones</td>
+            <td>Word</td>
+            <td>2025-09-18</td>
+            <td>Juan Pérez</td>
             <td>
               <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-              <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>Informe de Actividades Mensual</td>
+            <td>Excel</td>
+            <td>2025-09-05</td>
+            <td>María López</td>
+            <td>
+              <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
             </td>
           </tr>
         </tbody>
@@ -98,37 +101,35 @@
 
 {% block extra_js %}
   <script>
+    // ——— Interacciones básicas ———
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => document.querySelectorAll(sel);
 
     function filtrar() {
-      const funcionario = $('#filtroFuncionario').value.toLowerCase();
-      const inicio = $('#filtroInicio').value;
-      const fin = $('#filtroFin').value;
-
-      $$('#tablaLicencias tbody tr').forEach(tr => {
-        const nom = tr.children[0].textContent.toLowerCase();
-        const diaInicio = tr.children[1].textContent;
-        const diaFin = tr.children[2].textContent;
-
-        const okNom = !funcionario || nom.includes(funcionario);
-        const okInicio = !inicio || diaInicio >= inicio;
-        const okFin = !fin || diaFin <= fin;
-
-        tr.style.display = (okNom && okInicio && okFin) ? '' : 'none';
+      const nombre = $('#filtroNombre').value.toLowerCase();
+      const tipo   = $('#filtroTipo').value.toLowerCase();
+      const fecha  = $('#filtroFecha').value;
+      $$('#tablaDocumentos tbody tr').forEach(tr => {
+        const nombreDoc = tr.children[0].textContent.toLowerCase();
+        const tipoDoc   = tr.children[1].textContent.toLowerCase();
+        const fechaDoc  = tr.children[2].textContent;
+        const okNombre  = !nombre || nombreDoc.includes(nombre);
+        const okTipo    = !tipo   || tipoDoc.includes(tipo);
+        const okFecha   = !fecha  || fechaDoc === fecha;
+        tr.style.display = (okNombre && okTipo && okFecha) ? '' : 'none';
       });
     }
-
     function limpiarFiltros(){
-      $('#filtroFuncionario').value='';
-      $('#filtroInicio').value='';
-      $('#filtroFin').value='';
-      filtrar();
+      $('#filtroNombre').value=''; $('#filtroTipo').value=''; $('#filtroFecha').value=''; filtrar();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       $('#btnFiltrar').addEventListener('click', filtrar);
       $('#btnLimpiar').addEventListener('click', limpiarFiltros);
+      $('#btnSubir').addEventListener('click', () => {
+        // Reemplaza por: location.href = "{#{% url 'documentos_subir' %}#}";
+        alert('Función de subida simulada. Integraremos el formulario real.');
+      });
     });
   </script>
 {% endblock %}

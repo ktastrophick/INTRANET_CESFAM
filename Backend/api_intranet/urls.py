@@ -10,6 +10,7 @@ urlpatterns = [
     path('form_documento/', base_views.form_documento, name='form_documento'),
     path('lista_funcionarios/', funcionarios_views.lista_funcionarios, name='lista_funcionarios'),
     path('form_funcionario/', funcionarios_views.form_funcionario, name='form_funcionario'),
+    path('lista_funcionarios_func/', funcionarios_views.lista_funcionarios_func, name='lista_funcionarios_func'),
 
 
     # Calendario (página y API CRUD)
@@ -19,6 +20,7 @@ urlpatterns = [
 
     # Solicitudes
     path('solicitudes/', solicitudes_views.solicitudes, name='solicitudes'),
+    path('solicitud_admin/', solicitudes_views.solicitud_admin, name='solicitud_admin'),
     path('form_solicitud/', solicitudes_views.form_solicitud, name='form_solicitud'),
 
     # Perfil
