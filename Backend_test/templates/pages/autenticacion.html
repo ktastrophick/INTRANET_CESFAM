@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+
+{% block body_class %}login landing{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/autenticacion.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-content">
+  <div class="login-container" role="form" aria-label="Formulario de inicio de sesión">
+    <h2>Iniciar sesión</h2>
+    <p>Accede con tu usuario y contraseña institucional.</p>
+
+    {# Muestra errores generales (credenciales inválidas, etc.) #}
+    {% if form.non_field_errors %}
+      <div class="non-field-errors">
+        {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}" class="login-form">
+      {% csrf_token %}
+
+      <label for="id_username">Usuario (RUT sin puntos ni guion)</label>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div class="form-error">{{ form.username.errors.0 }}</div>
+      {% endif %}
+
+      <label for="id_password">Contraseña</label>
+      <div class="password-wrapper">
+        {{ form.password }}
+
+      </div>
+      {% if form.password.errors %}
+        <div class="form-error">{{ form.password.errors.0 }}</div>
+      {% endif %}
+
+      {# "next" para volver a la página solicitada #}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <div class="help-row">
+        <label class="remember-label">
+          <input type="checkbox" name="remember" id="rememberCheckbox">
+          <span>Mantener sesión iniciada</span>
+        </label>
+        <a href="{#{% url 'password_reset' %}#}" class="small-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button class="login-btn" type="submit">Ingresar</button>
+      <input type="hidden" name="session_exp" id="sessionExp" value="">
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/autenticacion.js' %}"></script>
+{% endblock %}

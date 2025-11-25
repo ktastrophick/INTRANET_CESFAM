@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+    {% include "base/includes/head.html" %}
+    {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    {% endblock %}
+
+    <body class="{% block body_class %}{% endblock %}">
+        {% if not body_class == 'login landing' %}
+            {% include "base/includes/header.html" %}
+        {% endif %}
+        
+        <main class="page-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% include "base/includes/footer.html" %}
+
+        {% include "base/includes/chat.html" %}
+
+        <script src="{% static 'js/main.js' %}"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+        <script src="{% static 'js/chat.js' %}"></script>
+
+        {% block extra_js %}{% endblock %}
+
+    </body>
+</html>

@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %} 
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+{%endblock%}
+
+{% block content %}
+<body>
+    <main>
+        <div class="welcome-banner">
+            <h2>¡Bienvenido/a, María Torres!</h2>
+            <p>Su espacio de gestión y comunicación interna del CESFAM Santa Rosa</p>
+        </div>
+
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3>Mi Resumen Personal</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p>Días Administrativos</p>
+                            <div class="number">3</div>
+                            <span>días disponibles</span>
+                        </div>
+                        <div class="summary-item teal">
+                            <p>Días de Vacaciones</p>
+                            <div class="number">10</div>
+                            <span>días disponibles</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="comunicados">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0;">Comunicados Recientes</h3>
+                        <a href="#" class="view-all" style="margin: 0;">Ver todos</a>
+                    </div>
+                    
+                    <a href="#" class="comunicado-item">
+                        <p>Actualización Protocolo COVID-19</p>
+                        <span>02 Oct 2025 • Salud</span>
+                    </a>
+
+                    <a href="#" class="comunicado-item">
+                        <p>Reunión General de Equipo - 10 de Octubre</p>
+                        <span>01 Oct 2025 • Administrativa</span>
+                    </a>
+
+                    <a href="#" class="comunicado-item">
+                        <p>Capacitación en Sistema SOME Digital</p>
+                        <span>28 Sep 2025 • Capacitación</span>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3>Próximas Actividades</h3>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>10</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Reunión General de Equipo</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                09:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>15</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Capacitación SOME Digital</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                14:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-item">
+                        <div class="calendar-date">
+                            <p>OCT</p>
+                            <span>20</span>
+                        </div>
+                        <div class="calendar-info">
+                            <p>Evaluación Trimestral</p>
+                            <span>
+                                <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
+                                10:00 hrs
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'calendario' %}" class="view-all">Ver calendario completo</a>
+                </div>
+
+                <div class="support-card">
+                    <h3>¿Necesitas ayuda?</h3>
+                    <p>Contacta con soporte técnico para resolver tus dudas</p>
+                    <button class="support-btn">
+                        <i data-lucide="mail"></i>
+                        <span>Contactar Soporte</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Lucide Icons Script -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- JavaScript Functions -->
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Toggle menú móvil
+        function toggleMenu() {
+            var mobileMenu = document.getElementById('mobile-menu');
+            var menuIcon = document.getElementById('menu-icon');
+            
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                menuIcon.setAttribute('data-lucide', 'x');
+            } else {
+                menuIcon.setAttribute('data-lucide', 'menu');
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Cerrar sesión
+        function cerrarSesion(){
+            window.location.href = "{% url 'login' %}";
+        }
+
+        // Toggle menú de usuario
+        function toggleUserMenu() {
+            const menu = document.getElementById("user-menu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Cerrar el menú de usuario si se hace clic fuera
+        document.addEventListener("click", function(event){
+            const userSection = document.querySelector(".user-section");
+            if(!userSection.contains(event.target)){
+                document.getElementById("user-menu").style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}
