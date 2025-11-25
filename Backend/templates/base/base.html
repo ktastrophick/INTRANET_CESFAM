@@ -1,30 +1,139 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="es" data-theme="light">
-    {% include "base/includes/head.html" %}
-    {% block extra_css %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d6efd">
+
+    <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
+    
+    <!-- Descripción de la app -->
+    <meta name="description" content="Intranet del CESFAM Santa Rosa">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          rel="stylesheet"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-    {% endblock %}
+    <link rel="stylesheet" href="{% static 'js/chat.js' %}">
 
-    <body class="{% block body_class %}{% endblock %}">
-        {% if not body_class == 'login landing' %}
-            {% include "base/includes/header.html" %}
+    <!-- CSS adicional según la página -->
+    {% block extra_css %}{% endblock %}
+</head>
+<header class="site-header">
+    <div class="header-container">
+        <!-- Logo + título -->
+        <div class="logo-section">
+        <div class="logo">
+            <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
+        </div>
+        <div class="logo-text">
+            <h1>Intranet CESFAM Santa Rosa</h1>
+            <p>Temuco, Chile</p>
+        </div>
+        </div>
+
+        {% if request.resolver_match.url_name != 'login' %}
+        <!-- NAV -->
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i><span>Inicio</span>
+            </a>
+
+            <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
+            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
+            </a>
+            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
+            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
+            </a>
+            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+            </a>
+            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+            <i class="fa-solid fa-users"></i><span>Funcionarios</span>
+            </a>             
+            <a href="{% url 'licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i><span>Licencias</span>
+            </a>           
+            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i><span></span>
+            </a>
+
+        
+
+        <!-- Usuario -->
+        <!-- {% if request.user.is_authenticated %} 
+            <div class="user-section">
+            <div class="user-info">
+                <p>{{ request.user.get_full_name|default:request.user.username }}</p>
+                <span>{{ request.user.cargo|default:"Funcionario/a" }}</span>
+            </div>
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                </button>
+            </form>
+            </div>
+        {% else %}
+            <a class="btn-login" href="{% url 'login' %}">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+            </a>
         {% endif %}
-        
-        <main class="page-content">
-            {% block content %}{% endblock %}
-        </main>
+        {% endif %}-->
+    </nav>
+    </div>
+</header>
+<main class="page-content">
+    {% block content %}
+    {% endblock %}
+</main>
+<footer class="site-footer">
+    <div class="footer-info">
+        <h4>CESFAM Santa Rosa</h4>
+        <p>Centro de Salud Familiar<br>
+        Av. Pircunche 0316<br>
+        Temuco, Región de La Araucanía – Chile<br>
+        Teléfono: <a href="tel:+56453244400">+56 45 324 4400</a><br>
+        Email: <a href="mailto:sda.santarosa@temuco.cl">sda.santarosa@temuco.cl</a></p>
+        <div class="footer-social">
+        <a href="https://facebook.com/cesfamsantarosa" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://www.instagram.com/cesfamsantarosatemuco/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://saludtemuco.cl/cesfam-santa-rosa/" target="_blank"><i class="fa-solid fa-globe"></i></a>
+        <a href="{#{% url 'manual' %}#}"><i class="fa-solid fa-book"></i></a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; {% now "Y" %} CESFAM Santa Rosa — Intranet | Todos los derechos reservados</p>
+    </div>
+</footer>
 
-        {% include "base/includes/footer.html" %}
+{% block extra_js %}{% endblock %}
 
-        {% include "base/includes/chat.html" %}
-
-        <script src="{% static 'js/main.js' %}"></script>
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
-        <script src="{% static 'js/chat.js' %}"></script>
-
-        {% block extra_js %}{% endblock %}
-
-    </body>
-</html>
+<div class="chat-container" id="chatContainer">
+    <div class="chat-header" id="chatHeader">
+        <h4>{{ user.username|default:"Usuario" }}</h4>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="message">
+            Hola! <span class="time">10:00 AM</span>
+        </div>
+    </div>
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+        <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
