@@ -209,6 +209,91 @@ body {
   background-color: rgba(102, 178, 255, 0.1);
 }
 
+/* ========================================= */
+/*  DROPDOWN ADAPTADO AL NAV EXISTENTE */
+/* ========================================= */
+
+/* Contenedor */
+.nav-dropdown {
+  position: relative;
+}
+
+/* Botón del dropdown (misma estética que los <a>) */
+.nav-dropdown .dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #E8F1FF;
+  font: inherit;
+  transition: .2s ease;
+}
+
+.nav-dropdown .dropdown-btn:hover {
+  background: rgba(255, 255, 255, .12);
+}
+
+.nav-dropdown.active .dropdown-btn {
+  background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+
+/* Flecha */
+.nav-dropdown .chevron {
+  margin-left: auto;
+  transition: transform .2s ease;
+}
+
+.nav-dropdown:hover .chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.nav-dropdown .dropdown-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: absolute;
+  top: calc(100% + .4rem);
+  left: 0;
+  min-width: 180px;
+  padding: .4rem 0;
+  z-index: 9999;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+  display: flex;
+}
+
+/* Items internos del menú */
+.nav-dropdown .dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .65rem 1rem;
+  text-decoration: none;
+  color: var(--text);
+  border-radius: 10px;
+  transition: background .15s;
+}
+
+.nav-dropdown .dropdown-menu a:hover {
+  background: var(--blue-200);
+}
+
+/* Estado activo para el hijo */
+.nav-dropdown .dropdown-menu a.active {
+  background: var(--blue-500);
+  color: white;
+}
+
 
 /* Sección de Usuario */
 .user-section {

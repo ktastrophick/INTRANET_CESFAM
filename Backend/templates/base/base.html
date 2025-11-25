@@ -1,37 +1,32 @@
 {% load static %}
+<!doctype html>
+<html lang="es" data-theme="light">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0d6efd">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d6efd">
 
-    <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
-    
-    <!-- Descripción de la app -->
-    <meta name="description" content="Intranet del CESFAM Santa Rosa">
+  <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
+  <meta name="description" content="Intranet del CESFAM Santa Rosa">
 
-    <!-- Favicon -->
-    <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
+  <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Fonts / Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          rel="stylesheet"
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer">
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 
-    <!-- CSS principal -->
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-    <link rel="stylesheet" href="{% static 'js/chat.js' %}">
-
-    <!-- CSS adicional según la página -->
-    {% block extra_css %}{% endblock %}
+  {% block extra_css %}{% endblock %}
 </head>
+
+<!-- body_class se inserta aquí -->
+<body class="{% block body_class %}{% endblock %}">
+
 <header class="site-header">
     <div class="header-container">
         <!-- Logo + título -->
@@ -49,32 +44,35 @@
         <!-- NAV -->
         <nav class="main-nav" aria-label="Navegación principal">
             <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-            <i class="fa-solid fa-house"></i><span>Inicio</span>
+                <i class="fa-solid fa-house"></i><span>Inicio</span>
             </a>
 
             <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
-            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
-            </a>
-            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
-            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
-            </a>
-            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
-            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
-            </a>
-            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
-            <i class="fa-solid fa-users"></i><span>Funcionarios</span>
-            </a>             
-            <a href="{% url 'licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
-            <i class="fa-solid fa-user"></i><span>Licencias</span>
-            </a>           
-            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
-            <i class="fa-solid fa-user"></i><span></span>
+                <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
             </a>
 
-        
+            <a href="{% url 'licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
+                <i class="fa-solid fa-id-card"></i><span>Licencias</span>
+            </a>
+
+            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
+                <i class="fa-solid fa-calendar"></i><span>Calendario</span>
+            </a>
+
+            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+                <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+            </a>
+
+            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+                <i class="fa-solid fa-users"></i><span>Funcionarios</span>
+            </a>
+
+            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+                <i class="fa-solid fa-user"></i><span>Perfil</span>
+            </a>
 
         <!-- Usuario -->
-        <!-- {% if request.user.is_authenticated %} 
+        {% if request.user.is_authenticated %} 
             <div class="user-section">
             <div class="user-info">
                 <p>{{ request.user.get_full_name|default:request.user.username }}</p>
@@ -92,7 +90,7 @@
             <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
             </a>
         {% endif %}
-        {% endif %}-->
+        {% endif %}
     </nav>
     </div>
 </header>
@@ -120,20 +118,55 @@
     </div>
 </footer>
 
-{% block extra_js %}{% endblock %}
+  <!-- ===== CHAT: HTML dentro del body (al final) ===== -->
+  <!-- Botón flotante -->
+  <div class="chat-floating-btn" id="chatFloatingBtn" aria-label="Abrir chat">
+      <i class="fas fa-comments" aria-hidden="true"></i>
+  </div>
 
-<div class="chat-container" id="chatContainer">
-    <div class="chat-header" id="chatHeader">
-        <h4>{{ user.username|default:"Usuario" }}</h4>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-        <div class="message">
-            Hola! <span class="time">10:00 AM</span>
+  <!-- Panel general -->
+  <div class="chat-panel" id="chatPanel" role="dialog" aria-hidden="true" aria-labelledby="chatTitle">
+    <!-- Vista lista -->
+    <div class="chat-list" id="chatList">
+      <div class="chat-list-header">
+        <h4 id="chatTitle">Mensajes</h4>
+      </div>
+
+      {% comment %} Asegúrate de pasar 'funcionarios' al contexto de la plantilla. {% endcomment %}
+      {% for funcionario in funcionarios %}
+      <div class="chat-list-item" data-user="{{ funcionario.id }}">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="info">
+          <h5>{{ funcionario.username }}</h5>
+          <p class="last">Haz clic para abrir el chat</p>
         </div>
+      </div>
+      {% empty %}
+      <div class="chat-list-item">
+        <div class="info"><p>No hay conversaciones.</p></div>
+      </div>
+      {% endfor %}
     </div>
-    <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
-        <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+
+    <!-- Vista chat individual -->
+    <div class="chat-window" id="chatWindow" aria-hidden="true">
+      <div class="chat-window-header">
+        <button id="backToList" class="icon-btn" aria-label="Volver a lista"><i class="fas fa-arrow-left"></i></button>
+        <h4 id="chatWith">Chat</h4>
+      </div>
+
+      <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"></div>
+
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." aria-label="Mensaje">
+        <button id="sendBtn" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+      </div>
     </div>
-</div>
+  </div>
+
+  {% block extra_js %}{% endblock %}
+
+  <!-- Scripts al final: cargar con defer no es necesario si están al final, pero no hace daño -->
+  <script src="{% static 'js/chat.js' %}" defer></script>
+</body>
+</html>

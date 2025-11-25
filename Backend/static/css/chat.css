@@ -1,52 +1,99 @@
-/* ========================================= */
-/* 6. CHAT FLOTANTE */
-/* ========================================= */
-
-/* Contenedor principal del chat */
-.chat-container {
+/* BOTÓN FLOTANTE */
+.chat-floating-btn {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  width: 320px;
-  background: var(--white);
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  z-index: 99999;
+}
+
+/* PANEL */
+.chat-panel {
+  position: fixed;
+  bottom: 5rem;
+  right: 1rem;
+  width: 350px;
+  height: 450px;
+  background: white;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
-  font-size: 0.9rem;
-  z-index: 999; /* Por debajo del header, pero encima del contenido */
+  display: none;
+  flex-direction: column;
+  z-index: 99999;
 }
 
-/* Encabezado del chat */
-.chat-header {
+/* LISTA */
+.chat-panel .chat-list { flex: 1; overflow-y: auto; }
+
+.chat-panel .chat-list-header {
+  padding: .5rem 1rem;
+
+
   background: var(--blue-500);
-  color: #fff;
-  padding: .75rem 1rem;
+  color: white;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.chat-panel .chat-list-header h4 {
+  margin: 0;      
+  
+}
+
+.chat-panel .chat-list-item {
+  padding: .8rem 1rem;
   display: flex;
-  justify-content: space-between;
+  gap: .7rem;
   align-items: center;
   cursor: pointer;
+  transition: background .15s;
 }
 
-.chat-header h4 {
-  margin: 0;
+.chat-panel .chat-list-item:hover { background: #f1f5ff; }
+
+.chat-panel .chat-list-item .avatar {
+  width: 40px; height: 40px; background: var(--blue-200); border-radius: 50%;
+}
+
+.chat-panel .chat-list-item .info h5 { margin: 0; font-size: 1rem; }
+.chat-panel .chat-list-item .info p.last { margin: 0; font-size: .8rem; color: var(--muted); }
+
+/* CHAT */
+.chat-panel .chat-window { display: none; flex-direction: column; height: 100%; }
+
+.chat-panel .chat-window .chat-window-header {
+  background: var(--blue-500);
+  color: white;
+  padding: .6rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.chat-panel .chat-window .chat-window-header .icon-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
 }
 
-.chat-header i {
-  transition: transform .3s ease;
-}
-
-.chat-header.collapsed i {
-  transform: rotate(-90deg);
-}
-
-/* Área de mensajes */
-.chat-messages {
+/* Mensajes */
+.chat-panel .chat-window .chat-messages {
   flex: 1;
-  padding: .75rem 1rem;
+  padding: 1rem;
   overflow-y: auto;
   background: #f5f9ff;
   display: flex;
@@ -54,61 +101,37 @@
   gap: .5rem;
 }
 
-.message {
+.chat-panel .chat-window .message {
   background: var(--blue-200);
   padding: .5rem .75rem;
   border-radius: var(--radius);
   max-width: 80%;
-  position: relative;
-  align-self: flex-start;
 }
 
-.message span.time {
-  font-size: .7rem;
-  color: var(--muted);
-  margin-left: .3rem;
-  display: block;
-  text-align: right;
+.chat-panel .chat-window .message.you {
+  background: var(--green-200);
+  align-self: flex-end;
 }
 
-/* Ocultar barra de desplazamiento */
-.chat-messages::-webkit-scrollbar {
-  width: 5px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Área de entrada */
-.chat-input {
+/* Input */
+.chat-panel .chat-window .chat-input {
   display: flex;
   border-top: 1px solid #dbe7f3;
 }
 
-.chat-input input {
-  flex: 1;
-  padding: .5rem .75rem;
-  border: none;
-  outline: none;
+.chat-panel .chat-window .chat-input input {
+  flex: 1; border: none; padding: .7rem;
 }
 
-.chat-input button {
+.chat-panel .chat-window .chat-input button {
   background: var(--green-500);
-  color: #fff;
   border: none;
-  padding: 0 .75rem;
+  color: white;
+  padding: 0 1rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.chat-input button:hover {
-  filter: brightness(1.1)
+/* Responsive */
+@media (max-width: 480px) {
+  .chat-panel { right: .5rem; left: .5rem; width: auto; bottom: 4.5rem; height: 60vh; }
 }
