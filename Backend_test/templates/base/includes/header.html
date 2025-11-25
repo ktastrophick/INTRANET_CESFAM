@@ -1,0 +1,65 @@
+{% load static %}
+<header class="site-header">
+    <div class="header-container">
+        <!-- Logo + título -->
+        <div class="logo-section">
+        <div class="logo">
+            <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
+        </div>
+        <div class="logo-text">
+            <h1>Intranet CESFAM Santa Rosa</h1>
+            <p>Temuco, Chile</p>
+        </div>
+        </div>
+
+        {% if request.resolver_match.url_name != 'login' %}
+        <!-- NAV -->
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i><span>Inicio</span>
+            </a>
+
+            <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
+            <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
+            </a>
+            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
+            <i class="fa-solid fa-calendar"></i><span>Calendario</span>
+            </a>
+            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+            <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+            </a>
+            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+            <i class="fa-solid fa-users"></i><span>Funcionarios</span>
+            </a>             
+            <a href="{% url 'licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i><span>Licencias</span>
+            </a>           
+            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i><span></span>
+            </a>
+
+        
+
+        <!-- Usuario -->
+        <!-- {% if request.user.is_authenticated %} -->
+            <div class="user-section">
+            <div class="user-info">
+                <p>{{ request.user.get_full_name|default:request.user.username }}</p>
+                <span>{{ request.user.cargo|default:"Funcionario/a" }}</span>
+            </div>
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                </button>
+            </form>
+            </div>
+        {% else %}
+            <a class="btn-login" href="{% url 'login' %}">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+            </a>
+        <!-- {% endif %}-->
+        {% endif %}
+    </nav>
+    </div>
+</header>
