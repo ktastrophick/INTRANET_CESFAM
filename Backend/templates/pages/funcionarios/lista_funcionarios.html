@@ -140,16 +140,13 @@
 <div class="card">
     <div class="card-header">
         <h3>Listado de Funcionarios Administrativos</h3>
+        {% if rol_usuario == "Director" %}
         <a href="{% url 'form_funcionario' %}">
             <button class="btn-primary">
                 <i class="fa-solid fa-plus"></i> Agregar funcionario
             </button>
         </a>
-        <a href="{% url 'lista_funcionarios_func' %}">
-            <button class="btn-primary">
-                <i class="fa-solid "></i> lista func
-            </button>
-        </a>
+        {% endif %}
     </div>
 
     <!-- Filtro por inicial -->
@@ -162,65 +159,42 @@
 
     <!-- Listado de funcionarios -->
     <div class="card-body">
-        <div class="funcionario-item">
-            <div class="funcionario-info-container">
-                <div class="funcionario-img">
-                    <i class="fa-solid fa-user-circle" style="font-size:60px; color:#3498db;"></i>
-                </div>
-                <div class="funcionario-info">
-                    <p><strong>RUT:</strong> 12345678-9</p>
-                    <p><strong>Nombre:</strong> Catalina Mardones</p>
-                    <p><strong>Correo:</strong> cata@example.com</p>
-                    <p><strong>Teléfono:</strong> +56912345678</p>
-                    <p><strong>Cargo:</strong> Analista Programador</p>
-                </div>
-            </div>
-            <div class="funcionario-actions">
-                <i class="fa-solid fa-pen" title="Editar"></i>
-                <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
-                <i class="fa-solid fa-trash" title="Eliminar"></i>
-            </div>
-        </div>
+        {% for f in funcionarios %}
+            <div class="funcionario-item">
+                <div class="funcionario-info-container">
+                    <div class="funcionario-img">
+                        <i class="fa-solid fa-user-circle" style="font-size:60px; color:#3498db;"></i>
+                    </div>
 
-        <div class="funcionario-item">
-            <div class="funcionario-info-container">
-                <div class="funcionario-img">
-                    <i class="fa-solid fa-user-circle" style="font-size:60px; color:#e67e22;"></i>
+                    <div class="funcionario-info">
+                        <p><strong>RUT:</strong> {{ f.rut }}-{{ f.dv }}</p>
+                        <p><strong>Nombre:</strong> {{ f.nombre }}</p>
+                        <p><strong>Correo:</strong> {{ f.correo }}</p>
+                        <p><strong>Teléfono:</strong> {{ f.telefono }}</p>
+                        <p><strong>Cargo:</strong> {{ f.id_cargo.nombre }}</p>
+                    </div>
                 </div>
-                <div class="funcionario-info">
-                    <p><strong>RUT:</strong> 98765432-1</p>
-                    <p><strong>Nombre:</strong> Luis González</p>
-                    <p><strong>Correo:</strong> luis@example.com</p>
-                    <p><strong>Teléfono:</strong> +56987654321</p>
-                    <p><strong>Cargo:</strong> Técnico</p>
-                </div>
-            </div>
-            <div class="funcionario-actions">
-                <i class="fa-solid fa-pen" title="Editar"></i>
-                <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
-                <i class="fa-solid fa-trash" title="Eliminar"></i>
-            </div>
-        </div>
 
-        <div class="funcionario-item">
-            <div class="funcionario-info-container">
-                <div class="funcionario-img">
-                    <i class="fa-solid fa-user-circle" style="font-size:60px; color:#2ecc71;"></i>
-                </div>
-                <div class="funcionario-info">
-                    <p><strong>RUT:</strong> 11111111-1</p>
-                    <p><strong>Nombre:</strong> Bo Zhang</p>
-                    <p><strong>Correo:</strong> bo@example.com</p>
-                    <p><strong>Teléfono:</strong> +56911111111</p>
-                    <p><strong>Cargo:</strong> Administrador</p>
+                <div class="funcionario-actions">
+                    {% if rol_usuario == "Director" %}
+                    <a href="{% url 'editar_funcionario' f.id_usuario %}">
+                        <i class="fa-solid fa-pen" title="Editar"></i>
+                    </a>
+                    {% endif %}
+                    <a href="mailto:{{ f.correo }}">
+                        <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
+                    </a>
+                    {% if rol_usuario == "Director" %}
+                    <a href="{% url 'eliminar_funcionario' f.id_usuario %}">
+                        <i class="fa-solid fa-trash" title="Eliminar"></i>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            <div class="funcionario-actions">
-                <i class="fa-solid fa-pen" title="Editar"></i>
-                <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
-                <i class="fa-solid fa-trash" title="Eliminar"></i>
-            </div>
-        </div>
+        {% empty %}
+            <p>No hay funcionarios registrados.</p>
+        {% endfor %}
     </div>
+
 </div>
 {% endblock %}

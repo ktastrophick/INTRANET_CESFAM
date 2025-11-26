@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Eliminar Funcionario{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 500px;
+        margin: 2rem auto;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #b91c1c;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1rem;
+        margin: 0.3rem 0;
+    }
+
+    .btn-delete {
+        background: #dc2626;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.3rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 1rem;
+    }
+    .btn-delete:hover {
+        background: #b91c1c;
+    }
+
+    .btn-cancel {
+        display: inline-block;
+        margin-left: 1rem;
+        color: #2563eb;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 1rem;
+    }
+    .btn-cancel:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-content">
+    <div class="delete-container">
+
+        <h2>¿Eliminar Funcionario?</h2>
+
+        <p>Estás a punto de eliminar al funcionario:</p>
+
+        <p><strong>{{ funcionario.nombre }}</strong></p>
+        <p>RUT: {{ funcionario.rut }}-{{ funcionario.dv }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button class="btn-delete" type="submit">
+                <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+
+            <a class="btn-cancel" href="{% url 'lista_funcionarios' %}">Cancelar</a>
+        </form>
+
+    </div>
+</section>
+{% endblock %}

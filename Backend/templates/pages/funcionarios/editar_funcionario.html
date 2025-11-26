@@ -1,0 +1,144 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Editar Funcionario — Intranet CESFAM{% endblock %}
+
+{% block extra_css %}
+<style>
+    .funcionario-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    /* RUT + DV en la misma línea */
+    .rut-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .rut-group input {
+        flex: 1;
+    }
+    .rut-group input[name="dv"] {
+        max-width: 80px;
+    }
+    button.submit-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+    button.submit-btn:hover {
+        background: #1d4ed8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-content">
+    <div class="funcionario-container">
+        <h2>Editar Funcionario</h2>
+
+        <form action="{% url 'editar_funcionario' funcionario.id_usuario %}" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group rut-group">
+                <div style="flex:1;">
+                    <label for="rut">RUT:</label>
+                    <input type="text" id="rut" name="rut" value="{{ funcionario.rut }}" required>
+                </div>
+                <div>
+                    <label for="dv">DV:</label>
+                    <input type="text" id="dv" name="dv" value="{{ funcionario.dv }}" maxlength="1" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" value="{{ funcionario.nombre }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" value="{{ funcionario.telefono }}">
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" value="{{ funcionario.correo }}">
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" value="{{ funcionario.contrasena }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_rol">Rol:</label>
+                <select id="id_rol" name="id_rol">
+                    <option value="">Seleccione un rol</option>
+                    {% for rol in roles %}
+                    <option value="{{ rol.id_rol }}" {% if funcionario.id_rol.id_rol == rol.id_rol %}selected{% endif %}>
+                        {{ rol.nombre_rol }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_departamento">Departamento:</label>
+                <select id="id_departamento" name="id_departamento">
+                    <option value="">Seleccione un departamento</option>
+                    {% for depto in departamentos %}
+                    <option value="{{ depto.id_departamento }}" {% if funcionario.id_departamento.id_departamento == depto.id_departamento %}selected{% endif %}>
+                        {{ depto.nombre_departamento }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_cargo">Cargo:</label>
+                <select id="id_cargo" name="id_cargo">
+                    <option value="">Seleccione un cargo</option>
+                    {% for cargo in cargos %}
+                    <option value="{{ cargo.id_cargo }}" {% if funcionario.id_cargo.id_cargo == cargo.id_cargo %}selected{% endif %}>
+                        {{ cargo.nombre_cargo }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button class="submit-btn" type="submit">
+                <i class="fa-solid fa-pen"></i> Guardar Cambios
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
