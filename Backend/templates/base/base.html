@@ -118,32 +118,37 @@
     </div>
 </footer>
 
-  <!-- ===== CHAT: HTML dentro del body (al final) ===== -->
+<!-- ===== CHAT: HTML dentro del body (al final) ===== -->
   <!-- Botón flotante -->
   <div class="chat-floating-btn" id="chatFloatingBtn" aria-label="Abrir chat">
-      <i class="fas fa-comments" aria-hidden="true"></i>
+    <i class="fas fa-comments" aria-hidden="true"></i>
   </div>
 
   <!-- Panel general -->
   <div class="chat-panel" id="chatPanel" role="dialog" aria-hidden="true" aria-labelledby="chatTitle">
-    <!-- Vista lista -->
+    
+    <!-- Vista lista de conversaciones -->
     <div class="chat-list" id="chatList">
       <div class="chat-list-header">
         <h4 id="chatTitle">Mensajes</h4>
       </div>
 
-      {% comment %} Asegúrate de pasar 'funcionarios' al contexto de la plantilla. {% endcomment %}
       {% for funcionario in funcionarios %}
       <div class="chat-list-item" data-user="{{ funcionario.id }}">
-        <div class="avatar" aria-hidden="true"></div>
+        <!-- Avatar con inicial del nombre -->
+        <div class="avatar" aria-hidden="true">
+          {{ funcionario.username|first|upper }}
+        </div>
         <div class="info">
-          <h5>{{ funcionario.username }}</h5>
+          <h5>{{ funcionario.get_full_name|default:funcionario.username }}</h5>
           <p class="last">Haz clic para abrir el chat</p>
         </div>
       </div>
       {% empty %}
       <div class="chat-list-item">
-        <div class="info"><p>No hay conversaciones.</p></div>
+        <div class="info">
+          <p>No hay conversaciones disponibles.</p>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -151,15 +156,28 @@
     <!-- Vista chat individual -->
     <div class="chat-window" id="chatWindow" aria-hidden="true">
       <div class="chat-window-header">
-        <button id="backToList" class="icon-btn" aria-label="Volver a lista"><i class="fas fa-arrow-left"></i></button>
+        <button id="backToList" class="chat-back-btn" aria-label="Volver a lista">
+          <i class="fas fa-arrow-left"></i>
+        </button>
         <h4 id="chatWith">Chat</h4>
       </div>
 
+      <!-- Contenedor de mensajes -->
       <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"></div>
 
+      <!-- Input para escribir -->
       <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." aria-label="Mensaje">
-        <button id="sendBtn" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+        <input 
+          type="text" 
+          id="chatInput" 
+          placeholder="Escribe un mensaje..." 
+          aria-label="Mensaje"
+          autocomplete="off"
+        >
+        <!-- ✅ CORREGIDO: chat-send-btn -->
+        <button id="sendBtn" class="chat-send-btn" aria-label="Enviar">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </div>
     </div>
   </div>
