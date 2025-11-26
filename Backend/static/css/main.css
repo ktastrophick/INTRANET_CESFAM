@@ -1,117 +1,123 @@
 /* ========================================= */
-/* 1. VARIABLES GLOBALES / CONFIGURACIÓN BASE */
+/* 1. VARIABLES GLOBALES */
 /* ========================================= */
 
 :root {
-  /* Colores */
-  --navy: #0B2C4A;
-  --blue-200: #D8ECFF;
-  --blue-500: #3A8DFF;
-  --orange-200: #FFD7A3;
-  --green-200: #CFF5D2;
-  --green-500: #2E8B57;
+  /* PALETA DE COLORES */
+  --primary: #0B2C4A;
+  --secondary: #3A8DFF;
+  --accent: #2E8B57;
+  --danger: #ef4444;
+  
+  /* NEUTRALES */
   --white: #FFFFFF;
   --text: #1A1A1A;
   --muted: #6B7280;
-
-  /* Estilos */
+  --border: #eef3fb;
+  
+  /* FONDOS */
+  --bg-blue: #D8ECFF;
+  --bg-orange: #FFD7A3;
+  --bg-green: #CFF5D2;
+  
+  /* ESPACIADO */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  
+  /* DISEÑO */
   --radius: 14px;
-  --shadow: 0 8px 24px rgba(0, 0, 0, .08);
+  --radius-sm: 10px;
+  --radius-full: 999px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+  
+  /* TRANSICIONES */
+  --transition: 0.2s ease;
 }
 
 /* ========================================= */
-/* 2. ESTILOS BASE Y RESET */
+/* 2. RESET Y BASE */
 /* ========================================= */
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  /* Consolidamos las fuentes para mejor lectura */
-  font-family: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   color: var(--text);
-  /* Aseguramos que body tenga este gradiente si es el background principal */
-  background: linear-gradient(180deg, var(--blue-200) 0%, var(--white) 100%);
+  background: linear-gradient(180deg, var(--bg-blue) 0%, var(--white) 100%);
+  line-height: 1.5;
 }
 
-/* ========================================= */
-/* 3. UTILIDADES Y GENERALES */
-/* ========================================= */
-
-/* Contenido Principal de la Página */
+/* CONTENEDOR UNIVERSAL */
+.container,
+.header-container,
 .page-content {
   max-width: 1200px;
-  margin: 1.25rem auto 2rem;
-  padding: 0 1rem;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
 }
 
-/* Estilos de Botones Generales */
-.btn {
+.page-content {
+  margin-block: var(--space-xl) var(--space-2xl);
+}
+
+/* ========================================= */
+/* 3. SISTEMA DE BOTONES UNIFICADO */
+/* ========================================= */
+
+/* BASE: todos los botones heredan esto */
+.btn,
+.btn-logout,
+.btn-login {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .6rem .9rem;
-  border-radius: 10px;
+  gap: var(--space-sm);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
   text-decoration: none;
   font-weight: 600;
-  transition: background .3s, filter .3s, color .3s; /* Añadimos transición general */
-}
-
-.btn-primary {
-  background: var(--green-500);
-  color: #fff;
-  border: none; /* Aseguramos que no tenga borde si es primario */
-}
-
-.btn-primary:hover {
-  filter: brightness(1.05);
-}
-
-.btn-outline {
-  border: 2px solid var(--navy);
-  color: var(--navy);
-  background: transparent; /* Aseguramos fondo transparente */
-}
-
-.btn-outline:hover {
-  background: var(--blue-200);
-}
-
-/* Botón de Logout (Específico, pero reutiliza la base .btn) */
-.btn-logout {
-  background: #ef4444;
-  color: #fff;
   border: none;
-  padding: .5rem 1rem;
-  border-radius: 10px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  font-weight: 500;
-  transition: background .3s;
+  transition: var(--transition);
+  font-family: inherit;
+  background: var(--accent);
+  color: var(--white);
 }
 
-.btn-logout:hover {
-  background: #dc2626;
+/* MODIFICADORES */
+.btn-logout {
+  background: var(--danger);
+}
+
+.btn-login {
+  background: var(--secondary);
+}
+
+/* ESTADOS */
+.btn:hover,
+.btn-logout:hover,
+.btn-login:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* ========================================= */
-/* 4. COMPONENTES PRINCIPALES (HEADER, NAV, FOOTER) */
+/* 4. HEADER Y NAVEGACIÓN */
 /* ========================================= */
 
-/* --- HEADER --- */
 .site-header {
-  background: var(--navy);
+  background: var(--primary);
   color: var(--white);
   position: sticky;
   top: 0;
@@ -120,398 +126,284 @@ body {
 }
 
 .header-container {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: .75rem 1rem;
+  gap: var(--space-lg);
+  padding-block: var(--space-md);
 }
 
-/* Logo */
+/* LOGO */
 .logo-section {
   display: flex;
   align-items: center;
-  gap: .75rem
+  gap: var(--space-md);
 }
 
 .logo {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--green-500), #38b6ff);
-  color: var(--white);
-  font-weight: 700;
-  letter-spacing: .5px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--accent), var(--secondary));
 }
 
 .logo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #ffffff22;
-  background: #fff;
-  box-shadow: 0 0 8px rgba(0, 0, 0, .15)
 }
 
 .logo-text h1 {
   font-size: 1.125rem;
-  margin: .1rem 0;
+  margin: 0.1rem 0;
   font-weight: 700;
-  line-height: 1.1
 }
 
 .logo-text p {
   margin: 0;
-  font-size: .85rem;
-  color: #D9E6F2
+  font-size: 0.85rem;
+  color: #D9E6F2;
 }
 
-/* Navegación (Solo escritorio) */
+/* NAVEGACIÓN */
 .main-nav {
   margin-left: auto;
   display: flex;
-  gap: .25rem;
-  background: rgba(255, 255, 255, .06);
-  padding: .25rem;
-  border-radius: 999px;
+  gap: var(--space-xs);
+  background: rgba(255, 255, 255, 0.06);
+  padding: var(--space-xs);
+  border-radius: var(--radius-full);
 }
 
 .main-nav a {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  color: #E8F1FF;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
   text-decoration: none;
-  padding: .5rem .9rem;
-  border-radius: 999px;
-  transition: .2s ease;
+  transition: var(--transition);
+  color: #E8F1FF;
+  white-space: nowrap;
 }
 
 .main-nav a:hover {
-  background: rgba(255, 255, 255, .12)
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .main-nav a.active {
-  background: linear-gradient(135deg, var(--blue-500), var(--green-500));
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
   color: var(--white);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+  box-shadow: var(--shadow-lg);
 }
 
-.main-nav a[href*="perfil"] i {
-  color: #66b2ff;
-}
-
-.main-nav a[href*="perfil"]:hover {
-  background-color: rgba(102, 178, 255, 0.1);
-}
-
-/* ========================================= */
-/*  DROPDOWN ADAPTADO AL NAV EXISTENTE */
-/* ========================================= */
-
-/* Contenedor */
-.nav-dropdown {
-  position: relative;
-}
-
-/* Botón del dropdown (misma estética que los <a>) */
-.nav-dropdown .dropdown-btn {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .5rem .9rem;
-  border-radius: 999px;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  color: #E8F1FF;
-  font: inherit;
-  transition: .2s ease;
-}
-
-.nav-dropdown .dropdown-btn:hover {
-  background: rgba(255, 255, 255, .12);
-}
-
-.nav-dropdown.active .dropdown-btn {
-  background: linear-gradient(135deg, var(--blue-500), var(--green-500));
-  color: var(--white);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-}
-
-/* Flecha */
-.nav-dropdown .chevron {
-  margin-left: auto;
-  transition: transform .2s ease;
-}
-
-.nav-dropdown:hover .chevron {
-  transform: rotate(180deg);
-}
-
-/* Dropdown Menu */
-.nav-dropdown .dropdown-menu {
-  display: none;
-  flex-direction: column;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  position: absolute;
-  top: calc(100% + .4rem);
-  left: 0;
-  min-width: 180px;
-  padding: .4rem 0;
-  z-index: 9999;
-}
-
-.nav-dropdown:hover .dropdown-menu {
-  display: flex;
-}
-
-/* Items internos del menú */
-.nav-dropdown .dropdown-menu a {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  padding: .65rem 1rem;
-  text-decoration: none;
-  color: var(--text);
-  border-radius: 10px;
-  transition: background .15s;
-}
-
-.nav-dropdown .dropdown-menu a:hover {
-  background: var(--blue-200);
-}
-
-/* Estado activo para el hijo */
-.nav-dropdown .dropdown-menu a.active {
-  background: var(--blue-500);
-  color: white;
-}
-
-
-/* Sección de Usuario */
+/* USUARIO */
 .user-section {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: .6rem;
-  margin-left: .5rem;
-  cursor: pointer;
-  padding: .35rem .6rem;
-  border-radius: 12px;
-  transition: background .2s ease;
-}
-
-.user-section:hover {
-  background: rgba(255, 255, 255, .08)
+  gap: var(--space-sm);
+  margin-left: var(--space-sm);
 }
 
 .user-info p {
   margin: 0;
   font-weight: 600;
-  color: #F2F7FF
+  color: #F2F7FF;
+  font-size: 0.9rem;
 }
 
 .user-info span {
   display: block;
-  font-size: .8rem;
-  color: #CFE6FF
+  font-size: 0.75rem;
+  color: #CFE6FF;
 }
 
-.user-section i.fa-chevron-down {
-  color: #DDEBFF
-}
-
-/* Dropdown de Usuario */
-.dropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + .5rem);
-  background: var(--white);
-  color: var(--text);
-  width: 200px;
-  border-radius: 12px;
-  padding: .4rem;
-  box-shadow: var(--shadow);
-  display: none;
-  z-index: 1010; /* Aseguramos que esté por encima del header */
-}
-
-.dropdown.active {
-  display: block
-}
-
-.dropdown a {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  text-decoration: none;
-  color: var(--text);
-  padding: .55rem .7rem;
-  border-radius: 10px;
-  transition: .15s;
-}
-
-.dropdown a:hover {
-  background: var(--blue-200)
-}
-
-
-/* --- FOOTER --- */
-.site-footer {
-  background: linear-gradient(to bottom, #e8f2ff, #d7e9ff);
-  color: #2b3a42;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  border-top: 1px solid rgba(0, 0, 0, .05);
-}
-
-.footer-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .8rem
-}
-
-.footer-info h4 {
-  font-weight: 700;
-  color: #0b2545;
-  margin-bottom: .3rem
-}
-
-.footer-info p {
+.logout-form {
   margin: 0;
-  line-height: 1.5;
-  font-size: .95rem
 }
-
-.footer-info a {
-  color: #1b7d4e;
-  text-decoration: none
-}
-
-.footer-info a:hover {
-  text-decoration: underline
-}
-
-.footer-social {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: .8rem
-}
-
-.footer-social a {
-  font-size: 1.4rem;
-  color: #1b7d4e;
-  transition: transform .2s, color .2s
-}
-
-.footer-social a:hover {
-  transform: scale(1.1);
-  color: #16663f
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(0, 0, 0, .1);
-  margin-top: 1.2rem;
-  padding-top: .8rem;
-  font-size: .85rem;
-  color: #6b7280
-}
-
 
 /* ========================================= */
-/* 5. SECCIONES DE CONTENIDO (HERO, CARDS) */
+/* 5. CARDS (Para páginas internas) */
 /* ========================================= */
 
-/* --- HERO --- */
-.hero {
-  background: linear-gradient(135deg, var(--orange-200), var(--blue-200));
-  border-radius: var(--radius);
-  box-shadow: var(--shadow)
-}
-
-.hero-body {
-  padding: 1.25rem 1rem 1.5rem
-}
-
-.hero-title {
-  margin: .25rem 0 .35rem;
-  font-size: 1.4rem
-}
-
-.hero-subtitle {
-  margin: .2rem 0 1rem;
-  color: var(--muted)
-}
-
-/* El estilo de botón .hero .btn se movió a Utilidades/Generales (.btn) */
-
-
-/* --- CARDS --- */
 .cards {
-  margin-top: 1rem;
+  margin-top: var(--space-lg);
   display: grid;
-  gap: 1rem;
-  /* Se define la grid base para móvil primero */
-  grid-template-columns: repeat(12, 1fr)
+  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .card {
-  grid-column: span 12;
   background: var(--white);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1rem;
-  border: 1px solid #eef3fb;
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 .card .icon {
   font-size: 1.35rem;
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  margin-bottom: .6rem;
-  background: linear-gradient(135deg, var(--blue-500), var(--green-500));
-  color: #fff;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+  color: var(--white);
 }
 
 .card h3 {
-  margin: .2rem 0 .3rem
+  margin: 0.2rem 0 0.3rem;
+  font-size: 1.125rem;
 }
 
 .card p {
-  margin: 0 0 .6rem;
-  color: var(--muted)
+  margin: 0 0 var(--space-md);
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .card-link {
   display: inline-flex;
-  gap: .4rem;
+  gap: 0.4rem;
   align-items: center;
   text-decoration: none;
-  color: var(--navy);
-  font-weight: 600
+  color: var(--primary);
+  font-weight: 600;
+  transition: var(--transition);
 }
 
 .card-link:hover {
-  color: var(--blue-500)
+  color: var(--secondary);
+  gap: 0.6rem;
 }
 
-/* Grid en pantallas medianas/grandes (Desktop) */
-@media (min-width: 768px) {
-  .card {
-    grid-column: span 4
+/* ========================================= */
+/* 6. HERO (Para páginas internas) */
+/* ========================================= */
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-orange), var(--bg-blue));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.hero-title {
+  margin: 0.25rem 0 0.35rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* ========================================= */
+/* 7. FOOTER */
+/* ========================================= */
+
+.site-footer {
+  background: linear-gradient(to bottom, #e8f2ff, #d7e9ff);
+  color: #2b3a42;
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.footer-info h4 {
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: var(--space-sm);
+}
+
+.footer-info p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.footer-info a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-info a:hover {
+  text-decoration: underline;
+}
+
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.footer-social a {
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: var(--transition);
+}
+
+.footer-social a:hover {
+  transform: scale(1.15);
+  color: #16663f;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ========================================= */
+/* 8. RESPONSIVE */
+/* ========================================= */
+
+@media (max-width: 1024px) {
+  .main-nav a span {
+    display: none;
+  }
+  
+  .user-info span {
+    display: none;
   }
 }
 
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+  }
+  
+  .main-nav {
+    order: 3;
+    width: 100%;
+    margin-top: var(--space-sm);
+    justify-content: space-around;
+  }
+  
+  .logo-text h1 {
+    font-size: 1rem;
+  }
+  
+  .hero-title {
+    font-size: 1.4rem;
+  }
+  
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
