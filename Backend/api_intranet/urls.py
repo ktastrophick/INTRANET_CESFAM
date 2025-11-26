@@ -8,9 +8,12 @@ urlpatterns = [
     path('index/', base_views.index, name='index'),
     path('documentos/', base_views.documentos, name='documentos'),
     path('form_documento/', base_views.form_documento, name='form_documento'),
+
+    #Funcionarios
     path('lista_funcionarios/', funcionarios_views.lista_funcionarios, name='lista_funcionarios'),
     path('form_funcionario/', funcionarios_views.form_funcionario, name='form_funcionario'),
-    path('lista_funcionarios_func/', funcionarios_views.lista_funcionarios_func, name='lista_funcionarios_func'),
+    path('funcionarios/editar/<int:id_usuario>/', funcionarios_views.editar_funcionario, name='editar_funcionario'),
+    path('funcionarios/eliminar/<int:id_usuario>/', funcionarios_views.eliminar_funcionario, name='eliminar_funcionario'),
 
 
     # Calendario (página y API CRUD)

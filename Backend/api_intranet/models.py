@@ -176,7 +176,6 @@ class Evento(models.Model):
     color = models.CharField(max_length=7, blank=True, null=True, help_text="Hex (#3A8DFF)")
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
-
     class Meta:
         managed = True
         db_table = 'evento'
