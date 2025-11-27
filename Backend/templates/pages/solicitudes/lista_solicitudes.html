@@ -4,230 +4,294 @@
 {% block title %}Solicitudes — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-  <style>
+<style>
     .solicitud-container{
-      background:white;
-      border-radius:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.1);
-      padding:2rem;
-      margin:0 auto;
-      max-width:1200px;
+        background:white;
+        border-radius:16px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.1);
+        padding:2rem;
+        margin:0 auto;
+        max-width:1200px;
     }
 
     .solicitud-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:1.5rem;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:1.5rem;
     }
 
     .solicitud-header h2{
-      font-size:1.5rem;
-      font-weight:700;
-      color:#1a1a1a;
+        font-size:1.5rem;
+        font-weight:700;
+        color:#1a1a1a;
     }
 
     .upload-btn{
-      background:linear-gradient(135deg,#66b2ff 0%,#7fffd4 100%);
-      color:#fff;
-      border:none;
-      padding:0.75rem 1.5rem;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:500;
-      transition:transform 0.3s,opacity 0.3s;
+        background:linear-gradient(135deg,#66b2ff 0%,#7fffd4 100%);
+        color:#fff;
+        border:none;
+        padding:0.75rem 1.5rem;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:500;
+        transition:transform 0.3s,opacity 0.3s;
     }
 
     .upload-btn:hover{opacity:0.9;transform:translateY(-2px);}
 
     .filter-container{
-      display:flex;
-      gap:1rem;
-      flex-wrap:wrap;
-      margin-bottom:1.5rem;
+        display:flex;
+        gap:1rem;
+        flex-wrap:wrap;
+        margin-bottom:1.5rem;
     }
 
     .filter-container input,
     .filter-container select{
-      padding:0.6rem;
-      border:1px solid #ccc;
-      border-radius:8px;
-      font-size:0.9rem;
-      flex:1;
-      min-width:180px;
+        padding:0.6rem;
+        border:1px solid #ccc;
+        border-radius:8px;
+        font-size:0.9rem;
+        flex:1;
+        min-width:180px;
     }
 
     table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:1rem;
-      border-radius:10px;
-      overflow:hidden;
+        width:100%;
+        border-collapse:collapse;
+        margin-top:1rem;
+        border-radius:10px;
+        overflow:hidden;
     }
 
     th,td{
-      padding:0.8rem;
-      text-align:left;
-      border-bottom:1px solid #eee;
+        padding:0.8rem;
+        text-align:left;
+        border-bottom:1px solid #eee;
     }
 
     th{
-      background:#2563eb;
-      color:white;
-      font-weight:600;
+        background:#2563eb;
+        color:white;
+        font-weight:600;
     }
 
     tr:hover{background:#f5faff;}
 
-    td.status-Pendiente{color:#ff9800;font-weight:600;}
-    td.status-Aprobado{color:#4caf50;font-weight:600;}
-    td.status-Rechazado{color:#dc2626;font-weight:600;}
+    .status-Pendiente{color:#ff9800;font-weight:600;}
+    .status-Aprobado{color:#4caf50;font-weight:600;}
+    .status-Rechazado{color:#dc2626;font-weight:600;}
+    
     .action-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      margin-right: 6px;
-      font-size: 1rem;
-      padding: 4px 6px;
-      border-radius: 6px;
-      transition: 0.2s;
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-right: 6px;
+        font-size: 1rem;
+        padding: 4px 6px;
+        border-radius: 6px;
+        transition: 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .action-btn.download { color: #4caf50; }
     .action-btn.download:hover { background: rgba(76,175,80,0.1); }
 
-    .action-btn.message { color: #2196f3; }
-    .action-btn.message:hover { background: rgba(33,150,243,0.1); }
+    .action-btn.edit { color: #2196f3; }
+    .action-btn.edit:hover { background: rgba(33,150,243,0.1); }
 
     .action-btn.delete { color: #dc2626; }
     .action-btn.delete:hover { background: rgba(220,38,38,0.1); }
-  </style>
+
+    .action-btn.approve { color: #4caf50; }
+    .action-btn.approve:hover { background: rgba(76,175,80,0.1); }
+
+    .action-btn.reject { color: #dc2626; }
+    .action-btn.reject:hover { background: rgba(220,38,38,0.1); }
+
+    /* Badges para estados */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .badge-pendiente { background: #fff3cd; color: #856404; }
+    .badge-aprobado { background: #d1edff; color: #0b5ed7; }
+    .badge-rechazado { background: #f8d7da; color: #721c24; }
+</style>
 {% endblock %}
 
 {% block content %}
-  <section class="page-content">
+<section class="page-content">
     <div class="solicitud-container">
-      <div class="solicitud-header">
-        <h2>Solicitudes de Permiso / Vacaciones</h2>
-        <a href="{% url 'form_solicitud' %}">
-          <button class="upload-btn"><i class="fa-solid fa-plus"></i> Nueva solicitud</button>
-        </a>
-      </div>
-
-      <div class="filter-container">
-        <input type="text" id="filterName" placeholder="Buscar por tipo o motivo..." onkeyup="aplicarFiltros()">
-        <input type="date" id="filterFecha" onchange="aplicarFiltros()">
-        <select id="filterEstado" onchange="aplicarFiltros()">
-          <option value="">Todos los estados</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="Aprobado">Aprobado</option>
-          <option value="Rechazado">Rechazado</option>
-        </select>
-      </div>
-
-<table id="solicitudesTable">
-  <thead>
-    <tr>
-      <th>Tipo</th>
-      <th>Fecha Inicio</th>
-      <th>Fecha Fin</th>
-      <th>Estado Jefatura</th>
-      <th>Estado Administración</th>
-      <th>Acciones</th> <!-- Nueva columna -->
-    </tr>
-  </thead>
-    <tbody>
-        {% for s in solicitudes %}
-        <tr>
-          <td>{{ s.tipo_solicitud.nombre }}</td>
-          <td>{{ s.dia_inicio }}</td>
-          <td>{{ s.dia_fin }}</td>
-
-          <td>
-            {{ s.descripcion|default:"---" }}
-          </td>
-
-          <td class="status-{{ s.estado_solicitud.nombre|default:'SinEstado' }}">
-            {{ s.estado_solicitud.nombre|default:"---" }}
-          </td>
-
-          <td>
-            {% if s.estado_solicitud.nombre == "Pendiente" %}
-              <span class="status-Pendiente">Pendiente</span>
-            {% elif s.estado_solicitud.nombre == "Aprobado" %}
-              <span class="status-Aprobado">Aprobado</span>
-            {% elif s.estado_solicitud.nombre == "Rechazado" %}
-              <span class="status-Rechazado">Rechazado</span>
-            {% else %}
-              ---
-            {% endif %}
-          </td>
-
-          <td>
-            <!-- Descargar -->
-            <button class="action-btn download" title="Descargar">
-              <i class="fa-solid fa-download"></i>
-            </button>
-
-            <!-- Aprobación Director -->
-            {% if rol_usuario == "Director" and s.estado_solicitud.nombre == "Pendiente" %}
-              <button class="action-btn" style="color:#4caf50;" title="Aprobar">
-                <i class="fa-solid fa-check"></i>
-              </button>
-              <button class="action-btn" style="color:#dc2626;" title="Rechazar">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            {% endif %}
-
-            <!-- Editar -->
-            <a href="{% url 'editar_solicitud' s.id_solicitud %}" class="action-btn" style="color:#2196f3;">
-                <i class="fa-solid fa-pen"></i>
+        <div class="solicitud-header">
+            <h2>📋 Solicitudes de Permiso / Vacaciones</h2>
+            <a href="{% url 'form_solicitud' %}">
+                <button class="upload-btn">
+                    <i class="fa-solid fa-plus"></i> Nueva solicitud
+                </button>
             </a>
+        </div>
 
-            <!-- Eliminar -->
-            <a href="{% url 'eliminar_solicitud' s.id_solicitud %}" class="action-btn delete">
-                <i class="fa-solid fa-trash"></i>
-            </a>
-          </td>
-        </tr>
+        <div class="filter-container">
+            <input type="text" id="filterName" placeholder="Buscar por tipo..." onkeyup="aplicarFiltros()">
+            <input type="date" id="filterFecha" onchange="aplicarFiltros()">
+            <select id="filterEstado" onchange="aplicarFiltros()">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Aprobado">Aprobado</option>
+                <option value="Rechazado">Rechazado</option>
+            </select>
+        </div>
 
-        {% empty %}
-        <tr>
-          <td colspan="7" style="text-align:center; padding:15px;">
-            No hay solicitudes registradas.
-          </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+        <table id="solicitudesTable">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Estado</th>
+                    <th>Aprobación Jefe</th>
+                    <th>Aprobación Director</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in solicitudes %}
+                <tr>
+                    <td>{{ s.tipo_solicitud.nombre }}</td>
+                    <td>{{ s.dia_inicio|date:"d/m/Y" }}</td>
+                    <td>{{ s.dia_fin|date:"d/m/Y" }}</td>
+                    
+                    <td>
+                        {% if s.estado_solicitud.nombre == "Pendiente" %}
+                            <span class="status-badge badge-pendiente"> {{ s.estado_solicitud.nombre }}</span>
+                        {% elif s.estado_solicitud.nombre == "Aprobado" %}
+                            <span class="status-badge badge-aprobado"> {{ s.estado_solicitud.nombre }}</span>
+                        {% elif s.estado_solicitud.nombre == "Rechazado" %}
+                            <span class="status-badge badge-rechazado"> {{ s.estado_solicitud.nombre }}</span>
+                        {% else %}
+                            <span class="status-badge">---</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        {% if s.aprobacion_jefe == True %}
+                            <span style="color:#4caf50;"> Aprobado</span>
+                        {% elif s.aprobacion_jefe == False %}
+                            <span style="color:#dc2626;"> Rechazado</span>
+                        {% else %}
+                            <span style="color:#ff9800;"> Pendiente</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        {% if s.aprobacion_director == True %}
+                            <span style="color:#4caf50;"> Aprobado</span>
+                        {% elif s.aprobacion_director == False %}
+                            <span style="color:#dc2626;"> Rechazado</span>
+                        {% else %}
+                            <span style="color:#ff9800;"> Pendiente</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        <!-- Editar (solo para solicitudes pendientes del usuario) -->
+                        {% if s.estado_solicitud.nombre == "Pendiente" and s.id_usuario.id_usuario == usuario.id_usuario %}
+                            <a href="{% url 'editar_solicitud' s.id_solicitud %}" class="action-btn edit" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                        {% endif %}
 
+                        <!-- Aprobación Jefe -->
+                        {% if rol_usuario == "Jefe de Departamento" and s.estado_solicitud.nombre == "Pendiente" %}
+                            <a href="{% url 'aprobar_jefe' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Jefe">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                            <a href="{% url 'rechazar_jefe' s.id_solicitud %}" class="action-btn reject" title="Rechazar como Jefe">
+                                <i class="fa-solid fa-xmark"></i>
+                            </a>
+                        {% endif %}
 
-</table>
+                        <!-- Aprobación Director -->
+                        {% if rol_usuario == "Director" and s.estado_solicitud.nombre == "Pendiente" %}
+                            <a href="{% url 'aprobar_director' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Director">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                            <a href="{% url 'rechazar_director' s.id_solicitud %}" class="action-btn reject" title="Rechazar como Director">
+                                <i class="fa-solid fa-xmark"></i>
+                            </a>
+                        {% endif %}
 
+                        <!-- Eliminar (solo para solicitudes pendientes del usuario) -->
+                        {% if s.estado_solicitud.nombre == "Pendiente" and s.id_usuario.id_usuario == usuario.id_usuario %}
+                            <a href="{% url 'eliminar_solicitud' s.id_solicitud %}" class="action-btn delete" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:20px;">
+                        No hay solicitudes registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-  </section>
+</section>
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    function aplicarFiltros(){
-      const nombre = document.getElementById("filterName").value.toLowerCase();
-      const fecha = document.getElementById("filterFecha").value;
-      const estado = document.getElementById("filterEstado").value;
+<script>
+function aplicarFiltros(){
+    const nombre = document.getElementById("filterName").value.toLowerCase();
+    const fecha = document.getElementById("filterFecha").value;
+    const estado = document.getElementById("filterEstado").value;
 
-      document.querySelectorAll("#solicitudesTable tbody tr").forEach(fila=>{
-        const tipo = fila.children[0].textContent.toLowerCase();
-        const inicio = fila.children[1].textContent;
-        const fin = fila.children[2].textContent;
-        const motivo = fila.children[3].textContent.toLowerCase();
-        const estadoJef = fila.children[4].textContent;
+    document.querySelectorAll("#solicitudesTable tbody tr").forEach(fila => {
+        if (fila.cells.length < 7) return; // Saltar fila vacía
+        
+        const tipo = fila.cells[0].textContent.toLowerCase();
+        const inicio = fila.cells[1].textContent;
+        const estadoText = fila.cells[3].textContent.toLowerCase();
 
         let mostrar = true;
-        if(nombre && !tipo.includes(nombre) && !motivo.includes(nombre)) mostrar=false;
-        if(fecha && !(fecha>=inicio && fecha<=fin)) mostrar=false;
-        if(estado && estadoJef!==estado) mostrar=false;
+        
+        // Filtro por nombre/tipo
+        if (nombre && !tipo.includes(nombre)) {
+            mostrar = false;
+        }
+        
+        // Filtro por estado
+        if (estado && !estadoText.includes(estado.toLowerCase())) {
+            mostrar = false;
+        }
+        
+        // Filtro por fecha (formato dd/mm/yyyy)
+        if (fecha) {
+            const [dia, mes, anio] = inicio.split('/');
+            const fechaInicio = `${anio}-${mes}-${dia}`;
+            if (fecha !== fechaInicio) {
+                mostrar = false;
+            }
+        }
 
         fila.style.display = mostrar ? "" : "none";
-      });
-    }
-  </script>
+    });
+}
+
+// Inicializar filtros
+document.addEventListener('DOMContentLoaded', function() {
+    aplicarFiltros();
+});
+</script>
 {% endblock %}

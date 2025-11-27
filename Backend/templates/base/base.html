@@ -42,39 +42,41 @@
         {# NAV y zona de usuario: se ocultan SOLO en la vista de login #}
         {% if request.resolver_match.url_name != 'login' %}
 
+        {% with usuario_activo=request.session.id_usuario usuario_nombre=request.session.usuario_nombre %}
+
         <!-- NAVEGACIÓN SUPERIOR -->
         <nav class="main-nav" aria-label="Navegación principal">
 
-            {# Links del menú solo para usuarios autenticados #}
-            {% if request.user.is_authenticated %}
+            {# Links del menú solo para usuarios con sesión activa #}
+            {% if usuario_activo %}
                 <a href="{% url 'index' %}"
-                   class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     <i class="fa-solid fa-house"></i><span>Inicio</span>
                 </a>
 
                 <a href="{% url 'lista_documentos' %}"
-                   class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
+                    class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
                     <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
                 </a>
 
                 <a href="{% url 'lista_licencias' %}"
-                   class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
+                    class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
                     <i class="fa-solid fa-id-card"></i><span>Licencias</span>
                 </a>
 
                 <a href="{% url 'lista_solicitudes' %}"
-                   class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
+                    class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
                     <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
                 </a>
 
                 <a href="{% url 'lista_funcionarios' %}"
-                   class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+                    class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
                     <i class="fa-solid fa-users"></i><span>Funcionarios</span>
                 </a>
             {% endif %}
 
-            {# Botón de INICIAR SESIÓN arriba en la barra cuando NO está autenticado #}
-            {% if not request.user.is_authenticated %}
+            {# Botón de INICIAR SESIÓN cuando NO hay sesión activa #}
+            {% if not usuario_activo %}
                 <a href="{% url 'login' %}" class="btn-login-nav">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     <span>Iniciar sesión</span>
@@ -83,12 +85,12 @@
 
         </nav>
 
-        {# Dropdown de usuario solo para autenticados #}
-        {% if request.user.is_authenticated %}
+        {# Dropdown de usuario solo para usuarios con sesión activa #}
+        {% if usuario_activo %}
         <div class="user-section" id="userDropdownToggle">
             <!-- INFO DEL USUARIO -->
             <div class="user-info">
-                <p>{{ request.user.username }}</p>
+                <p>{{ usuario_nombre|default:"Funcionario/a" }}</p>
                 <span>Funcionario/a</span>
             </div>
 
@@ -113,6 +115,7 @@
         </div>
         {% endif %}
 
+        {% endwith %} {# fin with usuario_activo/usuario_nombre #}
         {% endif %} {# fin if != 'login' #}
 
     </div>
@@ -202,3 +205,4 @@
 {% block extra_js %}{% endblock %}
 </body>
 </html>
+

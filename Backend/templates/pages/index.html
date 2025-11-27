@@ -1,8 +1,10 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}Inicio — Intranet CESFAM{% endblock %}
+
 {% block extra_css %} 
-    <!--<link rel="stylesheet" href="{% static 'css/index.css' %}">-->
+    <!-- Si quieres, luego puedes mover este CSS a static/css/index.css -->
     <style>
         .dashboard-container {
             padding: 2rem;
@@ -158,7 +160,6 @@
             grid-row: 2;
         }
 
-        /* TARJETAS DE SOLICITUDES */
         .status-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -417,9 +418,11 @@
     
     <!-- BANNER -->
     <section class="welcome-banner">
+        {% with nombre=usuario.nombre|default:request.session.usuario_nombre %}
         <h2 class="welcome-banner__title">
-            ¡Bienvenido/a, {{ request.user.get_full_name|default:request.user.username }}!
+            ¡Bienvenido/a, {{ nombre|default:"Funcionario/a" }}!
         </h2>
+        {% endwith %}
         <p class="welcome-banner__subtitle">
             Su espacio de gestión y comunicación interna del CESFAM Santa Rosa
         </p>
@@ -433,38 +436,38 @@
             <div class="profile-avatar">
                 <i data-lucide="user"></i>
             </div>
-            <h3 class="profile-name">Dr. Alejandra Contreras</h3>
-            <p class="profile-role">Administrativa</p>
+            <h3 class="profile-name">{{ usuario.nombre }}</h3>
+            <p class="profile-role">{{ rol }}</p>
         </section>
         
         <!-- COMUNICADOS (ARRIBA DERECHA) -->
         <section class="card--comunicados">
             <header class="card__header">
                 <h3 class="card__title">Comunicados Recientes</h3>
+                <!-- Si después tienes una vista de avisos, enlazamos aquí -->
                 <a href="#" class="view-all">Ver todos</a>
             </header>
-            
-            <a href="#" class="comunicado-item">
-                <p>Actualización Protocolo COVID-19</p>
-                <span>02 Oct 2025 • Salud</span>
-            </a>
 
-            <a href="#" class="comunicado-item">
-                <p>Reunión General de Equipo - 10 de Octubre</p>
-                <span>01 Oct 2025 • Administrativa</span>
-            </a>
-
-            <a href="#" class="comunicado-item">
-                <p>Capacitación en Sistema SOME Digital</p>
-                <span>28 Sep 2025 • Capacitación</span>
-            </a>
+            {% if avisos %}
+                {% for aviso in avisos %}
+                    <a href="#" class="comunicado-item">
+                        <p>{{ aviso.titulo }}</p>
+                        <span>
+                            {{ aviso.fecha_registro|date:"d M Y" }}
+                            • {{ aviso.id_usuario.nombre|default:"Dirección" }}
+                        </span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>No hay comunicados recientes.</p>
+            {% endif %}
         </section>
 
         <!-- SOLICITUDES Y CALENDARIO MINI (ABAJO IZQUIERDA) -->
         <section class="card--solicitudes">
             <header class="card__header">
                 <h3 class="card__title">Solicitudes</h3>
-                <a href="#" class="view-all">Ver todas</a>
+                <a href="{% url 'lista_solicitudes' %}" class="view-all">Ver todas</a>
             </header>
             
             <!-- TARJETAS DE SOLICITUDES -->
@@ -475,7 +478,7 @@
                     </div>
                     <div class="status-content">
                         <h4>Recibidos</h4>
-                        <p>12</p>
+                        <p>{{ solicitudes_recibidas|default:"0" }}</p>
                     </div>
                 </div>
 
@@ -485,7 +488,7 @@
                     </div>
                     <div class="status-content">
                         <h4>Pendientes</h4>
-                        <p>5</p>
+                        <p>{{ solicitudes_pendientes|default:"0" }}</p>
                     </div>
                 </div>
 
@@ -495,7 +498,7 @@
                     </div>
                     <div class="status-content">
                         <h4>Aceptadas</h4>
-                        <p>8</p>
+                        <p>{{ solicitudes_aceptadas|default:"0" }}</p>
                     </div>
                 </div>
 
@@ -505,12 +508,12 @@
                     </div>
                     <div class="status-content">
                         <h4>Rechazadas</h4>
-                        <p>2</p>
+                        <p>{{ solicitudes_rechazadas|default:"0" }}</p>
                     </div>
                 </div>
             </div>
 
-            <!-- CALENDARIO MINI DEBAJO DE SOLICITUDES -->
+            <!-- CALENDARIO MINI DEBAJO DE SOLICITUDES (decorativo por ahora) -->
             <div class="calendar-mini">
                 <div class="calendar-mini-header">OCTUBRE 2025</div>
                 
@@ -569,11 +572,17 @@
         <!-- PRÓXIMAS ACTIVIDADES (ABAJO DERECHA) -->
         <section class="card--actividades">
             <header class="card__header">
-                <h3 class="card__title">Próximas Actividades</h3>
+                <div>
+                    <h3 class="card__title">Próximas Actividades</h3>
+                    <p style="margin:0;font-size:0.85rem;color:#718096;">
+                        Tienes {{ eventos_proximos|default:"0" }} evento(s) en los próximos 7 días.
+                    </p>
+                </div>
                 <a href="{% url 'calendario' %}" class="view-all">Ver calendario</a>
             </header>
             
             <div class="upcoming-dates">
+                <!-- Aquí podrías, más adelante, listar eventos reales -->
                 <div class="upcoming-date-item">
                     <div class="date-badge">
                         <div class="date-badge-day">05</div>
@@ -632,48 +641,8 @@
 
 <!-- Lucide Icons Script -->
 <script src="https://unpkg.com/lucide@latest"></script>
-
-<!-- JavaScript Functions -->
 <script>
     // Inicializar iconos de Lucide
     lucide.createIcons();
-
-    // Toggle menú móvil
-    function toggleMenu() {
-        var mobileMenu = document.getElementById('mobile-menu');
-        var menuIcon = document.getElementById('menu-icon');
-        
-        mobileMenu.classList.toggle('active');
-        
-        if (mobileMenu.classList.contains('active')) {
-            menuIcon.setAttribute('data-lucide', 'x');
-        } else {
-            menuIcon.setAttribute('data-lucide', 'menu');
-        }
-        
-        lucide.createIcons();
-    }
-
-    // Cerrar sesión
-    function cerrarSesion(){
-        window.location.href = "{% url 'login' %}";
-    }
-
-    // Toggle menú de usuario
-    function toggleUserMenu() {
-        const menu = document.getElementById("user-menu");
-        menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    }
-
-    // Cerrar el menú de usuario si se hace clic fuera
-    document.addEventListener("click", function(event){
-        const userSection = document.querySelector(".user-section");
-        if(userSection && !userSection.contains(event.target)){
-            const userMenu = document.getElementById("user-menu");
-            if(userMenu) {
-                userMenu.style.display = "none";
-            }
-        }
-    });
 </script>
 {% endblock %}

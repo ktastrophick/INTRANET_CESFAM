@@ -6,68 +6,246 @@
 {% block extra_css %}
 <style>
     .solicitud-container {
-        background:white;
-        border-radius:16px;
-        box-shadow:0 2px 8px rgba(0,0,0,0.1);
-        padding:2rem;
-        max-width:800px;
-        margin:0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
     }
-    h2{font-size:1.5rem;font-weight:700;margin-bottom:1rem;color:#1a1a1a;}
-    .form-group{margin-bottom:1rem;}
-    label{display:block;font-weight:500;margin-bottom:0.25rem;}
-    input, select, textarea{
-        width:100%;
-        padding:0.6rem;
-        border-radius:8px;
-        border:1px solid #ccc;
+    
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #1a1a1a;
+        text-align: center;
     }
-    button.submit-btn{
-        background:#66b2ff;
-        color:white;
-        border:none;
-        padding:0.6rem 1.2rem;
-        border-radius:10px;
-        cursor:pointer;
-        font-weight:500;
-        transition:background 0.3s;
+    
+    .form-group {
+        margin-bottom: 1.5rem;
     }
-    button.submit-btn:hover{background:#4a9eea;}
+    
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+    }
+    
+    .submit-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s, transform 0.2s;
+    }
+    
+    .submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+    
+    .cancel-btn {
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+    
+    .cancel-btn:hover {
+        background: #4b5563;
+        text-decoration: none;
+        color: white;
+    }
+    
+    /* Estados de la solicitud (información) */
+    .solicitud-info {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .solicitud-info p {
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+    
+    .solicitud-info strong {
+        color: #374151;
+    }
+    
+    /* Mensajes de error */
+    .error-message {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .solicitud-container {
+            padding: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="page-content">
     <div class="solicitud-container">
-        <h2>Editar Solicitud</h2>
+        <h2> Editar Solicitud</h2>
 
-        <form method="POST">
+        <!-- Información actual de la solicitud -->
+        <div class="solicitud-info">
+            <p><strong>Estado actual:</strong> 
+                <span style="color: {% if solicitud.estado_solicitud.nombre == 'Aprobada' %}#16a34a{% elif solicitud.estado_solicitud.nombre == 'Rechazada' %}#dc2626{% else %}#d97706{% endif %};">
+                    {{ solicitud.estado_solicitud.nombre }}
+                </span>
+            </p>
+            <p><strong>Solicitante:</strong> {{ solicitud.id_usuario.nombre }}</p>
+            <p><strong>Fecha de registro:</strong> {{ solicitud.fecha_registro|date:"d/m/Y H:i" }}</p>
+        </div>
+
+        <form method="POST" id="solicitudForm">
             {% csrf_token %}
 
+            <!-- Tipo de Solicitud -->
             <div class="form-group">
-                <label for="solicitudTipo">Tipo de Solicitud:</label>
-                <select id="solicitudTipo" name="tipo_solicitud">
+                <label for="solicitudTipo"> Tipo de Solicitud:</label>
+                <select id="solicitudTipo" name="tipo_solicitud" required>
+                    <option value="">Seleccione un tipo</option>
                     {% for tipo in tipos_solicitud %}
-                        <option value="{{ tipo.id_tipo }}" {% if tipo.id_tipo == solicitud.tipo_solicitud.id_tipo %}selected{% endif %}>
+                        <option value="{{ tipo.id_tipo }}" 
+                            {% if tipo.id_tipo == solicitud.tipo_solicitud.id_tipo %}selected{% endif %}>
                             {{ tipo.nombre }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
 
+            <!-- Fechas -->
             <div class="form-group">
-                <label for="fechaInicio">Fecha Inicio:</label>
-                <input type="date" id="fechaInicio" name="dia_inicio" value="{{ solicitud.dia_inicio|date:'Y-m-d' }}" required>
+                <label for="fechaInicio"> Fecha Inicio:</label>
+                <input type="date" id="fechaInicio" name="dia_inicio" 
+                        value="{{ solicitud.dia_inicio|date:'Y-m-d' }}" 
+                        min="{{ today|date:'Y-m-d' }}" required>
+                <div class="error-message" id="fechaInicioError"></div>
             </div>
 
             <div class="form-group">
-                <label for="fechaFin">Fecha Fin:</label>
-                <input type="date" id="fechaFin" name="dia_fin" value="{{ solicitud.dia_fin|date:'Y-m-d' }}" required>
+                <label for="fechaFin"> Fecha Fin:</label>
+                <input type="date" id="fechaFin" name="dia_fin" 
+                        value="{{ solicitud.dia_fin|date:'Y-m-d' }}" 
+                        min="{{ today|date:'Y-m-d' }}" required>
+                <div class="error-message" id="fechaFinError"></div>
             </div>
 
-            <button class="submit-btn" type="submit">Guardar Cambios</button>
+            <!-- Botones -->
+            <div class="btn-group">
+                <a href="{% url 'lista_solicitudes' %}" class="cancel-btn">
+                    ✕ Cancelar
+                </a>
+                <button class="submit-btn" type="submit">
+                        Guardar Cambios
+                </button>
+            </div>
         </form>
-
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('solicitudForm');
+    const fechaInicio = document.getElementById('fechaInicio');
+    const fechaFin = document.getElementById('fechaFin');
+    const fechaInicioError = document.getElementById('fechaInicioError');
+    const fechaFinError = document.getElementById('fechaFinError');
+
+    // Validación de fechas en tiempo real
+    function validarFechas() {
+        let isValid = true;
+        
+        // Limpiar mensajes de error
+        fechaInicioError.textContent = '';
+        fechaFinError.textContent = '';
+        
+        const inicio = new Date(fechaInicio.value);
+        const fin = new Date(fechaFin.value);
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        
+        // Validar que fecha inicio no sea en el pasado
+        if (fechaInicio.value && inicio < hoy) {
+            fechaInicioError.textContent = 'No se pueden solicitar permisos en fechas pasadas';
+            isValid = false;
+        }
+        
+        // Validar que fecha fin sea posterior a fecha inicio
+        if (fechaInicio.value && fechaFin.value && inicio > fin) {
+            fechaFinError.textContent = 'La fecha fin debe ser posterior a la fecha de inicio';
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+
+    // Event listeners para validación en tiempo real
+    fechaInicio.addEventListener('change', validarFechas);
+    fechaFin.addEventListener('change', validarFechas);
+
+    // Validación al enviar el formulario
+    form.addEventListener('submit', function(e) {
+        if (!validarFechas()) {
+            e.preventDefault();
+            alert('Por favor, corrige los errores en el formulario antes de enviar.');
+        }
+    });
+
+    // Establecer fecha mínima como hoy
+    const today = new Date().toISOString().split('T')[0];
+    fechaInicio.min = today;
+    fechaFin.min = today;
+});
+</script>
 {% endblock %}

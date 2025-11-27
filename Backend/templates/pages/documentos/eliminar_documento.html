@@ -1,13 +1,16 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}Eliminar Documento — Intranet CESFAM{% endblock %}
+
 {% block content %}
 <div class="delete-container">
     <h2><i class="fa-solid fa-file-circle-xmark"></i> Eliminar Documento</h2>
 
     <div class="delete-box">
         <p class="warning">
-            ¿Estás seguro de que deseas eliminar el documento <strong>"{{ documento.nombre }}"</strong>?
+            ¿Estás seguro de que deseas eliminar el documento
+            <strong>"{{ documento.nombre }}"</strong>?
         </p>
 
         <p class="note">
@@ -20,7 +23,7 @@
                 <i class="fa-solid fa-trash"></i> Sí, eliminar
             </button>
 
-            <a href="{% url 'documentos' %}" class="cancel-btn">
+            <a href="{% url 'lista_documentos' %}" class="cancel-btn">
                 Cancelar
             </a>
         </form>

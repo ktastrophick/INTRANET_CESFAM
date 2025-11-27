@@ -57,19 +57,29 @@ body.login .login-form input:focus {
 
 /* Botón */
 body.login .login-btn {
-    background: linear-gradient(135deg, var(--green-500), var(--blue-500));
-    color: #fff;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.8rem 1rem;
+
+    background: #08bd26 !important;   /* verde */
+    color: #ffffff !important;        /* texto blanco */
+
     font-weight: 700;
-    padding: 0.8rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.25s ease;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
-body.login  .login-btn:hover {
+body.login .login-btn:hover {
+    background: #059020 !important;   /* un poco más oscuro al hover */
     transform: translateY(-2px);
-    filter: brightness(1.1);
+    filter: brightness(1.05);
 }
 
 /* Mensajes de error */

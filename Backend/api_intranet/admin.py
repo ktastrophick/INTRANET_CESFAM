@@ -6,9 +6,17 @@ from .models import (
     Cargo,
     Departamento,
     Usuario,
-    Evento,
-    Solicitud,
     EstadoSolicitud,
+    TipoSolicitud,
+    Solicitud,
+    Calendario,
+    TipoCalendario,
+    Avisos,
+    Licencia,
+    Perfil,
+    Documento,
+    InicioRegistrado,
+    Mensajes
 )
 
 # ----------------------------------------
@@ -36,8 +44,9 @@ class CargoAdmin(admin.ModelAdmin):
 # ----------------------------------------
 @admin.register(Departamento)
 class DepartamentoAdmin(admin.ModelAdmin):
-    list_display = ("id_departamento", "nombre")
+    list_display = ("id_departamento", "nombre", "jefe_departamento")
     search_fields = ("nombre",)
+    list_filter = ("jefe_departamento",)
     ordering = ("nombre",)
 
 
@@ -48,8 +57,7 @@ class DepartamentoAdmin(admin.ModelAdmin):
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = (
         "id_usuario",
-        "rut",
-        "dv",
+        "rut_completo",
         "nombre",
         "correo",
         "telefono",
@@ -61,6 +69,7 @@ class UsuarioAdmin(admin.ModelAdmin):
     list_filter = ("id_rol", "id_departamento", "id_cargo")
     search_fields = ("rut", "nombre", "correo")
     ordering = ("nombre",)
+    readonly_fields = ("fecha_registro",)
 
     fieldsets = (
         ("Datos de identificación", {
@@ -79,28 +88,6 @@ class UsuarioAdmin(admin.ModelAdmin):
 
 
 # ----------------------------------------
-# ADMIN Evento
-# ----------------------------------------
-@admin.register(Evento)
-class EventoAdmin(admin.ModelAdmin):
-    list_display = ("titulo", "fecha", "tipo", "usuario", "color", "fecha_registro")
-    list_filter = ("tipo", "usuario", "fecha")
-    search_fields = ("titulo", "descripcion")
-    ordering = ("-fecha",)
-    readonly_fields = ("fecha_registro",)
-
-    fieldsets = (
-        ("Información del Evento", {
-            "fields": ("titulo", "descripcion", "fecha", "color", "tipo")
-        }),
-        ("Metadatos", {
-            "fields": ("usuario", "fecha_registro"),
-            "classes": ("collapse",)
-        }),
-    )
-
-
-# ----------------------------------------
 # ADMIN EstadoSolicitud
 # ----------------------------------------
 @admin.register(EstadoSolicitud)
@@ -109,15 +96,247 @@ class EstadoSolicitudAdmin(admin.ModelAdmin):
     search_fields = ("nombre",)
     ordering = ("nombre",)
 
+
+# ----------------------------------------
+# ADMIN TipoSolicitud
+# ----------------------------------------
+@admin.register(TipoSolicitud)
+class TipoSolicitudAdmin(admin.ModelAdmin):
+    list_display = ("id_tipo", "nombre")
+    search_fields = ("nombre",)
+    ordering = ("nombre",)
+
+
 # ----------------------------------------
 # ADMIN Solicitud
 # ----------------------------------------
 @admin.register(Solicitud)
 class SolicitudAdmin(admin.ModelAdmin):
-    """
-    Administración básica de solicitudes.
+    list_display = (
+        "id_solicitud",
+        "id_usuario",
+        "tipo_solicitud",
+        "estado_solicitud",
+        "dia_inicio",
+        "dia_fin",
+        "fecha_registro",
+        "aprobacion_jefe",
+        "aprobacion_director"
+    )
+    list_filter = ("tipo_solicitud", "estado_solicitud", "aprobacion_jefe", "aprobacion_director")
+    search_fields = ("id_usuario__nombre", "tipo_solicitud__nombre")
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha_registro",)
 
-    No asumimos nombres de campos como 'titulo', 'estado', etc.,
-    para evitar los errores admin.E108/E116/E033 que ya viste.
-    """
-    pass
+    fieldsets = (
+        ("Información de la Solicitud", {
+            "fields": ("id_usuario", "tipo_solicitud", "estado_solicitud")
+        }),
+        ("Fechas", {
+            "fields": ("dia_inicio", "dia_fin")
+        }),
+        ("Aprobaciones", {
+            "fields": ("aprobacion_jefe", "aprobacion_director"),
+            "classes": ("collapse",)
+        }),
+        ("Registro", {
+            "fields": ("fecha_registro",),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN TipoCalendario
+# ----------------------------------------
+@admin.register(TipoCalendario)
+class TipoCalendarioAdmin(admin.ModelAdmin):
+    list_display = ("id_tipoc", "nombre")
+    search_fields = ("nombre",)
+    ordering = ("nombre",)
+
+
+# ----------------------------------------
+# ADMIN Calendario
+# ----------------------------------------
+@admin.register(Calendario)
+class CalendarioAdmin(admin.ModelAdmin):
+    list_display = (
+        "id_calendario",
+        "titulo",
+        "fecha",
+        "hora_inicio",
+        "hora_fin",
+        "todo_el_dia",
+        "id_tipoc",
+        "id_usuario",
+        "fecha_registro"
+    )
+    list_filter = ("id_tipoc", "id_usuario", "fecha", "todo_el_dia")
+    search_fields = ("titulo", "descripcion")
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha", "-hora_inicio")
+
+    fieldsets = (
+        ("Información del Evento", {
+            "fields": ("titulo", "descripcion", "fecha")
+        }),
+        ("Horario", {
+            "fields": ("hora_inicio", "hora_fin", "todo_el_dia")
+        }),
+        ("Categorización", {
+            "fields": ("id_tipoc", "id_usuario", "color")
+        }),
+        ("Registro", {
+            "fields": ("fecha_registro",),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN Avisos
+# ----------------------------------------
+@admin.register(Avisos)
+class AvisosAdmin(admin.ModelAdmin):
+    list_display = ("id_aviso", "titulo", "id_usuario", "fecha_registro")
+    list_filter = ("id_usuario", "fecha_registro")
+    search_fields = ("titulo", "descripcion")
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha_registro",)
+
+    fieldsets = (
+        ("Contenido del Aviso", {
+            "fields": ("titulo", "descripcion")
+        }),
+        ("Metadatos", {
+            "fields": ("id_usuario", "fecha_registro")
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN Licencia
+# ----------------------------------------
+@admin.register(Licencia)
+class LicenciaAdmin(admin.ModelAdmin):
+    list_display = (
+        "id_licencia",
+        "id_usuario",
+        "dia_inicio",
+        "dia_fin",
+        "fecha_registro"
+    )
+    list_filter = ("id_usuario", "dia_inicio", "dia_fin")
+    search_fields = ("id_usuario__nombre",)
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha_registro",)
+
+    fieldsets = (
+        ("Información de la Licencia", {
+            "fields": ("id_usuario", "dia_inicio", "dia_fin")
+        }),
+        ("Documentación", {
+            "fields": ("imagen",)
+        }),
+        ("Registro", {
+            "fields": ("fecha_registro",),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN Perfil
+# ----------------------------------------
+@admin.register(Perfil)
+class PerfilAdmin(admin.ModelAdmin):
+    list_display = ("id_perfil", "id_usuario", "fecha_registro")
+    list_filter = ("fecha_registro",)
+    search_fields = ("id_usuario__nombre", "descripcion")
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha_registro",)
+
+    fieldsets = (
+        ("Información del Perfil", {
+            "fields": ("id_usuario", "foto_perfil", "descripcion")
+        }),
+        ("Registro", {
+            "fields": ("fecha_registro",),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN Documento
+# ----------------------------------------
+@admin.register(Documento)
+class DocumentoAdmin(admin.ModelAdmin):
+    list_display = (
+        "id_documento",
+        "nombre",
+        "subido_por",
+        "fecha_subida"
+    )
+    list_filter = ("subido_por", "fecha_subida")
+    search_fields = ("nombre", "descripcion")
+    readonly_fields = ("fecha_subida",)
+    ordering = ("-fecha_subida",)
+
+    fieldsets = (
+        ("Información del Documento", {
+            "fields": ("nombre", "descripcion", "archivo")
+        }),
+        ("Metadatos", {
+            "fields": ("subido_por", "fecha_subida")
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN InicioRegistrado
+# ----------------------------------------
+@admin.register(InicioRegistrado)
+class InicioRegistradoAdmin(admin.ModelAdmin):
+    list_display = ("id_inicio", "id_usuario", "fecha_registro")
+    list_filter = ("id_usuario", "fecha_registro")
+    search_fields = ("id_usuario__nombre",)
+    readonly_fields = ("fecha_registro",)
+    ordering = ("-fecha_registro",)
+
+    fieldsets = (
+        ("Registro de Inicio", {
+            "fields": ("id_usuario", "fecha_registro")
+        }),
+    )
+
+
+# ----------------------------------------
+# ADMIN Mensajes
+# ----------------------------------------
+@admin.register(Mensajes)
+class MensajesAdmin(admin.ModelAdmin):
+    list_display = (
+        "id_mensaje",
+        "id_remitente",
+        "id_destinatario",
+        "fecha_envio",
+        "leido"
+    )
+    list_filter = ("id_remitente", "id_destinatario", "fecha_envio", "leido")
+    search_fields = ("cuerpo", "id_remitente__nombre", "id_destinatario__nombre")
+    readonly_fields = ("fecha_envio",)
+    ordering = ("-fecha_envio",)
+
+    fieldsets = (
+        ("Contenido del Mensaje", {
+            "fields": ("cuerpo",)
+        }),
+        ("Destinatarios", {
+            "fields": ("id_remitente", "id_destinatario")
+        }),
+        ("Estado", {
+            "fields": ("leido", "fecha_envio")
+        }),
+    )

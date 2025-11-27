@@ -17,32 +17,39 @@
 <section class="page-content">
   <div class="login-container" role="form" aria-label="Formulario de inicio de sesión">
     <h2>Iniciar sesión</h2>
-    <p></p>
+    <p>Ingresa tus credenciales para acceder a la intranet</p>
 
-    {# Muestra errores generales (credenciales inválidas, etc.) #}
-    {% if form.non_field_errors %}
+    {# Muestra mensajes de Django #}
+    {% if messages %}
       <div class="non-field-errors">
-        {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
       </div>
     {% endif %}
 
     <form method="post" action="{% url 'login' %}" class="login-form">
       {% csrf_token %}
 
-      <label for="id_username">Usuario (RUT sin puntos ni guion)</label>
-      {{ form.username }}
-      {% if form.username.errors %}
-        <div class="form-error">{{ form.username.errors.0 }}</div>
-      {% endif %}
+      <label for="username">Rut de Usuario (sin puntos, ni guion)</label>
+      <input type="text" 
+              id="username" 
+              name="username" 
+              placeholder="Ej: 12345678K" 
+              required
+              class="{% if form.username.errors %}error{% endif %}">
 
-      <label for="id_password">Contraseña</label>
+      <label for="password">Contraseña</label>
       <div class="password-wrapper">
-        {{ form.password }}
-
+        <input type="password" 
+                id="password" 
+                name="password" 
+                placeholder="Ingresa tu contraseña" 
+                required
+                class="{% if form.password.errors %}error{% endif %}">
       </div>
-      {% if form.password.errors %}
-        <div class="form-error">{{ form.password.errors.0 }}</div>
-      {% endif %}
 
       {# "next" para volver a la página solicitada #}
       {% if next %}
@@ -51,8 +58,7 @@
 
       <div class="help-row">
         <label class="remember-label">
-          {#<input type="checkbox" name="remember" id="rememberCheckbox">#}
-          {#<span>Mantener sesión iniciada</span>#}
+          <!-- Puedes agregar un checkbox "Recordarme" si lo necesitas -->
         </label>
         <a href="{#{% url 'password_reset' %}#}" class="small-link">¿Olvidaste tu contraseña?</a>
       </div>
@@ -67,4 +73,27 @@
 
 {% block extra_js %}
   <script src="{% static 'js/autenticacion.js' %}"></script>
+  
+  {# Script opcional para mejorar la experiencia de usuario #}
+  <script>
+    // Focus en el campo de RUT al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      const usernameField = document.getElementById('username');
+      if (usernameField) {
+        usernameField.focus();
+      }
+      
+      // Limpiar mensajes después de 5 segundos
+      setTimeout(function() {
+        const messages = document.querySelectorAll('.non-field-errors .alert');
+        messages.forEach(function(message) {
+          message.style.opacity = '0';
+          message.style.transition = 'opacity 0.5s';
+          setTimeout(function() {
+            message.remove();
+          }, 500);
+        });
+      }, 5000);
+    });
+  </script>
 {% endblock %}

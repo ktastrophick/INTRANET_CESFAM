@@ -1,15 +1,19 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}Editar Documento — Intranet CESFAM{% endblock %}
+
 {% block content %}
 <div class="form-container">
     <h2><i class="fa-solid fa-pen-to-square"></i> Editar Documento</h2>
 
-    {% if error %}
-    <p style="color:red; font-weight:600;">{{ error }}</p>
-    {% endif %}
-    {% if mensaje %}
-    <p style="color:green; font-weight:600;">{{ mensaje }}</p>
+    {# Mensajes del framework de mensajes de Django #}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p class="msg msg-{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data" action="{% url 'editar_documento' documento.id_documento %}">
@@ -17,29 +21,60 @@
 
         <div class="form-group">
             <label for="nombre">Nombre del documento:</label>
-            <input type="text" id="nombre" name="nombre" value="{{ documento.nombre }}" class="input-field" required>
+            <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value="{{ documento.nombre }}"
+                class="input-field"
+                required
+            >
         </div>
 
         <div class="form-group">
             <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" class="input-field" rows="3">{{ documento.descripcion }}</textarea>
+            <textarea
+                id="descripcion"
+                name="descripcion"
+                class="input-field"
+                rows="3"
+            >{{ documento.descripcion }}</textarea>
         </div>
 
         <div class="form-group">
             <label>Archivo actual:</label><br>
-            <a href="{{ documento.archivo.url }}" target="_blank" style="color:#2563eb; font-weight:600;">
-                {{ documento.archivo.name }}
-            </a>
+            {% if documento.archivo %}
+                <a href="{{ documento.archivo.url }}"
+                    target="_blank"
+                    style="color:#2563eb; font-weight:600;">
+                    {{ documento.archivo.name }}
+                </a>
+            {% else %}
+                <span style="color:#6b7280;">Sin archivo registrado.</span>
+            {% endif %}
         </div>
 
         <div class="form-group">
             <label for="archivo">Subir un nuevo archivo (opcional):</label>
-            <input type="file" id="archivo" name="archivo" class="input-field">
+            <input
+                type="file"
+                id="archivo"
+                name="archivo"
+                class="input-field"
+            >
+            <small style="display:block;color:#6b7280;margin-top:4px;">
+                Si no seleccionas un nuevo archivo, se mantendrá el actual.
+            </small>
         </div>
 
-        <button type="submit" class="upload-btn">
-            <i class="fa-solid fa-save"></i> Actualizar Documento
-        </button>
+        <div class="form-actions">
+            <button type="submit" class="upload-btn">
+                <i class="fa-solid fa-save"></i> Actualizar Documento
+            </button>
+            <a href="{% url 'lista_documentos' %}" class="cancel-btn">
+                Cancelar
+            </a>
+        </div>
     </form>
 </div>
 
@@ -73,19 +108,57 @@ label {
     border-radius: 8px;
     outline: none;
 }
-.upload-btn {
-    background: #16a34a;
-    color: #fff;
+.input-field:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37,99,235,0.2);
+}
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+.upload-btn,
+.cancel-btn {
     border: none;
     border-radius: 10px;
     padding: 10px 16px;
     font-weight: 600;
     cursor: pointer;
-    display: block;
-    margin: 1rem auto 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+.upload-btn {
+    background: #16a34a;
+    color: #fff;
 }
 .upload-btn:hover {
     filter: brightness(0.9);
+}
+.cancel-btn {
+    background: #6b7280;
+    color: #fff;
+}
+.cancel-btn:hover {
+    filter: brightness(0.9);
+}
+.messages {
+    margin-bottom: 1rem;
+}
+.msg {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.msg-error,
+.msg-danger {
+    color: #b91c1c;
+}
+.msg-success {
+    color: #15803d;
 }
 </style>
 {% endblock %}

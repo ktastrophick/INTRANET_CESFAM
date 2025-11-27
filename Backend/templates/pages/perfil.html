@@ -8,36 +8,57 @@
 {% endblock %}
 
 {% block content %}
-<section class="page-content">
-    <div class="perfil-container">
-        <h2>Mi Perfil</h2>
+<div class="perfil-container">
+    <h2>Mi Perfil</h2>
 
-        <div class="perfil-card">
-            <div class="perfil-info">
-                <div class="foto-perfil" aria-label="Foto de perfil">
+    <div class="perfil-card">
+        <div class="perfil-info">
+            <div class="foto-perfil" aria-label="Foto de perfil">
+                {# Si el usuario tiene foto en su perfil, la mostramos, si no, ícono #}
+                {% if perfil.foto_perfil %}
+                    <img src="{{ perfil.foto_perfil }}" alt="Foto de perfil">
+                {% else %}
                     <i class="fa-solid fa-user-circle"></i>
-                </div>
-
-                <div class="datos">
-                    <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
-                    <p><strong>RUT:</strong> {{ usuario.rut }}{% if usuario.dv %}-{{ usuario.dv }}{% endif %}</p>
-                    <p><strong>Correo:</strong> {{ usuario.correo|default:request.user.email }}</p>
-                    <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"—" }}</p>
-                    <p><strong>Departamento:</strong> {{ usuario.id_departamento.nombre|default:"—" }}</p>
-                    <p><strong>Cargo:</strong> {{ usuario.id_cargo.nombre|default:"—" }}</p>
-                    <p><strong>Rol:</strong> {{ usuario.id_rol.nombre|default:"Funcionario" }}</p>
-                </div>
+                {% endif %}
             </div>
 
-            <div class="acciones">
-                <a class="editar-btn" href="#">
-                    <i class="fa-solid fa-pen"></i> Editar Perfil
-                </a>
-                <a class="password-btn" href="#">
-                    <i class="fa-solid fa-lock"></i> Cambiar Contraseña
-                </a>
+            <div class="datos">
+                <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+                <p>
+                    <strong>RUT:</strong>
+                    {{ usuario.rut }}{% if usuario.dv %}-{{ usuario.dv }}{% endif %}
+                </p>
+                <p>
+                    <strong>Correo:</strong>
+                    {{ usuario.correo|default:"—" }}
+                </p>
+                <p>
+                    <strong>Teléfono:</strong>
+                    {{ usuario.telefono|default:"—" }}
+                </p>
+                <p>
+                    <strong>Departamento:</strong>
+                    {{ departamento|default:"—" }}
+                </p>
+                <p>
+                    <strong>Cargo:</strong>
+                    {{ cargo|default:"—" }}
+                </p>
+                <p>
+                    <strong>Rol:</strong>
+                    {{ rol|default:"Funcionario" }}
+                </p>
             </div>
         </div>
+
+        <div class="acciones">
+            <a class="editar-btn" href="{% url 'editar_perfil' %}">
+                <i class="fa-solid fa-pen"></i> Editar Perfil
+            </a>
+            <a class="password-btn" href="{% url 'cambiar_contrasena' %}">
+                <i class="fa-solid fa-lock"></i> Cambiar Contraseña
+            </a>
+        </div>
     </div>
-</section>
+</div>
 {% endblock %}

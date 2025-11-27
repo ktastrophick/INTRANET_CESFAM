@@ -1,84 +1,97 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block title %}Calendario — Intranet CESFAM{% endblock %}
+
 {% block extra_css %} 
     <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
-{%endblock%}
+{% endblock %}
 
 {% block content %}
-        <div class="calendar-layout">
-            <!-- IZQUIERDA: Calendario -->
-            <div class="calendar-container">
-                <div class="page-cal">
-                    <h2 class="title">Calendario</h2>
+<div class="calendar-page">
+    <header class="calendar-header">
+        <h2 class="page-title">Calendario</h2>
+        <p class="page-subtitle">
+            Gestiona tus eventos, reuniones y actividades internas del CESFAM.
+        </p>
+    </header>
 
-                    <!-- Formulario crear evento -->
-                    <section class="card form-card">
-                        <form id="form-nuevo" class="form-grid">
-                            {% csrf_token %}
-                            <input type="text" id="titulo" placeholder="Título" required />
-                            <input type="date" id="fecha" required />
-                            <!-- <input type="text" id="color" value="#3A8DFF" placeholder="#3A8DFF" /> -->
-                            <textarea id="desc" placeholder="Descripción (opcional)"></textarea>                            
-                            <br>
-                            <div>
-                                <button type="submit" class="btn-primary">Crear evento</button> 
-                            </div>
-                            </form>
-
-                            
-                    </section>
-
-                    <!-- Switcher Mes / Lista (dejamos "Mes" para la grilla de calendario) -->
-                    <section class="card switcher">
-                        <div class="tabs">
-                            <button id="tab-mes" class="active">Mes</button>
-                            <button id="tab-lista" type="button">Lista</button> <!-- si quieres, puede alternar a la derecha -->
+    <div class="calendar-layout" data-user-id="{{ usuario.id_usuario }}">
+        <!-- IZQUIERDA: Calendario -->
+        <div class="calendar-container">
+            <div class="page-cal">
+                <!-- Formulario crear evento -->
+                <section class="card form-card">
+                    <h3 class="card-title">Crear nuevo evento</h3>
+                    <form id="form-nuevo" class="form-grid">
+                        {% csrf_token %}
+                        <input type="text" id="titulo" placeholder="Título del evento" required />
+                        <input type="date" id="fecha" required />
+                        {# <input type="text" id="color" value="#3A8DFF" placeholder="#3A8DFF" /> #}
+                        <textarea id="desc" placeholder="Descripción (opcional)"></textarea>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                Crear evento
+                            </button>
                         </div>
+                    </form>
+                </section>
 
-                        <!-- Controles de mes -->
-                        <div id="month-controls" class="month-controls">
-                            <button id="prev-month" class="btn-icon" title="Mes anterior">◀</button>
-                            <div id="month-label"></div>
-                            <button id="next-month" class="btn-icon" title="Mes siguiente">▶</button>
-                            <button id="today-month" class="btn-ghost">Hoy</button>
-                        </div>
+                <!-- Switcher Mes / Lista -->
+                <section class="card switcher">
+                    <div class="tabs">
+                        <button id="tab-mes" class="active" type="button">Mes</button>
+                        <button id="tab-lista" type="button">Lista</button>
+                    </div>
 
-                        <!-- Vista mensual -->
-                        <div id="month-grid" class="month-grid">
-                        <div class="dow">Lun</div><div class="dow">Mar</div><div class="dow">Mié</div>
-                        <div class="dow">Jue</div><div class="dow">Vie</div><div class="dow">Sáb</div><div class="dow">Dom</div>
-                        <!-- Celdas dinámicas por JS -->
-                        </div>
-                    </section>
-                </div>
+                    <!-- Controles de mes -->
+                    <div id="month-controls" class="month-controls">
+                        <button id="prev-month" class="btn-icon" title="Mes anterior">◀</button>
+                        <div id="month-label"></div>
+                        <button id="next-month" class="btn-icon" title="Mes siguiente">▶</button>
+                        <button id="today-month" class="btn-ghost" type="button">Hoy</button>
+                    </div>
+
+                    <!-- Vista mensual -->
+                    <div id="month-grid" class="month-grid">
+                        <div class="dow">Lun</div>
+                        <div class="dow">Mar</div>
+                        <div class="dow">Mié</div>
+                        <div class="dow">Jue</div>
+                        <div class="dow">Vie</div>
+                        <div class="dow">Sáb</div>
+                        <div class="dow">Dom</div>
+                        {# Celdas dinámicas generadas por JS #}
+                    </div>
+                </section>
             </div>
-
-            <!-- DERECHA: Lista de eventos como sidebar -->
-            <aside class="event-list-container">
-                <div class="card">
-                    <div class="list-head" style="display:auto;justify-content:space-between;align-items:center;gap:.5rem">
-                        <h3 style="margin:0">Eventos</h3>
-                        <div class="filters" style="display:auto;gap:.5rem">
-                            <input type="date" id="filtro-start" />
-                            <button id="btn-filtrar" class="btn-light">Filtrar</button>
-                            <button id="btn-limpiar" class="btn-ghost">Limpiar</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="list-view">
-                    <ul id="items" class="items"></ul>
-                <div id="empty" class="empty-state" hidden>
-                    <div class="dot"></div>
-                        <p></p>
-                    </div>
-                </div>
-            </aside>
         </div>
 
-    {% endblock %}
+        <!-- DERECHA: Lista de eventos como sidebar -->
+        <aside class="event-list-container">
+            <div class="card">
+                <div class="list-head" style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
+                    <h3 style="margin:0">Eventos</h3>
+                    <div class="filters" style="display:flex;gap:.5rem">
+                        <input type="date" id="filtro-start" />
+                        <button id="btn-filtrar" class="btn-light" type="button">Filtrar</button>
+                        <button id="btn-limpiar" class="btn-ghost" type="button">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="list-view">
+                <ul id="items" class="items"></ul>
+                <div id="empty" class="empty-state" hidden>
+                    <div class="dot"></div>
+                    <p>No hay eventos para el rango seleccionado.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
 
-    {% block extra_js %}
+{% block extra_js %}
     <script src="{% static 'js/calendario.js' %}"></script>
-    {% endblock %}
+{% endblock %}
