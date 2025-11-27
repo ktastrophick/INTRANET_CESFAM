@@ -133,6 +133,25 @@
 .fa-trash { color: #dc2626; }       /* Eliminar */
 .fa-pen { color: #2563eb; }         /* Actualizar */
 .fa-envelope { color: #16a34a; }    /* Enviar mensaje */
+
+/* Filtros avanzados */
+.filtros-avanzados {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.filtros-avanzados input,
+.filtros-avanzados select {
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    min-width: 200px;
+    flex: 1;
+}
+
 </style>
 {% endblock %}
 
@@ -149,13 +168,18 @@
         {% endif %}
     </div>
 
-    <!-- Filtro por inicial -->
-    <div class="filtro-inicial">
-        {% for letra in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-            <a href="?inicial={{ letra }}">{{ letra }}</a>
-        {% endfor %}
-        <a href="{% url 'lista_funcionarios' %}">Todos</a>
+    <!-- Filtros Avanzados -->
+    <div class="filtros-avanzados">
+        <input type="text" id="buscarNombre" placeholder="Buscar por nombre o RUT…">
+
+        <select id="filtroCargo">
+            <option value="">Todos los cargos</option>
+            {% for cargo in cargos %}
+            <option value="{{ cargo.nombre }}">{{ cargo.nombre }}</option>
+            {% endfor %}
+        </select>
     </div>
+
 
     <!-- Listado de funcionarios -->
     <div class="card-body">
@@ -197,4 +221,34 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const buscarInput = document.getElementById("buscarNombre");
+    const filtroCargo = document.getElementById("filtroCargo");
+    const funcionarios = document.querySelectorAll(".funcionario-item");
+
+    function filtrar() {
+        const texto = buscarInput.value.toLowerCase();
+        const cargoSel = filtroCargo.value.toLowerCase();
+
+        funcionarios.forEach(item => {
+            const nombre = item.querySelector(".funcionario-info p:nth-child(2)").innerText.toLowerCase();
+            const rut = item.querySelector(".funcionario-info p:nth-child(1)").innerText.toLowerCase();
+            const cargo = item.querySelector(".funcionario-info p:nth-child(5)").innerText.toLowerCase();
+
+            const coincideTexto = nombre.includes(texto) || rut.includes(texto);
+            const coincideCargo = cargoSel === "" || cargo.includes(cargoSel);
+
+            item.style.display = (coincideTexto && coincideCargo) ? "flex" : "none";
+        });
+    }
+
+    buscarInput.addEventListener("keyup", filtrar);
+    filtroCargo.addEventListener("change", filtrar);
+});
+</script>
+
 {% endblock %}

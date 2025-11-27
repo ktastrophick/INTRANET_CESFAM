@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<section class="page-content">
+    <div class="solicitud-container">
+        <h2>Eliminar Solicitud</h2>
+
+        <p>¿Estás seguro de que deseas eliminar esta solicitud?</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button class="submit-btn" style="background:#dc2626;" type="submit">Eliminar</button>
+            <a href="{% url 'lista_solicitudes' %}" class="submit-btn" style="background:#666;">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

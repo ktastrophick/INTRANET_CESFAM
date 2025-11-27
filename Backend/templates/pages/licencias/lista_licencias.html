@@ -150,39 +150,52 @@ tr:hover {
                     <th>Acciones</th>
                 </tr>
             </thead>
-<tbody>
-    <!-- Datos de referencia -->
-    <tr>
-        <td>Juan Pérez</td>
-        <td>2025-10-01</td>
-        <td>2025-10-05</td>
-        <td>licencia1.pdf</td>
-        <td>
-            <a href="#"><button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button></a>
-            <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-        </td>
-    </tr>
-    <tr>
-        <td>María López</td>
-        <td>2025-11-10</td>
-        <td>2025-11-12</td>
-        <td>licencia2.jpg</td>
-        <td>
-            <a href="#"><button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button></a>
-            <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-        </td>
-    </tr>
-    <tr>
-        <td>Ana Torres</td>
-        <td>2025-12-15</td>
-        <td>2025-12-20</td>
-        <td>licencia3.pdf</td>
-        <td>
-            <a href="#"><button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button></a>
-            <button class="action-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-        </td>
-    </tr>
-</tbody>
+        <tbody>
+            {% for licencia in licencias %}
+            <tr>
+                <td>{{ licencia.id_usuario.nombre }}</td>
+                <td>{{ licencia.dia_inicio }}</td>
+                <td>{{ licencia.dia_fin }}</td>
+                <td>
+                    {% if licencia.imagen %}
+                        <a href="{{ licencia.imagen.url }}" download>{{ licencia.imagen }}</a>
+                    {% else %}
+                        Sin archivo
+                    {% endif %}
+                </td>
+                <td>
+                    {% if licencia.imagen %}
+                        <a href="{{ licencia.imagen.url }}" download>
+                            <button class="action-btn" title="Descargar">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </a>
+                    {% endif %}
+
+                    <!-- Botón Editar -->
+                    <a href="{% url 'editar_licencia' licencia.id_licencia %}">
+                        <button class="action-btn" title="Editar">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </a>
+
+                    <!-- Botón Eliminar -->
+                    <form method="post" action="{% url 'eliminar_licencia' licencia.id_licencia %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn" title="Eliminar">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay licencias registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
 
         </table>
     </div>

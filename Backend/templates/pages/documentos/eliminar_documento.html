@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="delete-container">
+    <h2><i class="fa-solid fa-file-circle-xmark"></i> Eliminar Documento</h2>
+
+    <div class="delete-box">
+        <p class="warning">
+            ¿Estás seguro de que deseas eliminar el documento <strong>"{{ documento.nombre }}"</strong>?
+        </p>
+
+        <p class="note">
+            Esta acción no se puede deshacer.
+        </p>
+
+        <form method="POST" action="{% url 'eliminar_documento' documento.id_documento %}">
+            {% csrf_token %}
+            <button class="delete-btn" type="submit">
+                <i class="fa-solid fa-trash"></i> Sí, eliminar
+            </button>
+
+            <a href="{% url 'documentos' %}" class="cancel-btn">
+                Cancelar
+            </a>
+        </form>
+    </div>
+</div>
+
+<style>
+.delete-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+h2 {
+    color: #b91c1c;
+    margin-bottom: 20px;
+}
+
+.warning {
+    font-size: 18px;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.note {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    filter: brightness(0.9);
+}
+
+.cancel-btn {
+    margin-left: 15px;
+    background: #4b5563;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cancel-btn:hover {
+    filter: brightness(0.9);
+}
+</style>
+{% endblock %}

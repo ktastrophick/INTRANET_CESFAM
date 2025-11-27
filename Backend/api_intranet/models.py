@@ -72,7 +72,7 @@ class InicioRegistrado(models.Model):
 
 class Licencia(models.Model):
     id_licencia = models.AutoField(primary_key=True)
-    imagen = models.CharField(max_length=255, blank=True, null=True)
+    imagen = models.FileField(upload_to='licencias/')
     dia_inicio = models.DateField(blank=True, null=True)
     dia_fin = models.DateField(blank=True, null=True)
     id_usuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_usuario', blank=True, null=True)
@@ -113,6 +113,9 @@ class Solicitud(models.Model):
     tipo_solicitud = models.ForeignKey('TipoSolicitud', models.DO_NOTHING, db_column='tipo_solicitud', blank=True, null=True)
     estado_solicitud = models.ForeignKey(EstadoSolicitud, models.DO_NOTHING, db_column='estado_solicitud', blank=True, null=True)
     fecha_registro = models.DateTimeField(blank=True, null=True)
+    aprobacion_jefe = models.BooleanField(null=True, blank=True)
+    aprobacion_director = models.BooleanField(null=True, blank=True)
+
 
     class Meta:
         managed = True

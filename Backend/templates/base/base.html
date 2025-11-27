@@ -47,19 +47,21 @@
                 <i class="fa-solid fa-house"></i><span>Inicio</span>
             </a>
 
-            <a href="{% url 'documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
+            <a href="{% url 'lista_documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
                 <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
             </a>
 
-            <a href="{% url 'licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
+            {% if rol_usuario == "Director" %}
+            <a href="{% url 'lista_licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
                 <i class="fa-solid fa-id-card"></i><span>Licencias</span>
             </a>
+            {% endif %}
 
             <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
                 <i class="fa-solid fa-calendar"></i><span>Calendario</span>
             </a>
 
-            <a href="{% url 'solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+            <a href="{% url 'lista_solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
                 <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
             </a>
 
@@ -140,7 +142,7 @@
           {{ funcionario.username|first|upper }}
         </div>
         <div class="info">
-          <h5>{{ funcionario.get_full_name|default:funcionario.username }}</h5>
+          <h5>{{ funcionario.get_full_name|default:funcionario.nombre }}</h5>
           <p class="last">Haz clic para abrir el chat</p>
         </div>
       </div>

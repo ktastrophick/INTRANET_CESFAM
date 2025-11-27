@@ -1,23 +1,27 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpRequest, HttpResponse
 from api_intranet.models import Usuario, RolUsuario, Departamento, Cargo
-from api_intranet.decoradores import rol_requerido
-
 
 def lista_funcionarios(request: HttpRequest) -> HttpResponse:
     # Obtener filtro por inicial desde GET
     inicial = request.GET.get("inicial")
-    
+
     if inicial:
         funcionarios = Usuario.objects.filter(nombre__istartswith=inicial)
     else:
         funcionarios = Usuario.objects.all()
-    
-    return render(
-        request,
-        'pages/funcionarios/lista_funcionarios.html',
-        {'funcionarios': funcionarios}
-    )
+
+    # Obtener cargos correctamente
+    cargos = Cargo.objects.all()
+
+    # Obtener rol del usuario (ajusta según tu sistema de roles)
+    rol_usuario = request.session.get("rol")  # ejemplo
+
+    return render(request, "pages/funcionarios/lista_funcionarios.html", {
+        "funcionarios": funcionarios,
+        "rol_usuario": rol_usuario,
+        "cargos": cargos
+    })
 
 def form_funcionario(request):
     # Obtener datos para mostrar en el formulario

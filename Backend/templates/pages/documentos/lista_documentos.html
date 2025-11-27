@@ -36,9 +36,11 @@
         <h2>Gestión de Documentos Institucionales</h2>
 
         {# Cambia a {% url 'documentos_subir' %} si ya tienes vista de carga #}
+        {% if rol_usuario == "Director" %}
         <a href="{% url 'form_documento' %}">
           <button class="upload-btn"><i class="fa-solid fa-plus"></i> Subir documento</button>
         </a>
+        {% endif %}
       </div>
 
       <div class="filters">
@@ -65,35 +67,62 @@
           </tr>
         </thead>
         <tbody>
-          {# Demo estático: reemplaza por un loop cuando tengas datos reales #}
-          <tr>
-            <td>Reglamento Interno 2025</td>
-            <td>PDF</td>
-            <td>2025-08-12</td>
-            <td>Carolina Soto</td>
-            <td>
-              <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>Formulario Solicitud Vacaciones</td>
-            <td>Word</td>
-            <td>2025-09-18</td>
-            <td>Juan Pérez</td>
-            <td>
-              <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>Informe de Actividades Mensual</td>
-            <td>Excel</td>
-            <td>2025-09-05</td>
-            <td>María López</td>
-            <td>
-              <button class="action-btn" title="Descargar"><i class="fa-solid fa-download"></i></button>
-            </td>
-          </tr>
+          {% for d in documentos %}
+            <tr>
+              <td>{{ d.nombre }}</td>
+
+              <td>
+                {% if d.archivo.url|lower|slice:"-4:" == ".pdf" %}
+                    PDF
+                {% elif d.archivo.url|lower|slice:"-4:" == ".doc" or d.archivo.url|lower|slice:"-5:" == ".docx" %}
+                    Word
+                {% elif d.archivo.url|lower|slice:"-4:" == ".xls" or d.archivo.url|lower|slice:"-5:" == ".xlsx" %}
+                    Excel
+                {% else %}
+                    Otro
+                {% endif %}
+              </td>
+
+
+              <td>{{ d.fecha_subida|date:"Y-m-d" }}</td>
+              <td>{{ d.subido_por.nombre }}</td>
+
+              <td>
+                  <a href="{{ d.archivo.url }}" download>
+                      <button class="action-btn" title="Descargar">
+                          <i class="fa-solid fa-download"></i>
+                      </button>
+                  </a>
+
+                  <div class="documento-actions">
+
+                      {% if rol_usuario == "Director" %}
+                      <a href="{% url 'editar_documento' d.id_documento %}">
+                          <i class="fa-solid fa-pen" title="Editar"></i>
+                      </a>
+                      {% endif %}
+
+                      <a href="mailto:{{ d.subido_por.correo }}">
+                          <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
+                      </a>
+
+                      {% if rol_usuario == "Director" %}
+                      <a href="{% url 'eliminar_documento' d.id_documento %}">
+                          <i class="fa-solid fa-trash" title="Eliminar"></i>
+                      </a>
+                      {% endif %}
+
+                  </div>
+              </td>
+
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center; padding:1.5rem;">No hay documentos registrados.</td>
+            </tr>
+          {% endfor %}
         </tbody>
+
       </table>
     </div>
   </section>

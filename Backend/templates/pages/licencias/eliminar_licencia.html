@@ -1,0 +1,73 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Eliminar Licencia — Intranet CESFAM{% endblock %}
+
+{% block extra_css %}
+<style>
+.delete-container {
+    background:white;
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    padding:2rem;
+    max-width:600px;
+    margin:0 auto;
+    text-align:center;
+}
+
+h2 {
+    color:#d50000;
+    margin-bottom:1rem;
+}
+
+p {
+    margin-bottom:1.5rem;
+}
+
+button.confirm-btn {
+    background:#d50000;
+    color:white;
+    border:none;
+    padding:0.7rem 1.5rem;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+button.confirm-btn:hover {
+    background:#b00000;
+}
+
+a.cancel-btn {
+    margin-left:1rem;
+    padding:0.7rem 1.5rem;
+    background:#ccc;
+    border-radius:10px;
+    text-decoration:none;
+    color:#333;
+    font-weight:600;
+}
+
+a.cancel-btn:hover {
+    background:#bdbdbd;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-content">
+    <div class="delete-container">
+        <h2>¿Eliminar esta licencia?</h2>
+        <p>Funcionario: <strong>{{ licencia.id_usuario.nombre }}</strong></p>
+        <p>Del <strong>{{ licencia.dia_inicio }}</strong> al <strong>{{ licencia.dia_fin }}</strong></p>
+
+        <form method="post" action="{% url 'eliminar_licencia' licencia.id_licencia %}">
+            {% csrf_token %}
+            <button type="submit" class="confirm-btn">
+                <i class="fa-solid fa-trash"></i> Eliminar Definitivamente
+            </button>
+            <a href="{% url 'lista_licencias' %}" class="cancel-btn">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock %}
