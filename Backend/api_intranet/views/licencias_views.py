@@ -3,7 +3,6 @@ from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
 from api_intranet.models import Licencia, Usuario
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from typing import Optional
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
@@ -64,6 +63,11 @@ def form_licencia(request: HttpRequest) -> HttpResponse:
     usuario = get_usuario_actual(request)
     if not usuario:
         return redirect("login")
+    
+    # Obtener todos los usuarios si es admin/director para el select
+    usuarios = None
+    if usuario.id_rol and (usuario.id_rol.nombre == "Admin" or usuario.id_rol.nombre == "Director"):
+        usuarios = Usuario.objects.all()
 
     if request.method == "POST":
         dia_inicio_str = request.POST.get("dia_inicio", "").strip()
@@ -118,9 +122,14 @@ def form_licencia(request: HttpRequest) -> HttpResponse:
                     "dia_fin": dia_fin_str
                 }
             })
-
-    # GET request - mostrar formulario vacío
-    return render(request, "pages/licencias/form_licencia.html")
+    # GET request - mostrar formulario con datos necesarios
+    context = {
+        "usuarios": usuarios,
+        "rol_usuario": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
+        "usuario": usuario,
+        "today": timezone.now().date()  # También necesitas esta variable para el min date
+    }
+    return render(request, "pages/licencias/form_licencia.html", context)   
 
 def editar_licencia(request: HttpRequest, id_licencia: int) -> HttpResponse:
     """Editar licencia existente"""
