@@ -3,8 +3,8 @@ from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
 from api_intranet.models import Solicitud, TipoSolicitud, EstadoSolicitud, Usuario
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from typing import Optional
+from datetime import date
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
     """Obtiene el usuario actual desde la sesión"""
@@ -193,32 +193,39 @@ def form_solicitud(request: HttpRequest) -> HttpResponse:
     if not usuario:
         return redirect("login")
 
+    # Obtener tipos de solicitud (siempre disponible)
+    tipos_solicitud = TipoSolicitud.objects.all()
+    estado_pendiente = EstadoSolicitud.objects.get(nombre="Pendiente")
+
     if request.method == "POST":
         tipo_id = request.POST.get("tipo_solicitud")
         fecha_inicio = request.POST.get("dia_inicio")
         fecha_fin = request.POST.get("dia_fin")
 
+        print(f"DEBUG POST: tipo_id={tipo_id}, fecha_inicio={fecha_inicio}, fecha_fin={fecha_fin}")
+
+        # Validaciones básicas
         if not tipo_id or not fecha_inicio or not fecha_fin:
             messages.error(request, "Todos los campos son obligatorios.")
-            tipos_solicitud = TipoSolicitud.objects.all()
             return render(request, "pages/solicitudes/form_solicitud.html", {
                 "tipos_solicitud": tipos_solicitud,
                 "data": {
                     "tipo_solicitud": tipo_id,
                     "dia_inicio": fecha_inicio,
                     "dia_fin": fecha_fin
-                }
+                },
+                "today": date.today()
             })
 
         try:
-            # Crear la solicitud
-            estado_pendiente = EstadoSolicitud.objects.get(nombre="Pendiente")
-            tipo_solicitud = TipoSolicitud.objects.get(id_tipo=tipo_id)
+            # Obtener el objeto TipoSolicitud
+            tipo_solicitud_obj = TipoSolicitud.objects.get(id_tipo=tipo_id)
             
+            # Crear la solicitud con todos los campos requeridos
             solicitud = Solicitud(
                 dia_inicio=fecha_inicio,
                 dia_fin=fecha_fin,
-                tipo_solicitud=tipo_solicitud,
+                tipo_solicitud=tipo_solicitud_obj,
                 id_usuario=usuario,
                 estado_solicitud=estado_pendiente,
                 fecha_registro=timezone.now(),
@@ -226,29 +233,48 @@ def form_solicitud(request: HttpRequest) -> HttpResponse:
                 aprobacion_director=None
             )
             
-            # Validar la solicitud antes de guardar
+            print(f"DEBUG: Creando solicitud para usuario {usuario.nombre}")
+            print(f"DEBUG: Tipo solicitud: {tipo_solicitud_obj.nombre}")
+            print(f"DEBUG: Estado: {estado_pendiente.nombre}")
+            
+            # Validar y guardar
             solicitud.full_clean()
             solicitud.save()
+            
+            print(f"DEBUG: Solicitud guardada con ID: {solicitud.id_solicitud}")
             
             messages.success(request, "Solicitud enviada correctamente.")
             return redirect("lista_solicitudes")
             
-        except Exception as e:
-            messages.error(request, f"Error al crear la solicitud: {str(e)}")
-            tipos_solicitud = TipoSolicitud.objects.all()
+        except TipoSolicitud.DoesNotExist:
+            messages.error(request, "El tipo de solicitud seleccionado no existe.")
             return render(request, "pages/solicitudes/form_solicitud.html", {
                 "tipos_solicitud": tipos_solicitud,
                 "data": {
                     "tipo_solicitud": tipo_id,
                     "dia_inicio": fecha_inicio,
                     "dia_fin": fecha_fin
-                }
+                },
+                "today": date.today()
+            })
+        except Exception as e:
+            messages.error(request, f"Error al crear la solicitud: {str(e)}")
+            print(f"ERROR: {str(e)}")
+            return render(request, "pages/solicitudes/form_solicitud.html", {
+                "tipos_solicitud": tipos_solicitud,
+                "data": {
+                    "tipo_solicitud": tipo_id,
+                    "dia_inicio": fecha_inicio,
+                    "dia_fin": fecha_fin
+                },
+                "today": date.today()
             })
 
-    # GET request - mostrar formulario
-    tipos_solicitud = TipoSolicitud.objects.all()
+    # GET request - mostrar formulario vacío
     return render(request, "pages/solicitudes/form_solicitud.html", {
-        "tipos_solicitud": tipos_solicitud
+        "tipos_solicitud": tipos_solicitud,
+        "data": {},
+        "today": date.today()
     })
 
 
