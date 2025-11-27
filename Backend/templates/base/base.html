@@ -24,179 +24,161 @@
   {% block extra_css %}{% endblock %}
 </head>
 
-<!-- body_class se inserta aquí -->
 <body class="{% block body_class %}{% endblock %}">
-
 <header class="site-header">
     <div class="header-container">
+
         <!-- Logo + título -->
         <div class="logo-section">
-          <div class="logo">
-              <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
-          </div>
-          <div class="logo-text">
-              <h1>Intranet CESFAM Santa Rosa</h1>
-              <p>Temuco, Chile</p>
-          </div>
+            <div class="logo">
+                <img src="{% static 'assets/images/cesfam.png' %}" alt="Logo CESFAM" />
+            </div>
+            <div class="logo-text">
+                <h1>Intranet CESFAM Santa Rosa</h1>
+                <p>Temuco, Chile</p>
+            </div>
         </div>
 
-        {% if request.resolver_match.url_name != 'login' %}
-        <!-- NAV -->
+        <!-- NAV solo cuando NO estemos en login -->
+        {% if request.user.is_authenticated and request.resolver_match.url_name != 'login' %}
         <nav class="main-nav" aria-label="Navegación principal">
-            <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+
+            <a href="{% url 'index' %}"
+                class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                 <i class="fa-solid fa-house"></i><span>Inicio</span>
             </a>
 
-            <a href="{% url 'lista_documentos' %}" class="{% if request.resolver_match.url_name == 'documentos' %}active{% endif %}">
+            <a href="{% url 'lista_documentos' %}"
+                class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
                 <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
             </a>
 
-            {% if rol_usuario == "Director" %}
-            <a href="{% url 'lista_licencias' %}" class="{% if request.resolver_match.url_name == 'licencias' %}active{% endif %}">
+            <a href="{% url 'lista_licencias' %}"
+                class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
                 <i class="fa-solid fa-id-card"></i><span>Licencias</span>
             </a>
-            {% endif %}
 
-            <a href="{% url 'calendario' %}" class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
-                <i class="fa-solid fa-calendar"></i><span>Calendario</span>
-            </a>
-
-            <a href="{% url 'lista_solicitudes' %}" class="{% if request.resolver_match.url_name == 'solicitudes' %}active{% endif %}">
+            <a href="{% url 'lista_solicitudes' %}"
+                class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
                 <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
             </a>
 
-            <a href="{% url 'lista_funcionarios' %}" class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+            <a href="{% url 'lista_funcionarios' %}"
+                class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
                 <i class="fa-solid fa-users"></i><span>Funcionarios</span>
             </a>
 
-            <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
-                <i class="fa-solid fa-user"></i><span>Perfil</span>
-            </a>
+        </nav>
 
-        <!-- Usuario -->
-        {% if request.user.is_authenticated %} 
-            <div class="user-section" id="userDropdownToggle">
-              <div class="user-info">
-                  <p>{{ request.user.get_full_name|default:request.user.username }}</p>
-                  <span>{{ request.user.cargo|default:"Funcionario/a" }}</span>
-              </div>
-              <i class="fas fa-chevron-down"></i>
-              <div class="dropdown" id="userDropdown">
-                <a href="{% url 'perfil' %}">
-                  <i class="fas fa-user"></i> Mi Perfil
-                </a>
-                <a href={#"{% url 'configuracion' %}"#}>
-                  <i class="fas fa-cog"></i> Configuración
-                </a>
-                <hr>
+        <!-- DROPDOWN DEL USUARIO - MOVIDO FUERA DEL NAV -->
+        <div class="user-section" id="userDropdownToggle">
+              
+            <!-- INFO DEL USUARIO -->
+            <div class="user-info">
+                <p>{{ request.user.username }}</p>
+                <span>Funcionario/a</span>
+            </div>
+
+            <!-- ICONO -->
+            <i class="fas fa-chevron-down"></i>
+
+            <!-- MENÚ DESPLEGABLE -->
+            <div class="dropdown" id="userDropdown">
+            <!-- Cerrar sesión -->
                 <form action="{% url 'logout' %}" method="post" class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout">
-                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+                    <button type="submit" class="btn-logout dropdown-item">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
                     </button>
                 </form>
-              </div>
             </div>
-        {% else %}
-            <a class="btn-login" href="{% url 'login' %}">
-              <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
-            </a>
+        </div>
         {% endif %}
-        {% endif %}
-        </nav>
+
     </div>
 </header>
+
+
 <main class="page-content">
     {% block content %}
     {% endblock %}
 </main>
+
 <footer class="site-footer">
     <div class="footer-info">
         <h4>CESFAM Santa Rosa</h4>
-        <p>Centro de Salud Familiar<br>
-        Av. Pircunche 0316<br>
-        Temuco, Región de La Araucanía – Chile<br>
-        Teléfono: <a href="tel:+56453244400">+56 45 324 4400</a><br>
-        Email: <a href="mailto:sda.santarosa@temuco.cl">sda.santarosa@temuco.cl</a></p>
+        <p>
+            Centro de Salud Familiar<br>
+            Av. Pircunche 0316 — Temuco<br>
+            Teléfono: <a href="tel:+56453244400">+56 45 324 4400</a><br>
+            Email: <a href="mailto:sda.santarosa@temuco.cl">sda.santarosa@temuco.cl</a>
+        </p>
+
         <div class="footer-social">
-          <a href="https://facebook.com/cesfamsantarosa" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-          <a href="https://www.instagram.com/cesfamsantarosatemuco/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://saludtemuco.cl/cesfam-santa-rosa/" target="_blank"><i class="fa-solid fa-globe"></i></a>
-          <a href="{#{% url 'manual' %}#}"><i class="fa-solid fa-book"></i></a>
+            <a href="https://facebook.com/cesfamsantarosa" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.instagram.com/cesfamsantarosatemuco/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://saludtemuco.cl/cesfam-santa-rosa/" target="_blank"><i class="fa-solid fa-globe"></i></a>
         </div>
     </div>
+
     <div class="footer-bottom">
-        <p>&copy; {% now "Y" %} CESFAM Santa Rosa — Intranet | Todos los derechos reservados</p>
+        <p>&copy; {% now "Y" %} CESFAM Santa Rosa — Intranet</p>
     </div>
 </footer>
 
-<!-- ===== CHAT: HTML dentro del body (al final) ===== -->
-  <!-- Botón flotante -->
-  <div class="chat-floating-btn" id="chatFloatingBtn" aria-label="Abrir chat">
-    <i class="fas fa-comments" aria-hidden="true"></i>
-  </div>
 
-  <!-- Panel general -->
-  <div class="chat-panel" id="chatPanel" role="dialog" aria-hidden="true" aria-labelledby="chatTitle">
-    
-    <!-- Vista lista de conversaciones -->
+<!-- CHAT (solo si existen funcionarios en contexto) -->
+{% if funcionarios %}
+<div class="chat-floating-btn" id="chatFloatingBtn" aria-label="Abrir chat">
+    <i class="fas fa-comments"></i>
+</div>
+
+<div class="chat-panel" id="chatPanel">
+
     <div class="chat-list" id="chatList">
-      <div class="chat-list-header">
-        <h4 id="chatTitle">Mensajes</h4>
-      </div>
+        <div class="chat-list-header">
+            <h4>Mensajes</h4>
+        </div>
 
-      {% for funcionario in funcionarios %}
-      <div class="chat-list-item" data-user="{{ funcionario.id }}">
-        <!-- Avatar con inicial del nombre -->
-        <div class="avatar" aria-hidden="true">
-          {{ funcionario.username|first|upper }}
+        {% for funcionario in funcionarios %}
+        <div class="chat-list-item" data-user="{{ funcionario.id_usuario }}">
+            <div class="avatar">
+                {{ funcionario.nombre|first|upper }}
+            </div>
+            <div class="info">
+                <h5>{{ funcionario.nombre }}</h5>
+                <p>Haz clic para abrir el chat</p>
+            </div>
         </div>
-        <div class="info">
-          <h5>{{ funcionario.get_full_name|default:funcionario.nombre }}</h5>
-          <p class="last">Haz clic para abrir el chat</p>
-        </div>
-      </div>
-      {% empty %}
-      <div class="chat-list-item">
-        <div class="info">
-          <p>No hay conversaciones disponibles.</p>
-        </div>
-      </div>
-      {% endfor %}
+        {% empty %}
+        <p>No hay funcionarios disponibles.</p>
+        {% endfor %}
+
     </div>
 
-    <!-- Vista chat individual -->
-    <div class="chat-window" id="chatWindow" aria-hidden="true">
-      <div class="chat-window-header">
-        <button id="backToList" class="chat-back-btn" aria-label="Volver a lista">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <h4 id="chatWith">Chat</h4>
-      </div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-window-header">
+            <button id="backToList" class="chat-back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h4 id="chatWith">Chat</h4>
+        </div>
 
-      <!-- Contenedor de mensajes -->
-      <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"></div>
+        <div class="chat-messages" id="chatMessages"></div>
 
-      <!-- Input para escribir -->
-      <div class="chat-input">
-        <input 
-          type="text" 
-          id="chatInput" 
-          placeholder="Escribe un mensaje..." 
-          aria-label="Mensaje"
-          autocomplete="off"
-        >
-        
-        <button id="sendBtn" class="chat-send-btn" aria-label="Enviar">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+            <button id="sendBtn" class="chat-send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
     </div>
-  </div>
 
-  {% block extra_js %}{% endblock %}
+</div>
+{% endif %}
 
-  <script src="{% static 'js/chat.js' %}" defer></script>
-  <!--<script src="{% static 'js/main.js' %}"></script>-->
+<script src="{% static 'js/main.js' %}" defer></script>
+<script src="{% static 'js/chat.js' %}" defer></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
