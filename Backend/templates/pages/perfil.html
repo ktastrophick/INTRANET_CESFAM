@@ -4,102 +4,40 @@
 {% block title %}Mi Perfil — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
-    {% endblock %}
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock %}
 
-    {% block content %}
-    <section class="page-content">
+{% block content %}
+<section class="page-content">
     <div class="perfil-container">
         <h2>Mi Perfil</h2>
 
         <div class="perfil-card">
-        <div class="perfil-info">
-            <div class="foto-perfil" aria-label="Foto de perfil">
-            <i class="fa-solid fa-user-circle"></i>
+            <div class="perfil-info">
+                <div class="foto-perfil" aria-label="Foto de perfil">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+
+                <div class="datos">
+                    <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+                    <p><strong>RUT:</strong> {{ usuario.rut }}{% if usuario.dv %}-{{ usuario.dv }}{% endif %}</p>
+                    <p><strong>Correo:</strong> {{ usuario.correo|default:request.user.email }}</p>
+                    <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"—" }}</p>
+                    <p><strong>Departamento:</strong> {{ usuario.id_departamento.nombre|default:"—" }}</p>
+                    <p><strong>Cargo:</strong> {{ usuario.id_cargo.nombre|default:"—" }}</p>
+                    <p><strong>Rol:</strong> {{ usuario.id_rol.nombre|default:"Funcionario" }}</p>
+                </div>
             </div>
 
-            <div class="datos">
-            <p><strong>Nombre:</strong> {#{{ usuario.nombre|default:request.user.get_full_name }}#}</p>
-            <p><strong>RUT:</strong> {{ usuario.rut }}{% if usuario.dv %}-{{ usuario.dv }}{% endif %}</p>
-            <p><strong>Correo:</strong> {#{{ usuario.correo|default:request.user.email }}#}</p>
-            <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"—" }}</p>
-            <p><strong>Departamento:</strong> {{ usuario.departamento|default:"—" }}</p>
-            <p><strong>Cargo:</strong> {{ usuario.cargo|default:"—" }}</p>
-            <p><strong>Rol:</strong> {{ usuario.rol|default:"Funcionario" }}</p>
+            <div class="acciones">
+                <a class="editar-btn" href="#">
+                    <i class="fa-solid fa-pen"></i> Editar Perfil
+                </a>
+                <a class="password-btn" href="#">
+                    <i class="fa-solid fa-lock"></i> Cambiar Contraseña
+                </a>
             </div>
         </div>
-
-        <div class="acciones">
-            <a class="editar-btn" href="{#{% url 'perfil_editar' %}#}">
-            <i class="fa-solid fa-pen"></i> Editar Perfil
-            </a>
-            <a class="password-btn" href="{#{% url 'password_change' %}#}">
-            <i class="fa-solid fa-lock"></i> Cambiar Contraseña
-            </a>
-        </div>
-        </div>
-        {# --- Accesos rápidos --- #}
-    <div class="card perfil-card-extra">
-    <h3>Accesos Rápidos</h3>
-    <a href="{% url 'licencias' %}" class="quick-access-item orange">
-        <div class="quick-access-icon orange"><i class="fa-solid fa-file-lines"></i></div>
-        <div class="quick-access-text">
-            <p>Mis Licencias</p>
-            <span>Revisar y gestionar</span>
-        </div>
-        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-    </a>
-    </div>
-
-    {# --- Mi resumen personal (KPIs) --- #}
-    <div class="card perfil-card-extra">
-    <h3>Mi Resumen Personal</h3>
-    <div class="summary-grid">
-        <div class="summary-item">
-        <p>Días Administrativos</p>
-        <div class="number">{{ dias_admin_disponibles|default:3 }}</div>
-        <span>días disponibles</span>
-        </div>
-        <div class="summary-item teal">
-        <p>Días de Vacaciones</p>
-        <div class="number">{{ dias_vacaciones_disponibles|default:10 }}</div>
-        <span>días disponibles</span>
-        </div>
-    </div>
-    </div>
-
-    {# --- Próximas actividades (mini) --- #}
-    <div class="card perfil-card-extra">
-    <h3>Próximas Actividades</h3>
-
-    {#{% for ev in proximos_eventos|default:list %}#}
-        <div class="calendar-item">
-        <div class="calendar-date">
-            <p>{{ ev.mes_corto|default:"OCT" }}</p>
-            <span>{{ ev.dia|default:"10" }}</span>
-        </div>
-        <div class="calendar-info">
-            <p>{{ ev.titulo|default:"Reunión General de Equipo" }}</p>
-            <span><i class="fa-regular fa-clock"></i> {{ ev.hora|default:"09:00" }} hrs</span>
-        </div>
-        </div>
-    {#{% empty %}#}
-        <p style="color:#666">No hay actividades próximas.</p>
-    {#{% endfor %}#}
-
-    <a href="{% url 'calendario' %}" class="view-all">Ver calendario completo</a>
-    </div>
-
-    {# --- (Opcional) Soporte --- #}
-    <div class="support-card perfil-card-extra">
-    <h3>¿Necesitas ayuda?</h3>
-    <p>Contacta con soporte técnico para resolver tus dudas</p>
-    <a class="support-btn" href="mailto:sda.santarosa@temuco.cl">
-        <i class="fa-regular fa-envelope"></i>
-        <span>Contactar Soporte</span>
-    </a>
-    </div>
-
     </div>
 </section>
 {% endblock %}
