@@ -4,51 +4,175 @@
 {% block title %}Eliminar Solicitud — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-    {# Si tienes un CSS general de solicitudes, lo reutilizamos #}
-    <link rel="stylesheet" href="{% static 'css/solicitudes.css' %}">
+<style>
+    .solicitud-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 600px;
+        margin: 2rem auto;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #dc2626;
+    }
+
+    .warning-icon {
+        font-size: 3rem;
+        color: #dc2626;
+        margin-bottom: 1rem;
+    }
+
+    .solicitud-resumen-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        text-align: left;
+    }
+
+    .solicitud-resumen-card p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+        color: #374151;
+    }
+
+    .solicitud-resumen-card strong {
+        color: #1f2937;
+        min-width: 120px;
+        display: inline-block;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-danger {
+        background: #dc2626;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: #4b5563;
+        color: white;
+        text-decoration: none;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-pendiente { background: #fff3cd; color: #856404; }
+    .badge-aprobado { background: #d1edff; color: #0b5ed7; }
+    .badge-rechazado { background: #f8d7da; color: #721c24; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .solicitud-container {
+            padding: 1rem;
+            margin: 1rem;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .btn-danger, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <section class="page-content">
-    <div class="solicitud-container solicitud-eliminar">
-        <h2>Eliminar Solicitud</h2>
+    <div class="solicitud-container">
+        <!-- Icono de advertencia -->
+        <div class="warning-icon">
+            
+        </div>
+        
+        <h2> Eliminar Solicitud</h2>
 
-        <p>
-            ¿Estás seguro de que deseas eliminar esta solicitud?
-            Esta acción no se puede deshacer.
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">
+            ¿Estás seguro de que deseas eliminar esta solicitud?<br>
+            <strong>Esta acción no se puede deshacer.</strong>
         </p>
 
-        {# Resumen de la solicitud para que el usuario vea qué está borrando #}
+        <!-- Resumen de la solicitud -->
         {% if solicitud %}
         <div class="solicitud-resumen-card">
-            <p><strong>ID:</strong> {{ solicitud.id_solicitud }}</p>
-            <p>
-                <strong>Tipo:</strong>
-                {{ solicitud.tipo_solicitud.nombre|default:"—" }}
+            <p><strong>ID:</strong> #{{ solicitud.id_solicitud }}</p>
+            <p><strong>Tipo:</strong> {{ solicitud.tipo_solicitud.nombre|default:"—" }}</p>
+            <p><strong>Fecha inicio:</strong> {{ solicitud.dia_inicio|date:"d/m/Y" }}</p>
+            <p><strong>Fecha fin:</strong> {{ solicitud.dia_fin|date:"d/m/Y" }}</p>
+            <p><strong>Estado:</strong> 
+                {% if solicitud.estado_solicitud.nombre == "Pendiente" %}
+                    <span class="status-badge badge-pendiente"> {{ solicitud.estado_solicitud.nombre }}</span>
+                {% elif solicitud.estado_solicitud.nombre == "Aprobado" %}
+                    <span class="status-badge badge-aprobado"> {{ solicitud.estado_solicitud.nombre }}</span>
+                {% elif solicitud.estado_solicitud.nombre == "Rechazado" %}
+                    <span class="status-badge badge-rechazado"> {{ solicitud.estado_solicitud.nombre }}</span>
+                {% else %}
+                    <span class="status-badge">{{ solicitud.estado_solicitud.nombre|default:"—" }}</span>
+                {% endif %}
             </p>
-            <p>
-                <strong>Fecha inicio:</strong>
-                {{ solicitud.dia_inicio|date:"d/m/Y" }}
-            </p>
-            <p>
-                <strong>Fecha fin:</strong>
-                {{ solicitud.dia_fin|date:"d/m/Y" }}
-            </p>
-            <p>
-                <strong>Estado actual:</strong>
-                {{ solicitud.estado_solicitud.nombre|default:"—" }}
-            </p>
+            <p><strong>Solicitante:</strong> {{ solicitud.id_usuario.nombre }}</p>
         </div>
         {% endif %}
 
+        <!-- Formulario de eliminación -->
         <form method="POST" class="solicitud-eliminar-form">
             {% csrf_token %}
-            <button class="submit-btn btn-danger" type="submit">
-                Eliminar
-            </button>
-            <a href="{% url 'lista_solicitudes' %}" class="submit-btn btn-secondary">
-                Cancelar
-            </a>
+            <div class="btn-group">
+                <button class="btn-danger" type="submit">
+                        Eliminar Permanentemente
+                </button>
+                <a href="{% url 'lista_solicitudes' %}" class="btn-secondary">
+                    ✕ Cancelar
+                </a>
+            </div>
         </form>
     </div>
 </section>
