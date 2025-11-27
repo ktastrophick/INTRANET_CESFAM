@@ -14,11 +14,6 @@
         <h2>Bienvenido a Intranet CESFAM Santa Rosa</h2>
         <p>Plataforma central para la gestión administrativa y comunicación interna del personal del CESFAM.</p>
 
-        {% if not request.user.is_authenticated %}
-            <a href="{% url 'login' %}" class="btn-login">
-                Iniciar sesión
-            </a>
-        {% endif %}
     </section>
 
     <!-- TARJETAS INFORMATIVAS -->

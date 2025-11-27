@@ -2,30 +2,36 @@
 Vistas base de la intranet (páginas generales como inicio e index).
 """
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 
 
 def inicio(request: HttpRequest) -> HttpResponse:
     """
-    Vista de la página de inicio de la intranet.
+    Vista de la página pública de inicio.
 
-    - Método soportado: GET.
-    - Renderiza la plantilla 'pages/inicio.html'.
+    - Si el usuario NO está autenticado → muestra la portada (landing).
+    - Si el usuario está autenticado → redirige al dashboard (index).
+
+    Plantilla: 'pages/inicio.html'
     """
-    # En el futuro puedes agregar contexto adicional aquí, por ejemplo:
-    # context = {"usuario": request.user}
-    # return render(request, "pages/inicio.html", context)
+    if request.user.is_authenticated:
+        return redirect("index")
+
     return render(request, "pages/inicio.html")
 
 
 def index(request: HttpRequest) -> HttpResponse:
     """
-    Vista de la página principal (dashboard) de la intranet.
+    Vista del dashboard principal.
 
-    - Método soportado: GET.
-    - Renderiza la plantilla 'pages/index.html'.
+    - Solo accesible si el usuario está autenticado.
+    - Si no lo está → redirige al login.
+
+    Plantilla: 'pages/index.html'
     """
-    # Igual que en inicio, aquí puedes ir agregando datos agregados,
-    # estadísticas u otra información para el dashboard.
+    if not request.user.is_authenticated:
+        return redirect("login")
+
     return render(request, "pages/index.html")
+
