@@ -1,24 +1,28 @@
+/* CONTENEDOR PRINCIPAL */
 .perfil-container {
     max-width: 960px;
     margin: 0 auto;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
-    padding: 2rem
+    padding: 2rem;
 }
 
+/* TARJETA PRINCIPAL */
 .perfil-card {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem
+    gap: 1.25rem;
 }
 
+/* INFORMACIÓN DE PERFIL */
 .perfil-info {
     display: flex;
     gap: 1.5rem;
-    align-items: flex-start
+    align-items: flex-start;
 }
 
+/* FOTO */
 .foto-perfil {
     width: 96px;
     height: 96px;
@@ -27,21 +31,23 @@
     justify-content: center;
     color: #66b2ff;
     background: #e3f2fd;
-    border-radius: 50%
+    border-radius: 50%;
 }
 
 .foto-perfil .fa-user-circle {
-    font-size: 72px
+    font-size: 72px;
 }
 
+/* DATOS DEL USUARIO */
 .datos p {
-    margin: .25rem 0
+    margin: .25rem 0;
 }
 
+/* BOTONES DE ACCIÓN */
 .acciones {
     display: flex;
     gap: .75rem;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 
 .editar-btn,
@@ -54,178 +60,26 @@
     border: none;
     padding: .6rem 1rem;
     border-radius: 10px;
-    text-decoration: none
+    text-decoration: none;
+    font-weight: 500;
+    transition: filter .2s ease-in-out;
 }
 
 .password-btn {
     background: #7fffd4;
-    color: #1a1a1a
+    color: #1a1a1a;
 }
 
-.editar-btn:hover {
-    filter: brightness(.95)
-}
-
+.editar-btn:hover,
 .password-btn:hover {
-    filter: brightness(.95)
+    filter: brightness(.95);
 }
 
-@media (max-width:768px) {
+/* RESPONSIVE */
+@media (max-width: 768px) {
     .perfil-info {
         flex-direction: column;
         align-items: center;
-        text-align: center
+        text-align: center;
     }
-}
-
-
-/* Contenedores extra en perfil */
-.perfil-card-extra {
-    margin-top: 1.5rem;
-}
-
-/* Quick access (reutiliza del index con nombres compatibles) */
-.quick-access-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem
-}
-
-.quick-access-item {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: .9rem 1rem;
-    text-decoration: none;
-    color: #1a1a1a;
-    transition: transform .2s, box-shadow .2s
-}
-
-.quick-access-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, .06)
-}
-
-.quick-access-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center
-}
-
-.quick-access-icon.blue {
-    background: #e3f2fd
-}
-
-.quick-access-icon.green {
-    background: #e6f7f1
-}
-
-.quick-access-icon.purple {
-    background: #efe7ff
-}
-
-.quick-access-text p {
-    margin: 0;
-    font-weight: 600
-}
-
-.quick-access-text span {
-    color: #666;
-    font-size: .85rem
-}
-
-/* Summary (KPIs) */
-.summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem
-}
-
-.summary-item {
-    background: #f8fafc;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 1rem
-}
-
-.summary-item .number {
-    font-size: 1.8rem;
-    font-weight: 800;
-    line-height: 1
-}
-
-.summary-item.teal {
-    background: #e6f7f1
-}
-
-/* Mini calendario */
-.calendar-item {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    padding: .75rem 0;
-    border-bottom: 1px solid #f0f0f0
-}
-
-.calendar-date {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    background: #e3f2fd;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center
-}
-
-.calendar-date p {
-    margin: 0;
-    font-size: .7rem;
-    font-weight: 700;
-    color: #1a1a1a
-}
-
-.calendar-date span {
-    margin-top: -2px;
-    font-size: 1rem;
-    font-weight: 800
-}
-
-.calendar-info p {
-    margin: 0;
-    font-weight: 600
-}
-
-.calendar-info span {
-    color: #666;
-    font-size: .85rem
-}
-
-/* Support */
-.support-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 1rem
-}
-
-.support-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-    background: #66b2ff;
-    color: #fff;
-    padding: .6rem 1rem;
-    border-radius: 10px;
-    text-decoration: none
-}
-
-.support-btn:hover {
-    filter: brightness(.95)
 }
