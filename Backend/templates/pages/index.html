@@ -3,420 +3,14 @@
 
 {% block title %}Inicio — Intranet CESFAM{% endblock %}
 
-{% block extra_css %} 
-    <!-- Si quieres, luego puedes mover este CSS a static/css/index.css -->
-    <style>
-        .dashboard-container {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* BANNER PRINCIPAL */
-        .welcome-banner {
-            background: linear-gradient(135deg, #448fda 0%, #4080bb 100%);
-            border-radius: 16px;
-            padding: 2.5rem;
-            color: white;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .welcome-banner__title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .welcome-banner__subtitle {
-            font-size: 1rem;
-            opacity: 0.95;
-            margin: 0;
-        }
-
-        /* LAYOUT PRINCIPAL UNIFICADO */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        /* PERFIL */
-        .card--profile {
-            background: white;
-            border-radius: 10px;
-            padding: 5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            text-align: center;
-            border: 2px solid #e2e8f0;
-            grid-column: auto;
-            grid-row: auto;
-            margin: auto;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #448fda 0%, #4080bb 100%);
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .profile-avatar i {
-            width: 40px;
-            height: 40px;
-            color: white;
-        }
-
-        .profile-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0 0 0.25rem 0;
-            color: #2d3748;
-        }
-
-        .profile-role {
-            font-size: 0.9rem;
-            color: #718096;
-            margin: 0;
-        }
-
-        /* COMUNICADOS */
-        .card--comunicados {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
-            grid-column: 2;
-            grid-row: 1;
-        }
-
-        .card__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .card__title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0;
-            color: #2d3748;
-        }
-
-        .view-all {
-            color: #448fda;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .view-all:hover {
-            text-decoration: underline;
-            color: #4080bb;
-        }
-
-        .comunicado-item {
-            display: flex;
-            flex-direction: column;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            text-decoration: none;
-            transition: background 0.2s;
-            border-left: 3px solid #448fda;
-        }
-
-        .comunicado-item:hover {
-            background: #f7fafc;
-        }
-
-        .comunicado-item p {
-            margin: 0 0 0.5rem 0;
-            color: #2d3748;
-            font-weight: 500;
-        }
-
-        .comunicado-item span {
-            font-size: 0.85rem;
-            color: #718096;
-        }
-
-        /* SOLICITUDES */
-        .card--solicitudes {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
-            grid-column: 1;
-            grid-row: 2;
-        }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .status-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: transform 0.2s;
-            border: 1px solid #e2e8f0;
-        }
-
-        .status-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        }
-
-        .status-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .status-icon i {
-            width: 24px;
-            height: 24px;
-            color: white;
-        }
-
-        .status-icon.recibidos { background: linear-gradient(135deg, #448fda 0%, #4080bb 100%); }
-        .status-icon.pendientes { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .status-icon.aceptadas { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .status-icon.rechazadas { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-
-        .status-content h4 {
-            margin: 0 0 0.25rem 0;
-            font-size: 0.85rem;
-            color: #718096;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .status-content p {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2d3748;
-        }
-
-        /* CALENDARIO MINI */
-        .calendar-mini {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
-        }
-
-        .calendar-mini-header {
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        .calendar-mini-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .calendar-mini-day-header {
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #718096;
-            padding: 0.25rem 0;
-        }
-
-        .calendar-mini-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: #4a5568;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .calendar-mini-day:hover {
-            background: #edf2f7;
-        }
-
-        .calendar-mini-day.today {
-            background: #448fda;
-            color: white;
-            font-weight: 600;
-        }
-
-        .calendar-mini-day.other-month {
-            color: #cbd5e0;
-        }
-
-        /* ACTIVIDADES Y CALENDARIO */
-        .card--actividades {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
-            grid-column: 2;
-            grid-row: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .upcoming-dates {
-            flex: 1;
-        }
-
-        .upcoming-date-item {
-            display: flex;
-            gap: 0.75rem;
-            padding: 0.75rem 0;
-            align-items: flex-start;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .upcoming-date-item:last-child {
-            border-bottom: none;
-        }
-
-        .date-badge {
-            width: 50px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .date-badge-day {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #448fda;
-            line-height: 1;
-        }
-
-        .date-badge-month {
-            font-size: 0.75rem;
-            color: #718096;
-        }
-
-        .upcoming-date-item p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #2d3748;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        /* SOPORTE */
-        .support-section {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            text-align: center;
-            background: linear-gradient(135deg, #dcffd3 0%, #d7ffdc 100%);
-            border-left: 4px solid #62e46d;
-            border: 1px solid #e2e8f0;
-        }
-
-        .support-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #2d3748;
-        }
-
-        .support-description {
-            font-size: 0.9rem;
-            color: #718096;
-            margin-bottom: 1.5rem;
-        }
-
-        .support-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            background: #448fda;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .support-button:hover {
-            background: #4080bb;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 968px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto auto;
-            }
-
-            .card--profile {
-                grid-column: 1;
-                grid-row: 1;
-            }
-
-            .card--comunicados {
-                grid-column: 1;
-                grid-row: 2;
-            }
-
-            .card--solicitudes {
-                grid-column: 1;
-                grid-row: 3;
-            }
-
-            .card--actividades {
-                grid-column: 1;
-                grid-row: 4;
-            }
-
-            .status-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     
-    <!-- BANNER -->
+    <!-- BANNER COMPACTO -->
     <section class="welcome-banner">
         {% with nombre=usuario.nombre|default:request.session.usuario_nombre %}
         <h2 class="welcome-banner__title">
@@ -428,221 +22,345 @@
         </p>
     </section>
     
-    <!-- GRID PRINCIPAL UNIFICADO -->
-    <div class="dashboard-grid">
+    <!-- LAYOUT PRINCIPAL EQUILIBRADO -->
+    <div class="dashboard-layout">
         
-        <!-- PERFIL (ARRIBA IZQUIERDA) -->
-        <section class="card--profile">
-            <div class="profile-avatar">
-                <i data-lucide="user"></i>
-            </div>
-            <h3 class="profile-name">{{ usuario.nombre }}</h3>
-            <p class="profile-role">{{ rol }}</p>
-        </section>
-        
-        <!-- COMUNICADOS (ARRIBA DERECHA) -->
-        <section class="card--comunicados">
-            <header class="card__header">
-                <h3 class="card__title">Comunicados Recientes</h3>
-                <!-- Si después tienes una vista de avisos, enlazamos aquí -->
-                <a href="#" class="view-all">Ver todos</a>
-            </header>
-
-            {% if avisos %}
-                {% for aviso in avisos %}
-                    <a href="#" class="comunicado-item">
-                        <p>{{ aviso.titulo }}</p>
-                        <span>
-                            {{ aviso.fecha_registro|date:"d M Y" }}
-                            • {{ aviso.id_usuario.nombre|default:"Dirección" }}
-                        </span>
-                    </a>
-                {% endfor %}
-            {% else %}
-                <p>No hay comunicados recientes.</p>
-            {% endif %}
-        </section>
-
-        <!-- SOLICITUDES Y CALENDARIO MINI (ABAJO IZQUIERDA) -->
-        <section class="card--solicitudes">
-            <header class="card__header">
-                <h3 class="card__title">Solicitudes</h3>
-                <a href="{% url 'lista_solicitudes' %}" class="view-all">Ver todas</a>
-            </header>
+        <!-- COLUMNA PRINCIPAL -->
+        <div class="dashboard-main">
             
-            <!-- TARJETAS DE SOLICITUDES -->
-            <div class="status-grid">
-                <div class="status-card">
-                    <div class="status-icon recibidos">
-                        <i data-lucide="inbox"></i>
-                    </div>
-                    <div class="status-content">
-                        <h4>Recibidos</h4>
-                        <p>{{ solicitudes_recibidas|default:"0" }}</p>
-                    </div>
-                </div>
-
-                <div class="status-card">
-                    <div class="status-icon pendientes">
-                        <i data-lucide="clock"></i>
-                    </div>
-                    <div class="status-content">
-                        <h4>Pendientes</h4>
-                        <p>{{ solicitudes_pendientes|default:"0" }}</p>
-                    </div>
-                </div>
-
-                <div class="status-card">
-                    <div class="status-icon aceptadas">
-                        <i data-lucide="check-circle"></i>
-                    </div>
-                    <div class="status-content">
-                        <h4>Aceptadas</h4>
-                        <p>{{ solicitudes_aceptadas|default:"0" }}</p>
-                    </div>
-                </div>
-
-                <div class="status-card">
-                    <div class="status-icon rechazadas">
-                        <i data-lucide="x-circle"></i>
-                    </div>
-                    <div class="status-content">
-                        <h4>Rechazadas</h4>
-                        <p>{{ solicitudes_rechazadas|default:"0" }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CALENDARIO MINI DEBAJO DE SOLICITUDES (decorativo por ahora) -->
-            <div class="calendar-mini">
-                <div class="calendar-mini-header">OCTUBRE 2025</div>
+            <!-- RESUMEN PERSONAL -->
+            <section class="card card--summary">
+                <header class="card__header">
+                    <h3 class="card__title">Mi Resumen</h3>
+                    <a href="{% url 'perfil' %}" class="card__action-link">Ver Perfil</a>
+                </header>
                 
-                <div class="calendar-mini-grid">
-                    <div class="calendar-mini-day-header">L</div>
-                    <div class="calendar-mini-day-header">M</div>
-                    <div class="calendar-mini-day-header">M</div>
-                    <div class="calendar-mini-day-header">J</div>
-                    <div class="calendar-mini-day-header">V</div>
-                    <div class="calendar-mini-day-header">S</div>
-                    <div class="calendar-mini-day-header">D</div>
+                <div class="summary-grid">
+                    <div class="summary-item summary-item--admin">
+                        <div class="summary-item__label">Mi Rol</div>
+                        <div class="summary-item__value">{{ rol|default:"Funcionario" }}</div>
+                        <div class="summary-item__description">Centro de Salud Familiar</div>
+                    </div>
                     
-                    <div class="calendar-mini-day other-month">29</div>
-                    <div class="calendar-mini-day other-month">30</div>
-                    <div class="calendar-mini-day">1</div>
-                    <div class="calendar-mini-day">2</div>
-                    <div class="calendar-mini-day">3</div>
-                    <div class="calendar-mini-day">4</div>
-                    <div class="calendar-mini-day">5</div>
-                    
-                    <div class="calendar-mini-day">6</div>
-                    <div class="calendar-mini-day">7</div>
-                    <div class="calendar-mini-day">8</div>
-                    <div class="calendar-mini-day">9</div>
-                    <div class="calendar-mini-day">10</div>
-                    <div class="calendar-mini-day">11</div>
-                    <div class="calendar-mini-day">12</div>
-                    
-                    <div class="calendar-mini-day">13</div>
-                    <div class="calendar-mini-day">14</div>
-                    <div class="calendar-mini-day today">15</div>
-                    <div class="calendar-mini-day">16</div>
-                    <div class="calendar-mini-day">17</div>
-                    <div class="calendar-mini-day">18</div>
-                    <div class="calendar-mini-day">19</div>
-                    
-                    <div class="calendar-mini-day">20</div>
-                    <div class="calendar-mini-day">21</div>
-                    <div class="calendar-mini-day">22</div>
-                    <div class="calendar-mini-day">23</div>
-                    <div class="calendar-mini-day">24</div>
-                    <div class="calendar-mini-day">25</div>
-                    <div class="calendar-mini-day">26</div>
-                    
-                    <div class="calendar-mini-day">27</div>
-                    <div class="calendar-mini-day">28</div>
-                    <div class="calendar-mini-day">29</div>
-                    <div class="calendar-mini-day">30</div>
-                    <div class="calendar-mini-day">31</div>
-                    <div class="calendar-mini-day other-month">1</div>
-                    <div class="calendar-mini-day other-month">2</div>
+                    <div class="summary-item summary-item--vacation">
+                        <div class="summary-item__label">Días Disponibles</div>
+                        <div class="summary-item__value">15</div>
+                        <div class="summary-item__description">Vacaciones este año</div>
+                    </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- PRÓXIMAS ACTIVIDADES (ABAJO DERECHA) -->
-        <section class="card--actividades">
-            <header class="card__header">
-                <div>
-                    <h3 class="card__title">Próximas Actividades</h3>
-                    <p style="margin:0;font-size:0.85rem;color:#718096;">
-                        Tienes {{ eventos_proximos|default:"0" }} evento(s) en los próximos 7 días.
-                    </p>
-                </div>
-                <a href="{% url 'calendario' %}" class="view-all">Ver calendario</a>
-            </header>
+            </section>
             
-            <div class="upcoming-dates">
-                <!-- Aquí podrías, más adelante, listar eventos reales -->
-                <div class="upcoming-date-item">
-                    <div class="date-badge">
-                        <div class="date-badge-day">05</div>
-                        <div class="date-badge-month">OCT</div>
-                    </div>
-                    <p>Reunión General de Equipo</p>
+            <!-- COMUNICADOS RECIENTES -->
+            <section class="card card--announcements">
+                <header class="card__header">
+                    <h3 class="card__title">Comunicados Recientes</h3>
+                    <a href="{#{% url 'comunicados' %}"#} class="card__action-link">Ver todos</a>
+                </header>
+                
+                <div class="announcements-list">
+                    {% if avisos %}
+                        {% for aviso in avisos %}
+                            <a href="#" class="announcement-item">
+                                <div class="announcement-item__title">{{ aviso.titulo }}</div>
+                                <div class="announcement-item__meta">
+                                    {{ aviso.fecha_registro|date:"d M Y" }} • 
+                                    {{ aviso.id_usuario.nombre|default:"Dirección" }}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="announcement-item">
+                            <div class="announcement-item__title">No hay comunicados recientes</div>
+                            <div class="announcement-item__meta">Los nuevos avisos aparecerán aquí</div>
+                        </div>
+                    {% endif %}
                 </div>
-
-                <div class="upcoming-date-item">
-                    <div class="date-badge">
-                        <div class="date-badge-day">08</div>
-                        <div class="date-badge-month">OCT</div>
+            </section>
+            
+            <!-- SOLICITUDES -->
+            <section class="card card--solicitudes">
+                <header class="card__header">
+                    <h3 class="card__title">Estado de Solicitudes</h3>
+                    <a href="{% url 'lista_solicitudes' %}" class="card__action-link">Ver todas</a>
+                </header>
+                
+                <div class="summary-grid">
+                    <div class="summary-item" style="background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%); border-left-color: #448fda;">
+                        <div class="summary-item__label">Recibidas</div>
+                        <div class="summary-item__value" style="color: #448fda;">{{ solicitudes_recibidas|default:"0" }}</div>
+                        <div class="summary-item__description">Total este mes</div>
                     </div>
-                    <p>Capacitación SOME Digital</p>
-                </div>
-
-                <div class="upcoming-date-item">
-                    <div class="date-badge">
-                        <div class="date-badge-day">15</div>
-                        <div class="date-badge-month">OCT</div>
+                    
+                    <div class="summary-item" style="background: linear-gradient(135deg, #fff3e0 0%, #f5f5f5 100%); border-left-color: #ff9800;">
+                        <div class="summary-item__label">Pendientes</div>
+                        <div class="summary-item__value" style="color: #ff9800;">{{ solicitudes_pendientes|default:"0" }}</div>
+                        <div class="summary-item__description">En revisión</div>
                     </div>
-                    <p>Evaluación Trimestral</p>
-                </div>
-
-                <div class="upcoming-date-item">
-                    <div class="date-badge">
-                        <div class="date-badge-day">18</div>
-                        <div class="date-badge-month">OCT</div>
+                    
+                    <div class="summary-item" style="background: linear-gradient(135deg, #e8f5e8 0%, #f5f5f5 100%); border-left-color: #4caf50;">
+                        <div class="summary-item__label">Aceptadas</div>
+                        <div class="summary-item__value" style="color: #4caf50;">{{ solicitudes_aceptadas|default:"0" }}</div>
+                        <div class="summary-item__description">Este período</div>
                     </div>
-                    <p>Revisión de Protocolos</p>
-                </div>
-
-                <div class="upcoming-date-item">
-                    <div class="date-badge">
-                        <div class="date-badge-day">22</div>
-                        <div class="date-badge-month">OCT</div>
+                    
+                    <div class="summary-item" style="background: linear-gradient(135deg, #ffebee 0%, #f5f5f5 100%); border-left-color: #f44336;">
+                        <div class="summary-item__label">Rechazadas</div>
+                        <div class="summary-item__value" style="color: #f44336;">{{ solicitudes_rechazadas|default:"0" }}</div>
+                        <div class="summary-item__description">Este período</div>
                     </div>
-                    <p>Entrega de Reportes Mensuales</p>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+        
+        <!-- SIDEBAR -->
+        <div class="dashboard-sidebar">
+            
+            <!-- CALENDARIO FUNCIONAL -->
+            <section class="card card--calendar">
+                <header class="card__header">
+                    <h3 class="card__title">Calendario</h3>
+                    <a href="{% url 'calendario' %}" class="card__action-link">Ver completo</a>
+                </header>
+                
+                <div class="calendar-mini" id="calendar-mini">
+                    <!-- El calendario se generará con JavaScript -->
+                    <div class="calendar-header">
+                        <button id="prev-month" class="calendar-nav">‹</button>
+                        <h4 id="current-month">Octubre 2025</h4>
+                        <button id="next-month" class="calendar-nav">›</button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- Días generados dinámicamente -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- PRÓXIMAS ACTIVIDADES -->
+            <section class="card card--calendar">
+                <header class="card__header">
+                    <h3 class="card__title">Próximas Actividades</h3>
+                    <span class="card__action-link">{{ eventos_proximos|default:"0" }} eventos</span>
+                </header>
+                
+                <div class="calendar-list">
+                    <div class="calendar-item">
+                        <div class="calendar-item__date">
+                            <span class="calendar-item__month">Oct</span>
+                            <span class="calendar-item__day">05</span>
+                        </div>
+                        <div class="calendar-item__info">
+                            <div class="calendar-item__title">Reunión General de Equipo</div>
+                            <div class="calendar-item__time">09:00 - 11:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-item__date">
+                            <span class="calendar-item__month">Oct</span>
+                            <span class="calendar-item__day">08</span>
+                        </div>
+                        <div class="calendar-item__info">
+                            <div class="calendar-item__title">Capacitación SOME Digital</div>
+                            <div class="calendar-item__time">14:00 - 16:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-item__date">
+                            <span class="calendar-item__month">Oct</span>
+                            <span class="calendar-item__day">15</span>
+                        </div>
+                        <div class="calendar-item__info">
+                            <div class="calendar-item__title">Evaluación Trimestral</div>
+                            <div class="calendar-item__time">10:00 - 12:00</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
     
-    <!-- SECCIÓN DE SOPORTE (ABAJO DE TODO) -->
-    <section class="support-section">
-        <h3 class="support-title">¿Necesitas ayuda?</h3>
-        <p class="support-description">
+    <!-- SOPORTE -->
+    <section class="support-card">
+        <h3 class="support-card__title">¿Necesitas ayuda?</h3>
+        <p class="support-card__description">
             Nuestro equipo de soporte está disponible para asistirte con cualquier problema o consulta que tengas.
         </p>
-        <a href="#" class="support-button">
+        <button class="support-card__button">
             <i data-lucide="headphones"></i>
             Contactar Soporte
-        </a>
+        </button>
     </section>
 </div>
 
-<!-- Lucide Icons Script -->
-<script src="https://unpkg.com/lucide@latest"></script>
+<!-- JavaScript para el calendario funcional -->
 <script>
-    // Inicializar iconos de Lucide
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Calendario funcional
+        const calendarGrid = document.getElementById('calendar-grid');
+        const currentMonthElement = document.getElementById('current-month');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        
+        let currentDate = new Date();
+        
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            
+            // Actualizar el título del mes
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+            
+            // Obtener primer día del mes y último día
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            
+            // Días de la semana
+            const dayNames = ["L", "M", "M", "J", "V", "S", "D"];
+            
+            // Limpiar calendario
+            calendarGrid.innerHTML = '';
+            
+            // Añadir encabezados de días
+            dayNames.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day-header';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Añadir días vacíos al inicio
+            const startingDay = firstDay.getDay();
+            // Ajustar para que la semana empiece en lunes
+            const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
+            
+            for (let i = 0; i < adjustedStartingDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Añadir días del mes
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Marcar el día actual
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayElement.classList.add('today');
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        // Navegación del calendario
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+        });
+        
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+        });
+        
+        // Inicializar calendario
+        renderCalendar(currentDate);
+        
+        // Inicializar iconos de Lucide
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
 </script>
+
+<!-- Estilos específicos para el calendario funcional -->
+<style>
+    .calendar-mini {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1rem;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .calendar-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+    
+    .calendar-nav {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+    }
+    
+    .calendar-nav:hover {
+        background: var(--border);
+        color: var(--text);
+    }
+    
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+    
+    .calendar-day-header {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted);
+        padding: 0.5rem 0;
+    }
+    
+    .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: var(--text);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .calendar-day:hover {
+        background: var(--border);
+    }
+    
+    .calendar-day.today {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+    }
+    
+    .calendar-day.empty {
+        background: transparent;
+        cursor: default;
+    }
+    
+    .calendar-day.empty:hover {
+        background: transparent;
+    }
+</style>
 {% endblock %}
