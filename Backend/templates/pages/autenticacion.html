@@ -1,3 +1,7 @@
+{#-----------------------------------------------------------#}
+{#  Plantilla de página de autenticación (login)               #}
+{#-----------------------------------------------------------#}
+
 {% extends "base/base.html" %}
 {% load static %}
 
@@ -13,7 +17,7 @@
 <section class="page-content">
   <div class="login-container" role="form" aria-label="Formulario de inicio de sesión">
     <h2>Iniciar sesión</h2>
-    <p>Accede con tu usuario y contraseña institucional.</p>
+    <p></p>
 
     {# Muestra errores generales (credenciales inválidas, etc.) #}
     {% if form.non_field_errors %}
@@ -47,8 +51,8 @@
 
       <div class="help-row">
         <label class="remember-label">
-          <input type="checkbox" name="remember" id="rememberCheckbox">
-          <span>Mantener sesión iniciada</span>
+          {#<input type="checkbox" name="remember" id="rememberCheckbox">#}
+          {#<span>Mantener sesión iniciada</span>#}
         </label>
         <a href="{#{% url 'password_reset' %}#}" class="small-link">¿Olvidaste tu contraseña?</a>
       </div>
