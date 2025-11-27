@@ -39,40 +39,53 @@
             </div>
         </div>
 
-        <!-- NAV solo cuando NO estemos en login -->
-        {% if request.user.is_authenticated and request.resolver_match.url_name != 'login' %}
+        {# NAV y zona de usuario: se ocultan SOLO en la vista de login #}
+        {% if request.resolver_match.url_name != 'login' %}
+
+        <!-- NAVEGACIÓN SUPERIOR -->
         <nav class="main-nav" aria-label="Navegación principal">
 
-            <a href="{% url 'index' %}"
-                class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-                <i class="fa-solid fa-house"></i><span>Inicio</span>
-            </a>
+            {# Links del menú solo para usuarios autenticados #}
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'index' %}"
+                   class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i><span>Inicio</span>
+                </a>
 
-            <a href="{% url 'lista_documentos' %}"
-                class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
-                <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
-            </a>
+                <a href="{% url 'lista_documentos' %}"
+                   class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
+                    <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
+                </a>
 
-            <a href="{% url 'lista_licencias' %}"
-                class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
-                <i class="fa-solid fa-id-card"></i><span>Licencias</span>
-            </a>
+                <a href="{% url 'lista_licencias' %}"
+                   class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
+                    <i class="fa-solid fa-id-card"></i><span>Licencias</span>
+                </a>
 
-            <a href="{% url 'lista_solicitudes' %}"
-                class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
-                <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
-            </a>
+                <a href="{% url 'lista_solicitudes' %}"
+                   class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
+                    <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
+                </a>
 
-            <a href="{% url 'lista_funcionarios' %}"
-                class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
-                <i class="fa-solid fa-users"></i><span>Funcionarios</span>
-            </a>
+                <a href="{% url 'lista_funcionarios' %}"
+                   class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+                    <i class="fa-solid fa-users"></i><span>Funcionarios</span>
+                </a>
+            {% endif %}
+
+            {# Botón de INICIAR SESIÓN arriba en la barra cuando NO está autenticado #}
+            {% if not request.user.is_authenticated %}
+                <a href="{% url 'login' %}" class="btn-login-nav">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Iniciar sesión</span>
+                </a>
+            {% endif %}
 
         </nav>
 
-        <!-- DROPDOWN DEL USUARIO - MOVIDO FUERA DEL NAV -->
+        {# Dropdown de usuario solo para autenticados #}
+        {% if request.user.is_authenticated %}
         <div class="user-section" id="userDropdownToggle">
-              
             <!-- INFO DEL USUARIO -->
             <div class="user-info">
                 <p>{{ request.user.username }}</p>
@@ -84,16 +97,23 @@
 
             <!-- MENÚ DESPLEGABLE -->
             <div class="dropdown" id="userDropdown">
-            <!-- Cerrar sesión -->
+                <!-- Enlace al perfil -->
+                <a href="{% url 'perfil' %}" class="dropdown-item">
+                    <i class="fa-solid fa-id-badge"></i> Mi perfil
+                </a>
+
+                <!-- Cerrar sesión -->
                 <form action="{% url 'logout' %}" method="post" class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout dropdown-item">
+                    <button type="submit" class="dropdown-item logout-btn">
                         <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
                     </button>
                 </form>
             </div>
         </div>
         {% endif %}
+
+        {% endif %} {# fin if != 'login' #}
 
     </div>
 </header>

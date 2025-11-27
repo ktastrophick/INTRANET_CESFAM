@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import (base_views, calendario_views, solicitudes_views, perfil_views, funcionarios_views, 
-                    documentos_views, licencias_views)
+                    documentos_views, licencias_views, autenticacion_views)
 
 urlpatterns = [
     # Páginas base
@@ -42,6 +42,6 @@ urlpatterns = [
 
     # Autenticación
     path('login/', auth_views.LoginView.as_view(template_name='pages/autenticacion.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='inicio'), name='logout'),
 ]
 
