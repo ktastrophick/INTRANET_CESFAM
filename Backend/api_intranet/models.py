@@ -153,6 +153,9 @@ class Usuario(models.Model):
     class Meta:
         managed = True
         db_table = 'usuario'
+    
+    def __str__(self) -> str:
+        return f"{self.rut}-{self.dv} | {self.nombre}"
 
 class Perfil(models.Model):
     id_perfil = models.AutoField(primary_key=True)

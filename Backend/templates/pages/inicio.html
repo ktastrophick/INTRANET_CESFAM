@@ -1,5 +1,4 @@
 {% extends "base/base.html" %}
-
 {% load static %}
 
 {% block title %}Inicio — Intranet CESFAM{% endblock %}
@@ -8,11 +7,18 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
 {% endblock %}
+
 {% block content %}
     <!-- BANNER DE BIENVENIDA -->
     <section class="welcome-banner no-header">
         <h2>Bienvenido a Intranet CESFAM Santa Rosa</h2>
         <p>Plataforma central para la gestión administrativa y comunicación interna del personal del CESFAM.</p>
+
+        {% if not request.user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn-login">
+                Iniciar sesión
+            </a>
+        {% endif %}
     </section>
 
     <!-- TARJETAS INFORMATIVAS -->
@@ -30,11 +36,4 @@
             <p>Compromiso, respeto, transparencia, colaboración y cuidado de la comunidad.</p>
         </article>
     </section>
-{% endblock %}
-
-{% block extra_js %}
-    <script>
-        //const btn = document.getElementById('goLoginBtn');
-        //if (btn) btn.addEventListener('click', () => location.href = '/accounts/login/');
-    </script>
 {% endblock %}
