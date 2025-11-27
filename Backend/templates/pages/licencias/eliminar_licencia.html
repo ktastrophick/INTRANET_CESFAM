@@ -6,50 +6,117 @@
 {% block extra_css %}
 <style>
 .delete-container {
-    background:white;
-    border-radius:16px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    padding:2rem;
-    max-width:600px;
-    margin:0 auto;
-    text-align:center;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.warning-icon {
+    font-size: 3rem;
+    color: #dc2626;
+    margin-bottom: 1rem;
 }
 
 h2 {
-    color:#d50000;
-    margin-bottom:1rem;
+    color: #dc2626;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
 
-p {
-    margin-bottom:1.5rem;
+.licencia-info {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
 }
 
-button.confirm-btn {
-    background:#d50000;
-    color:white;
-    border:none;
-    padding:0.7rem 1.5rem;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
+.licencia-info p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #374151;
 }
 
-button.confirm-btn:hover {
-    background:#b00000;
+.licencia-info strong {
+    color: #1f2937;
+    min-width: 120px;
+    display: inline-block;
 }
 
-a.cancel-btn {
-    margin-left:1rem;
-    padding:0.7rem 1.5rem;
-    background:#ccc;
-    border-radius:10px;
-    text-decoration:none;
-    color:#333;
-    font-weight:600;
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
-a.cancel-btn:hover {
-    background:#bdbdbd;
+.btn-danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    color: white;
+    text-decoration: none;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-pendiente { background: #fff3cd; color: #856404; }
+.badge-aprobado { background: #d1edff; color: #0b5ed7; }
+.badge-rechazado { background: #f8d7da; color: #721c24; }
+
+@media (max-width: 768px) {
+    .delete-container {
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-danger, .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
 }
 </style>
 {% endblock %}
@@ -57,16 +124,48 @@ a.cancel-btn:hover {
 {% block content %}
 <section class="page-content">
     <div class="delete-container">
-        <h2>¿Eliminar esta licencia?</h2>
-        <p>Funcionario: <strong>{{ licencia.id_usuario.nombre }}</strong></p>
-        <p>Del <strong>{{ licencia.dia_inicio }}</strong> al <strong>{{ licencia.dia_fin }}</strong></p>
+        <div class="warning-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        
+        <h2>Eliminar Licencia Medica</h2>
 
-        <form method="post" action="{% url 'eliminar_licencia' licencia.id_licencia %}">
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">
+            ¿Está seguro de que desea eliminar esta licencia medica?<br>
+            <strong>Esta acción no se puede deshacer.</strong>
+        </p>
+
+        <div class="licencia-info">
+            <p><strong>Funcionario:</strong> {{ licencia.id_usuario.nombre }}</p>
+            <p><strong>RUT:</strong> {{ licencia.id_usuario.rut }}-{{ licencia.id_usuario.dv }}</p>
+            <p><strong>Fecha inicio:</strong> {{ licencia.dia_inicio|date:"d/m/Y" }}</p>
+            <p><strong>Fecha fin:</strong> {{ licencia.dia_fin|date:"d/m/Y" }}</p>
+            <p><strong>Dias totales:</strong> 
+                {% if licencia.dia_inicio and licencia.dia_fin %}
+                    {{ licencia.dia_fin|timeuntil:licencia.dia_inicio }} dias
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+            <p><strong>Documento:</strong> 
+                {% if licencia.imagen %}
+                    <span style="color: #059669;">Archivo adjunto</span>
+                {% else %}
+                    <span style="color: #6b7280;">Sin documento</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="POST">
             {% csrf_token %}
-            <button type="submit" class="confirm-btn">
-                <i class="fa-solid fa-trash"></i> Eliminar Definitivamente
-            </button>
-            <a href="{% url 'lista_licencias' %}" class="cancel-btn">Cancelar</a>
+            <div class="btn-group">
+                <button class="btn-danger" type="submit">
+                    <i class="fa-solid fa-trash"></i> Eliminar Permanentemente
+                </button>
+                <a href="{% url 'lista_licencias' %}" class="btn-secondary">
+                    <i class="fa-solid fa-times"></i> Cancelar
+                </a>
+            </div>
         </form>
     </div>
 </section>

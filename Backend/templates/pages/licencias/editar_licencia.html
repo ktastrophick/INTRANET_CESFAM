@@ -6,51 +6,209 @@
 {% block extra_css %}
 <style>
 .licencia-container {
-    background:white;
-    border-radius:16px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    padding:2rem;
-    max-width:600px;
-    margin:0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 h2 {
-    font-size:1.5rem;
-    font-weight:700;
-    margin-bottom:1.5rem;
-    color:#1a1a1a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+    text-align: center;
 }
 
 .form-group {
-    margin-bottom:1rem;
+    margin-bottom: 1.5rem;
 }
 
 label {
-    display:block;
-    font-weight:500;
-    margin-bottom:0.25rem;
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.form-hint {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+    font-style: italic;
 }
 
 input[type="date"],
 input[type="file"] {
-    width:100%;
-    padding:0.6rem;
-    border-radius:8px;
-    border:1px solid #ccc;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-button.save-btn {
-    background:#00c853;
-    color:white;
-    border:none;
-    padding:0.6rem 1.2rem;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:500;
+input[type="date"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-button.save-btn:hover {
-    background:#00a844;
+.current-file {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.current-file a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.current-file a:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+}
+
+.file-warning {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #92400e;
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.save-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.save-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cancel-btn:hover {
+    background: #4b5563;
+    color: white;
+    text-decoration: none;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+
+.date-validation {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    display: none;
+}
+
+.date-validation.valid {
+    background: #f0fdf4;
+    color: #059669;
+    border: 1px solid #bbf7d0;
+}
+
+.date-validation.invalid {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.file-input-container {
+    position: relative;
+}
+
+.file-input-preview {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    text-align: center;
+    background: #f8fafc;
+    transition: border-color 0.3s;
+}
+
+.file-input-preview:hover {
+    border-color: #2563eb;
+}
+
+.file-input-preview.has-file {
+    border-color: #059669;
+    background: #f0fdf4;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #059669;
+}
+
+.file-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .licencia-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
 }
 </style>
 {% endblock %}
@@ -58,33 +216,188 @@ button.save-btn:hover {
 {% block content %}
 <section class="page-content">
     <div class="licencia-container">
-        <h2>Editar Licencia</h2>
-
-        <form method="post" enctype="multipart/form-data" action="{% url 'editar_licencia' licencia.id_licencia %}">
+        <h2>Editar Licencia Medica</h2>
+        
+        <form method="post" enctype="multipart/form-data" action="{% url 'editar_licencia' licencia.id_licencia %}" id="licenciaForm">
             {% csrf_token %}
 
+            <!-- Información del funcionario (solo lectura) -->
             <div class="form-group">
-                <label for="dia_inicio">Día de Inicio:</label>
-                <input type="date" id="dia_inicio" name="dia_inicio" value="{{ licencia.dia_inicio }}" required>
+                <label>Funcionario:</label>
+                <input type="text" value="{{ licencia.id_usuario.nombre }} ({{ licencia.id_usuario.rut }}-{{ licencia.id_usuario.dv }})" disabled>
+                <div class="form-hint">No se puede cambiar el funcionario asociado a la licencia</div>
+            </div>
+
+            <!-- Fechas de la licencia -->
+            <div class="form-group">
+                <label for="dia_inicio">Fecha de Inicio:</label>
+                <input type="date" id="dia_inicio" name="dia_inicio" 
+                        value="{{ licencia.dia_inicio|date:'Y-m-d' }}" required>
+                <div class="form-hint">Fecha en que comienza la licencia medica</div>
+                <div id="fechaInicioError" class="error-message"></div>
             </div>
 
             <div class="form-group">
-                <label for="dia_fin">Día de Fin:</label>
-                <input type="date" id="dia_fin" name="dia_fin" value="{{ licencia.dia_fin }}" required>
+                <label for="dia_fin">Fecha de Fin:</label>
+                <input type="date" id="dia_fin" name="dia_fin" 
+                        value="{{ licencia.dia_fin|date:'Y-m-d' }}" required>
+                <div class="form-hint">Fecha en que finaliza la licencia medica</div>
+                <div id="fechaFinError" class="error-message"></div>
             </div>
 
+            <!-- Validación de fechas -->
+            <div id="dateValidation" class="date-validation"></div>
+
+            <!-- Documento de la licencia -->
             <div class="form-group">
-                <label for="imagen">Documento (opcional):</label>
+                <label for="imagen">Documento de Licencia:</label>
+                
                 {% if licencia.imagen %}
-                    <p>Archivo actual: <a href="{{ licencia.imagen.url }}" target="_blank">{{ licencia.imagen.name }}</a></p>
+                <div class="current-file">
+                    <strong>Archivo actual:</strong>
+                    <a href="{{ licencia.imagen.url }}" target="_blank">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        {{ licencia.imagen.name|slice:"12:" }}
+                    </a>
+                </div>
+                <div class="file-warning">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                    Si selecciona un nuevo archivo, el actual sera reemplazado.
+                </div>
                 {% endif %}
-                <input type="file" id="imagen" name="imagen" accept=".jpg,.jpeg,.png,.pdf">
+                
+                <div class="file-input-container">
+                    <input type="file" id="imagen" name="imagen" 
+                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                    <div class="file-input-preview" id="filePreview">
+                        <i class="fa-solid fa-cloud-upload-alt" style="font-size: 2rem; color: #6b7280; margin-bottom: 0.5rem;"></i>
+                        <div>Haga clic para seleccionar un nuevo documento</div>
+                        <div class="file-info">Formatos permitidos: JPG, PNG, PDF, DOC (Max. 10MB)</div>
+                    </div>
+                </div>
+                <div id="fileError" class="error-message"></div>
             </div>
 
-            <button type="submit" class="save-btn">
-                <i class="fa-solid fa-save"></i> Guardar Cambios
-            </button>
+            <!-- Botones -->
+            <div class="btn-group">
+                <a href="{% url 'lista_licencias' %}" class="cancel-btn">
+                    <i class="fa-solid fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="save-btn">
+                    <i class="fa-solid fa-save"></i> Guardar Cambios
+                </button>
+            </div>
         </form>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('licenciaForm');
+    const diaInicio = document.getElementById('dia_inicio');
+    const diaFin = document.getElementById('dia_fin');
+    const imagenInput = document.getElementById('imagen');
+    const filePreview = document.getElementById('filePreview');
+    const dateValidation = document.getElementById('dateValidation');
+    const fechaInicioError = document.getElementById('fechaInicioError');
+    const fechaFinError = document.getElementById('fechaFinError');
+    const fileError = document.getElementById('fileError');
+
+    // Preview de archivo seleccionado
+    imagenInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        fileError.textContent = '';
+        
+        if (file) {
+            // Validar tamaño (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                fileError.textContent = 'El archivo no puede superar 10MB';
+                imagenInput.value = '';
+                resetFilePreview();
+                return;
+            }
+            
+            // Validar tipo de archivo
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf', 
+                                    'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                fileError.textContent = 'Tipo de archivo no permitido';
+                imagenInput.value = '';
+                resetFilePreview();
+                return;
+            }
+            
+            // Mostrar preview
+            filePreview.innerHTML = `
+                <i class="fa-solid fa-file-circle-check" style="font-size: 2rem; color: #059669; margin-bottom: 0.5rem;"></i>
+                <div class="file-name">${file.name}</div>
+                <div class="file-info">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+            `;
+            filePreview.classList.add('has-file');
+        } else {
+            resetFilePreview();
+        }
+    });
+
+    function resetFilePreview() {
+        filePreview.innerHTML = `
+            <i class="fa-solid fa-cloud-upload-alt" style="font-size: 2rem; color: #6b7280; margin-bottom: 0.5rem;"></i>
+            <div>Haga clic para seleccionar un nuevo documento</div>
+            <div class="file-info">Formatos permitidos: JPG, PNG, PDF, DOC (Max. 10MB)</div>
+        `;
+        filePreview.classList.remove('has-file');
+    }
+
+    // Validación de fechas en tiempo real
+    function validarFechas() {
+        fechaInicioError.textContent = '';
+        fechaFinError.textContent = '';
+        dateValidation.textContent = '';
+        dateValidation.className = 'date-validation';
+        
+        if (!diaInicio.value || !diaFin.value) {
+            return true;
+        }
+        
+        const inicio = new Date(diaInicio.value);
+        const fin = new Date(diaFin.value);
+        
+        let isValid = true;
+        
+        // Validar que fecha fin sea posterior a fecha inicio
+        if (inicio > fin) {
+            fechaFinError.textContent = 'La fecha fin debe ser posterior a la fecha de inicio';
+            dateValidation.textContent = 'Las fechas seleccionadas no son validas';
+            dateValidation.classList.add('invalid');
+            isValid = false;
+        } else {
+            // Calcular días de diferencia
+            const diffTime = Math.abs(fin - inicio);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            dateValidation.textContent = `Licencia por ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
+            dateValidation.classList.add('valid');
+        }
+        
+        return isValid;
+    }
+
+    // Event listeners para validación
+    diaInicio.addEventListener('change', validarFechas);
+    diaFin.addEventListener('change', validarFechas);
+
+    // Validación al enviar el formulario
+    form.addEventListener('submit', function(e) {
+        if (!validarFechas()) {
+            e.preventDefault();
+            return;
+        }
+    });
+
+    // Validar fechas al cargar la página
+    validarFechas();
+});
+</script>
 {% endblock %}
