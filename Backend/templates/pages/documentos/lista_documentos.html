@@ -4,175 +4,460 @@
 {% block title %}Documentos — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-  <style>
-    .documentos-container{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:2rem}
-    .documentos-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
-    .documentos-header h2{font-size:1.5rem;font-weight:700;color:#1a1a1a}
-    .upload-btn{background:linear-gradient(135deg,#66b2ff 0%,#7fffd4 100%);color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;cursor:pointer;font-weight:500;transition:transform .3s,opacity .3s}
-    .upload-btn:hover{opacity:.9;transform:translateY(-2px)}
-    .filters{display:flex;flex-wrap:wrap;gap:1rem;background:#f5f5f5;border-radius:12px;padding:1rem;margin-bottom:1.5rem}
-    .filters input,.filters select{padding:.6rem;border:1px solid #ddd;border-radius:8px;font-size:.9rem;flex:1;min-width:180px}
-    .filters button{background:#66b2ff;color:#fff;border:none;padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;font-weight:500;transition:background .3s}
-    .filters button:hover{background:#4a9eea}
-    table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
-    th,td{padding:1rem;text-align:left;border-bottom:1px solid #eee}
-    th{background:#2563eb;color:#fff;font-weight:600}
-    tr:hover{background:#f5faff}
-    .documento-actions i{margin-right:.5rem;cursor:pointer;color:#2563eb;transition:color .3s}
-    .documento-actions i:hover{color:#1e88e5}
-    .messages{margin-bottom:1rem}
-    .messages p{margin:0 0 .25rem 0;font-weight:600;font-size:.9rem}
-    .messages .error{color:#b91c1c}
-    .messages .success{color:#15803d}
-    @media (max-width: 768px){
-      .filters{flex-direction:column}
-      th,td{font-size:.85rem}
-      .documentos-header{flex-direction:column;align-items:flex-start;gap:1rem}
-      .upload-btn{width:100%}
+<style>
+.documentos-container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.documentos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.documentos-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.upload-btn {
+    background: linear-gradient(135deg, #66b2ff 0%, #7fffd4 100%);
+    color: #fff;
+    border: none;
+    padding: .75rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform .3s, opacity .3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-btn:hover {
+    opacity: .9;
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.filters input,
+.filters select {
+    padding: .75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: .9rem;
+    flex: 1;
+    min-width: 180px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.filters input:focus,
+.filters select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filters button {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: .75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background .3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filters button:hover {
+    background: #1d4ed8;
+}
+
+.btn-clear {
+    background: #6b7280 !important;
+}
+
+.btn-clear:hover {
+    background: #4b5563 !important;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.action-btn.download { color: #059669; }
+.action-btn.download:hover { background: rgba(5, 150, 105, 0.1); }
+
+.action-btn.edit { color: #2563eb; }
+.action-btn.edit:hover { background: rgba(37, 99, 235, 0.1); }
+
+.action-btn.delete { color: #dc2626; }
+.action-btn.delete:hover { background: rgba(220, 38, 38, 0.1); }
+
+.action-btn.view { color: #7c3aed; }
+.action-btn.view:hover { background: rgba(124, 58, 237, 0.1); }
+
+.action-btn.email { color: #d97706; }
+.action-btn.email:hover { background: rgba(217, 119, 6, 0.1); }
+
+.file-type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-pdf { background: #fee2e2; color: #dc2626; }
+.badge-word { background: #dbeafe; color: #1d4ed8; }
+.badge-excel { background: #dcfce7; color: #16a34a; }
+.badge-other { background: #f3e8ff; color: #7c3aed; }
+
+.file-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-link:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #d1d5db;
+}
+
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.alert-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.alert-info {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+}
+
+@media (max-width: 768px) {
+    .documentos-container {
+        padding: 1rem;
     }
-  </style>
+    
+    .documentos-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .filters {
+        flex-direction: column;
+    }
+    
+    .filters input,
+    .filters select {
+        min-width: auto;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-  <section class="page-content">
+<section class="page-content">
     <div class="documentos-container">
-
-      {# Mensajes de Django #}
-      {% if messages %}
+        <!-- Mensajes -->
+        {% if messages %}
         <div class="messages">
-          {% for message in messages %}
-            <p class="{{ message.tags }}">{{ message }}</p>
-          {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
         </div>
-      {% endif %}
-
-      <div class="documentos-header">
-        <h2>Gestión de Documentos Institucionales</h2>
-
-        {# Solo Admin puede subir documentos (según lógica de views) #}
-        {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
-        <a href="{% url 'form_documento' %}">
-          <button class="upload-btn">
-            <i class="fa-solid fa-plus"></i> Subir documento
-          </button>
-        </a>
         {% endif %}
-      </div>
 
-      <div class="filters">
-        <input type="text" id="filtroNombre" placeholder="Buscar por nombre…" value="{{ query|default:'' }}">
-        <select id="filtroTipo">
-          <option value="">Tipo de archivo</option>
-          <option value="pdf">PDF</option>
-          <option value="word">Word</option>
-          <option value="excel">Excel</option>
-        </select>
-        <input type="date" id="filtroFecha">
-        <button id="btnFiltrar" type="button">Filtrar</button>
-        <button id="btnLimpiar" type="button">Limpiar</button>
-      </div>
+        <div class="documentos-header">
+            <h2> Gestión de Documentos Institucionales</h2>
 
-      <table id="tablaDocumentos">
-        <thead>
-          <tr>
-            <th>Nombre del Documento</th>
-            <th>Tipo</th>
-            <th>Fecha</th>
-            <th>Funcionario</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for d in api_intranet_documento %}
-            <tr>
-              <td>{{ d.nombre }}</td>
+            {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
+            <a href="{% url 'form_documento' %}" class="upload-btn">
+                <i class="fa-solid fa-plus"></i> Subir Documento
+            </a>
+            {% endif %}
+        </div>
 
-              <td>
-                {% if d.archivo.url|lower|slice:"-4:" == ".pdf" %}
-                    PDF
-                {% elif d.archivo.url|lower|slice:"-4:" == ".doc" or d.archivo.url|lower|slice:"-5:" == ".docx" %}
-                    Word
-                {% elif d.archivo.url|lower|slice:"-4:" == ".xls" or d.archivo.url|lower|slice:"-5:" == ".xlsx" %}
-                    Excel
-                {% else %}
-                    Otro
-                {% endif %}
-              </td>
+        <!-- Filtros Mejorados -->
+        <div class="filters">
+            <input type="text" id="filtroNombre" placeholder=" Buscar por nombre o descripción...">
+            <select id="filtroTipo">
+                <option value="">Todos los tipos</option>
+                <option value="pdf">PDF</option>
+                <option value="word">Word</option>
+                <option value="excel">Excel</option>
+                <option value="otro">Otros</option>
+            </select>
+            <input type="date" id="filtroFecha">
+            <button id="btnFiltrar">
+                <i class="fa-solid fa-filter"></i> Filtrar
+            </button>
+            <button id="btnLimpiar" class="btn-clear">
+                <i class="fa-solid fa-eraser"></i> Limpiar
+            </button>
+        </div>
 
-              <td>{{ d.fecha_subida|date:"Y-m-d" }}</td>
-              <td>{{ d.subido_por.nombre }}</td>
+        <!-- Tabla de Documentos -->
+        <table id="tablaDocumentos">
+            <thead>
+                <tr>
+                    <th>Nombre del Documento</th>
+                    <th>Tipo</th>
+                    <th>Fecha</th>
+                    <th>Funcionario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in api_intranet_documentos %}
+                <tr>
+                    <td>
+                        <strong>{{ d.nombre }}</strong>
+                        {% if d.descripcion %}
+                        <br>
+                        <small style="color: #6b7280;">{{ d.descripcion|truncatewords:10 }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if d.archivo.url|lower|slice:"-4:" == ".pdf" %}
+                            <span class="file-type-badge badge-pdf">PDF</span>
+                        {% elif d.archivo.url|lower|slice:"-4:" == ".doc" or d.archivo.url|lower|slice:"-5:" == ".docx" %}
+                            <span class="file-type-badge badge-word">Word</span>
+                        {% elif d.archivo.url|lower|slice:"-4:" == ".xls" or d.archivo.url|lower|slice:"-5:" == ".xlsx" %}
+                            <span class="file-type-badge badge-excel">Excel</span>
+                        {% else %}
+                            <span class="file-type-badge badge-other">Otro</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ d.fecha_subida|date:"d/m/Y" }}</td>
+                    <td>
+                        {{ d.subido_por.nombre }}
+                        <br>
+                        <small style="color: #6b7280;">{{ d.subido_por.id_cargo.nombre }}</small>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ d.archivo.url }}" download class="action-btn download" title="Descargar">
+                                <i class="fa-solid fa-download"></i>
+                            </a>
+                            
+                            <a href="{{ d.archivo.url }}" target="_blank" class="action-btn view" title="Vista previa">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            
+                            <a href="mailto:{{ d.subido_por.correo }}" class="action-btn email" title="Contactar">
+                                <i class="fa-solid fa-envelope"></i>
+                            </a>
 
-              <td>
-                  <a href="{{ d.archivo.url }}" download>
-                      <i class="fa-solid fa-download" title="Descargar"></i>
-                  </a>
-
-                  <div class="documento-actions">
-                      {# Solo Admin puede editar/eliminar según tu lógica de permisos #}
-                      {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
-                      <a href="{% url 'editar_documento' d.id_documento %}">
-                          <i class="fa-solid fa-pen" title="Editar"></i>
-                      </a>
-                      {% endif %}
-
-                      <a href="mailto:{{ d.subido_por.correo }}">
-                          <i class="fa-solid fa-envelope" title="Enviar mensaje"></i>
-                      </a>
-
-                      {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
-                      <a href="{% url 'eliminar_documento' d.id_documento %}">
-                          <i class="fa-solid fa-trash" title="Eliminar"></i>
-                      </a>
-                      {% endif %}
-                  </div>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="5" style="text-align:center; padding:1.5rem;">
-                No hay documentos registrados.
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+                            {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
+                            <a href="{% url 'editar_documento' d.id_documento %}" class="action-btn edit" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            
+                            <a href="{% url 'eliminar_documento' d.id_documento %}" class="action-btn delete" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h3>No hay documentos registrados</h3>
+                        <p>Comienza subiendo el primer documento institucional</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-  </section>
+</section>
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    const $  = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroNombre = document.getElementById('filtroNombre');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const filtroFecha = document.getElementById('filtroFecha');
+    const btnFiltrar = document.getElementById('btnFiltrar');
+    const btnLimpiar = document.getElementById('btnLimpiar');
+    const filas = document.querySelectorAll('#tablaDocumentos tbody tr');
 
-    function filtrar() {
-      const nombre = $('#filtroNombre').value.toLowerCase();
-      const tipo   = $('#filtroTipo').value.toLowerCase();
-      const fecha  = $('#filtroFecha').value;
+    function aplicarFiltros() {
+        const nombre = filtroNombre.value.toLowerCase().trim();
+        const tipo = filtroTipo.value.toLowerCase();
+        const fecha = filtroFecha.value;
 
-      $$('#tablaDocumentos tbody tr').forEach(tr => {
-        const nombreDoc = tr.children[0].textContent.toLowerCase();
-        const tipoDoc   = tr.children[1].textContent.toLowerCase();
-        const fechaDoc  = tr.children[2].textContent;
+        filas.forEach(fila => {
+            if (fila.cells.length < 5) return; // Saltar fila vacía
 
-        const okNombre  = !nombre || nombreDoc.includes(nombre);
-        const okTipo    = !tipo   || tipoDoc.includes(tipo);
-        const okFecha   = !fecha  || fechaDoc === fecha;
+            const nombreDoc = fila.cells[0].textContent.toLowerCase();
+            const tipoDoc = fila.cells[1].textContent.toLowerCase();
+            const fechaDoc = fila.cells[2].textContent;
 
-        tr.style.display = (okNombre && okTipo && okFecha) ? '' : 'none';
-      });
+            // Convertir fecha dd/mm/yyyy a yyyy-mm-dd para comparación
+            const [dia, mes, anio] = fechaDoc.split('/');
+            const fechaTabla = `${anio}-${mes}-${dia}`;
+
+            let mostrar = true;
+
+            // Filtro por nombre
+            if (nombre && !nombreDoc.includes(nombre)) {
+                mostrar = false;
+            }
+
+            // Filtro por tipo
+            if (tipo && tipoDoc !== tipo) {
+                mostrar = false;
+            }
+
+            // Filtro por fecha
+            if (fecha && fechaTabla !== fecha) {
+                mostrar = false;
+            }
+
+            fila.style.display = mostrar ? '' : 'none';
+        });
     }
 
-    function limpiarFiltros(){
-      $('#filtroNombre').value = '';
-      $('#filtroTipo').value   = '';
-      $('#filtroFecha').value  = '';
-      filtrar();
+    function limpiarFiltros() {
+        filtroNombre.value = '';
+        filtroTipo.value = '';
+        filtroFecha.value = '';
+        aplicarFiltros();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      $('#btnFiltrar').addEventListener('click', filtrar);
-      $('#btnLimpiar').addEventListener('click', limpiarFiltros);
-    });
-  </script>
+    // Event listeners
+    btnFiltrar.addEventListener('click', aplicarFiltros);
+    btnLimpiar.addEventListener('click', limpiarFiltros);
+    
+    // Filtrar al escribir en tiempo real
+    filtroNombre.addEventListener('input', aplicarFiltros);
+    
+    // Filtrar al cambiar selecciones
+    filtroTipo.addEventListener('change', aplicarFiltros);
+    filtroFecha.addEventListener('change', aplicarFiltros);
+
+    // Aplicar filtros iniciales si hay valores en los campos
+    aplicarFiltros();
+});
+</script>
 {% endblock %}

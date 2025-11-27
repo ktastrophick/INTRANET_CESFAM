@@ -195,7 +195,7 @@ select:focus {
             <!-- Funcionario (si es admin puede seleccionar, sino se auto-selecciona) -->
             <div class="form-group">
                 <label for="id_usuario"> Funcionario:</label>
-                {% if rol_usuario in ["Admin", "Director"] %}
+                {% if rol_usuario == "Admin" or rol_usuario == "Director" %}
                     <select id="id_usuario" name="id_usuario" required>
                         <option value="">Seleccione un funcionario</option>
                         {% for usuario in usuarios %}

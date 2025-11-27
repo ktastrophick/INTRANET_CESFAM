@@ -231,24 +231,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const funcionarios = document.querySelectorAll(".funcionario-item");
 
     function filtrar() {
-        const texto = buscarInput.value.toLowerCase();
+        const texto = buscarInput.value.toLowerCase().trim();
         const cargoSel = filtroCargo.value.toLowerCase();
 
         funcionarios.forEach(item => {
+            if (!item.querySelector(".funcionario-info")) return;
+            
             const nombre = item.querySelector(".funcionario-info p:nth-child(2)").innerText.toLowerCase();
             const rut = item.querySelector(".funcionario-info p:nth-child(1)").innerText.toLowerCase();
             const cargo = item.querySelector(".funcionario-info p:nth-child(5)").innerText.toLowerCase();
 
-            const coincideTexto = nombre.includes(texto) || rut.includes(texto);
-            const coincideCargo = cargoSel === "" || cargo.includes(cargoSel);
+            const coincideTexto = !texto || nombre.includes(texto) || rut.includes(texto);
+            const coincideCargo = !cargoSel || cargo.includes(cargoSel);
 
             item.style.display = (coincideTexto && coincideCargo) ? "flex" : "none";
         });
     }
 
-    buscarInput.addEventListener("keyup", filtrar);
+    // Filtrar en tiempo real
+    buscarInput.addEventListener("input", filtrar);
     filtroCargo.addEventListener("change", filtrar);
+    
+    // Aplicar filtros iniciales si hay valores
+    filtrar();
 });
 </script>
-
 {% endblock %}
