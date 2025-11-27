@@ -2,26 +2,26 @@
 <!doctype html>
 <html lang="es" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0d6efd">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d6efd">
 
-  <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
-  <meta name="description" content="Intranet del CESFAM Santa Rosa">
+    <title>{% block title %}Intranet CESFAM Santa Rosa{% endblock %}</title>
+    <meta name="description" content="Intranet del CESFAM Santa Rosa">
 
-  <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
 
   <!-- Fonts / Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
 
   <!-- CSS principal -->
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
-  <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 
-  {% block extra_css %}{% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -99,11 +99,7 @@
 
             <!-- MENÚ DESPLEGABLE -->
             <div class="dropdown" id="userDropdown">
-                <!-- Enlace al perfil -->
-                <a href="{% url 'perfil' %}" class="dropdown-item">
-                    <i class="fa-solid fa-id-badge"></i> Mi perfil
-                </a>
-
+                
                 <!-- Cerrar sesión -->
                 <form action="{% url 'logout' %}" method="post" class="logout-form">
                     {% csrf_token %}
