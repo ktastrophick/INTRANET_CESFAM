@@ -113,8 +113,9 @@
                 <select id="id_rol" name="id_rol">
                     <option value="">Seleccione un rol</option>
                     {% for rol in roles %}
-                    <option value="{{ rol.id_rol }}" {% if funcionario.id_rol.id_rol == rol.id_rol %}selected{% endif %}>
-                        {{ rol.nombre_rol }}
+                    <option value="{{ rol.id_rol }}" 
+                        {% if funcionario.id_rol and funcionario.id_rol.id_rol == rol.id_rol %}selected{% endif %}>
+                        {{ rol.nombre }}
                     </option>
                     {% endfor %}
                 </select>
@@ -125,8 +126,9 @@
                 <select id="id_departamento" name="id_departamento">
                     <option value="">Seleccione un departamento</option>
                     {% for depto in departamentos %}
-                    <option value="{{ depto.id_departamento }}" {% if funcionario.id_departamento.id_departamento == depto.id_departamento %}selected{% endif %}>
-                        {{ depto.nombre_departamento }}
+                    <option value="{{ depto.id_departamento }}" 
+                        {% if funcionario.id_departamento and funcionario.id_departamento.id_departamento == depto.id_departamento %}selected{% endif %}>
+                        {{ depto.nombre }}
                     </option>
                     {% endfor %}
                 </select>
@@ -136,11 +138,12 @@
                 <label for="id_cargo">Cargo:</label>
                 <select id="id_cargo" name="id_cargo">
                     <option value="">Seleccione un cargo</option>
-                    {% for cargo in cargos %}
-                    <option value="{{ cargo.id_cargo }}" {% if funcionario.id_cargo.id_cargo == cargo.id_cargo %}selected{% endif %}>
-                        {{ cargo.nombre_cargo }}
-                    </option>
-                    {% endfor %}
+                        {% for cargo in cargos %}
+                        <option value="{{ cargo.id_cargo }}" 
+                            {% if funcionario.id_cargo and funcionario.id_cargo.id_cargo == cargo.id_cargo %}selected{% endif %}>
+                            {{ cargo.nombre }}
+                        </option>
+                        {% endfor %}
                 </select>
             </div>
 
