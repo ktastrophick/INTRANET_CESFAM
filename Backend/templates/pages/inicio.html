@@ -17,15 +17,8 @@
             del personal del CESFAM.
         </p>
 
-        {# Botón principal de Iniciar sesión (solo tiene sentido si no hay sesión en tu sistema) #}
-        {% if not request.session.id_usuario %}
-        <div class="welcome-actions">
-            <a href="{% url 'login' %}" class="btn-primary">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                Iniciar sesión
-            </a>
-        </div>
-        {% endif %}
+
+        
     </section>
 
     <!-- TARJETAS INFORMATIVAS -->

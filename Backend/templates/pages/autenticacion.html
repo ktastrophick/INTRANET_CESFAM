@@ -19,17 +19,7 @@
     <h2>Iniciar sesión</h2>
     <p>Ingresa tus credenciales para acceder a la intranet</p>
 
-    {# Muestra mensajes de Django #}
-    {% if messages %}
-      <div class="non-field-errors">
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
+  
     <form method="post" action="{% url 'login' %}" class="login-form">
       {% csrf_token %}
 
