@@ -43,8 +43,16 @@ def calendario(request: HttpRequest) -> HttpResponse:
     if not usuario:
         return redirect("login")
     
+    # Obtener todos los eventos ordenados por fecha
+    eventos = Calendario.objects.all().order_by('fecha', 'hora_inicio')
+    
+    # También obtener tipos de calendario si los necesitas
+    tipos_evento = TipoCalendario.objects.all()
+    
     return render(request, 'pages/calendario.html', {
-        "usuario": usuario
+        "usuario": usuario,
+        "eventos": eventos,
+        "tipos_evento": tipos_evento
     })
 
 def _serialize_event(e: Calendario) -> EventoJSON:
