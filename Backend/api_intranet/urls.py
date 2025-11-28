@@ -4,19 +4,8 @@ from .views import (base_views, calendario_views, solicitudes_views, perfil_view
                     documentos_views, licencias_views)
 
 urlpatterns = [
-    # =============================================
-    # PÁGINAS BASE
-    # =============================================
 
-    path('', inicio, name='inicio'),    
-    path('index/', index, name='index'),
 
-    # =============================================
-    # CALENDARIO - IMPORTACIONES DIRECTAS
-    # =============================================
-    path('calendario/', calendario, name='calendario'),
-    path('eventos/', eventos_api, name='eventos_api'),
-    path('eventos/<int:id>/', evento_detalle_api, name='evento_api'),
 
     path('', base_views.inicio, name='inicio'),    
     path('index/', base_views.index, name='index'),
