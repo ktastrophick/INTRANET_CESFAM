@@ -324,7 +324,7 @@ tr:hover {
                 </tr>
             </thead>
             <tbody>
-                {% for d in api_intranet_documentos %}
+                {% for d in documentos %}
                 <tr>
                     <td>
                         <strong>{{ d.nombre }}</strong>
@@ -360,11 +360,8 @@ tr:hover {
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             
-                            <a href="mailto:{{ d.subido_por.correo }}" class="action-btn email" title="Contactar">
-                                <i class="fa-solid fa-envelope"></i>
-                            </a>
 
-                            {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
+                            {% if usuario.id_rol and usuario.id_rol.nombre == "Director" %}
                             <a href="{% url 'editar_documento' d.id_documento %}" class="action-btn edit" title="Editar">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
