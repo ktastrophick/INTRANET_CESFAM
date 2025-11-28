@@ -129,14 +129,6 @@ input:focus, select:focus {
     <div class="solicitud-container">
         <h2>Nueva Solicitud</h2>
         
-        <!-- Mostrar mensajes -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
 
         <form method="post" id="solicitudForm">
             {% csrf_token %}

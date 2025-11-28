@@ -4,6 +4,7 @@ from django.contrib import messages
 from api_intranet.models import Usuario, RolUsuario, Departamento, Cargo
 from django.contrib.auth.decorators import login_required
 from typing import Optional
+from django.db import transaction
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
     """Obtiene el usuario actual desde la sesión"""
@@ -26,15 +27,9 @@ def lista_funcionarios(request: HttpRequest) -> HttpResponse:
     rol_usuario = getattr(usuario.id_rol, 'nombre', 'Funcionario') if usuario.id_rol else "Funcionario"
     
     # Base queryset
-    if rol_usuario == "Director":
-        # Admin y Director ven todos los funcionarios
-        funcionarios = Usuario.objects.all()
-    elif rol_usuario == "Jefe_depto" and usuario.id_departamento:
-        # Jefe ve solo funcionarios de su departamento
-        funcionarios = Usuario.objects.filter(id_departamento=usuario.id_departamento)
-    else:
-        # Funcionarios normales ven lista básica (solo info pública)
-        funcionarios = Usuario.objects.all()
+    # TODOS pueden ver a todos los funcionarios
+    funcionarios = Usuario.objects.all()
+
 
     # Aplicar filtros
     inicial = request.GET.get("inicial")
@@ -78,7 +73,6 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
         messages.error(request, "No tienes permisos para crear funcionarios.")
         return redirect("lista_funcionarios")
 
-    # Obtener datos para mostrar en el formulario
     roles = RolUsuario.objects.all()
     departamentos = Departamento.objects.all()
     cargos = Cargo.objects.all()
@@ -95,7 +89,7 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
         id_departamento = request.POST.get("id_departamento") or None
         id_cargo = request.POST.get("id_cargo") or None
 
-        # Validaciones básicas
+        # Validaciones mínimas
         if not all([rut, dv, nombre, contrasena]):
             messages.error(request, "RUT, DV, nombre y contraseña son obligatorios.")
             return render(request, "pages/funcionarios/form_funcionario.html", {
@@ -104,7 +98,7 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
                 "cargos": cargos,
                 "data": request.POST
             })
-            
+
         if not rut.isdigit():
             messages.error(request, "El RUT debe contener solo números.")
             return render(request, "pages/funcionarios/form_funcionario.html", {
@@ -115,26 +109,54 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
             })
 
         try:
-            # Crear el funcionario con validaciones
-            funcionario = Usuario(
-                rut=int(rut),  # Ahora es seguro porque validamos que es dígito
-                dv=dv,
-                nombre=nombre,
-                telefono=telefono or None,
-                correo=correo or None,
-                contrasena=contrasena,
-                # CORREGIDO: Asignación segura de ForeignKeys
-                id_rol_id=int(id_rol) if id_rol and id_rol.isdigit() else None,
-                id_departamento_id=int(id_departamento) if id_departamento and id_departamento.isdigit() else None,
-                id_cargo_id=int(id_cargo) if id_cargo and id_cargo.isdigit() else None
-            )
-            # Aplicar validaciones del modelo
-            funcionario.full_clean()
-            funcionario.save()
-            
+            with transaction.atomic():
+                funcionario = Usuario(
+                    rut=int(rut),
+                    dv=dv,
+                    nombre=nombre,
+                    telefono=telefono or None,
+                    correo=correo or None,
+                    contrasena=contrasena,
+                    id_rol_id=int(id_rol) if id_rol and id_rol.isdigit() else None,
+                    id_departamento_id=int(id_departamento) if id_departamento and id_departamento.isdigit() else None,
+                    id_cargo_id=int(id_cargo) if id_cargo and id_cargo.isdigit() else None
+                )
+
+                funcionario.full_clean()
+                funcionario.save()
+
+                # -------- LÓGICA JEFE DE DEPARTAMENTO --------
+                if id_rol == "3" and id_departamento and id_departamento.isdigit():
+                    depto = Departamento.objects.filter(pk=int(id_departamento)).first()
+
+                    if depto:
+                        # 1) Si el usuario era jefe en otro departamento, limpiarlo
+                        otros_deptos = Departamento.objects.filter(
+                            jefe_departamento=funcionario
+                        ).exclude(pk=depto.pk)
+
+                        for d in otros_deptos:
+                            d.jefe_departamento = None
+                            d.save()
+
+                        # 2) Asignar como jefe del nuevo departamento
+                        depto.jefe_departamento = funcionario
+                        depto.save()
+
+                        # 3) Quitar jefatura al jefe anterior
+                        jefe_anterior = Usuario.objects.filter(
+                            id_rol__nombre="Jefe_depto",
+                            id_departamento=depto
+                        ).exclude(id_usuario=funcionario.id_usuario).first()
+
+                        if jefe_anterior:
+                            jefe_anterior.id_rol = RolUsuario.objects.get(nombre="Funcionario")
+                            jefe_anterior.save()
+                # ---------------------------------------------
+
             messages.success(request, f"Funcionario {nombre} creado exitosamente.")
             return redirect("lista_funcionarios")
-            
+
         except Exception as e:
             messages.error(request, f"Error al crear funcionario: {str(e)}")
             return render(request, "pages/funcionarios/form_funcionario.html", {
@@ -144,16 +166,15 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
                 "data": request.POST
             })
 
-    # GET request - mostrar formulario vacío
-    return render(
-        request,
-        "pages/funcionarios/form_funcionario.html",
-        {
-            "roles": roles,
-            "departamentos": departamentos,
-            "cargos": cargos
-        }
-    )
+    return render(request, "pages/funcionarios/form_funcionario.html", {
+        "roles": roles,
+        "departamentos": departamentos,
+        "cargos": cargos
+    })
+
+
+
+from django.db import transaction
 
 def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
     """Editar funcionario existente (solo Admin)"""
@@ -175,71 +196,104 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
 
     if request.method == "POST":
         try:
-            # Conversión segura de RUT
+            # -------------------
+            # Leer inputs
+            # -------------------
             rut_str = request.POST.get("rut")
-            if rut_str and rut_str.isdigit():
-                funcionario.rut = int(rut_str)
-            
-            # Métodos seguros en strings
             dv_input = request.POST.get("dv", "")
-            funcionario.dv = dv_input.upper().strip() if dv_input else getattr(funcionario, 'dv', '')
-            
             nombre_input = request.POST.get("nombre", "")
-            funcionario.nombre = nombre_input.strip() if nombre_input else getattr(funcionario, 'nombre', '')
-            
-            funcionario.telefono = request.POST.get("telefono", "").strip() or None
-            funcionario.correo = request.POST.get("correo", "").strip() or None
-            
-            # Solo actualizar contraseña si se proporcionó una nueva
+            telefono_input = request.POST.get("telefono", "")
+            correo_input = request.POST.get("correo", "")
             nueva_contrasena = request.POST.get("contrasena", "").strip()
-            if nueva_contrasena:
-                funcionario.contrasena = nueva_contrasena
 
-            # CORRECCIÓN: Asignación segura de ForeignKeys usando objetos completos
             id_rol = request.POST.get("id_rol")
             id_departamento = request.POST.get("id_departamento")
             id_cargo = request.POST.get("id_cargo")
-            
-            # Asignar objetos ForeignKey completos
+
+            # -------------------
+            # Aplicar cambios en el objeto (antes de validar)
+            # -------------------
+            if rut_str and rut_str.isdigit():
+                funcionario.rut = int(rut_str)
+
+            funcionario.dv = dv_input.upper().strip() if dv_input else funcionario.dv
+            funcionario.nombre = nombre_input.strip() if nombre_input else funcionario.nombre
+            funcionario.telefono = telefono_input.strip() or None
+            funcionario.correo = correo_input.strip() or None
+            if nueva_contrasena:
+                funcionario.contrasena = nueva_contrasena
+
+            # Asignar FK provisionales (objetos o None)
+            # Rol
             if id_rol and id_rol.isdigit():
                 try:
-                    funcionario.id_rol = RolUsuario.objects.get(pk=int(id_rol))
+                    rol_obj = RolUsuario.objects.get(pk=int(id_rol))
+                    funcionario.id_rol = rol_obj
                 except RolUsuario.DoesNotExist:
                     funcionario.id_rol = None
             else:
                 funcionario.id_rol = None
 
+            # Departamento
             if id_departamento and id_departamento.isdigit():
-                try:
-                    funcionario.id_departamento = Departamento.objects.get(pk=int(id_departamento))
-                except Departamento.DoesNotExist:
-                    funcionario.id_departamento = None
+                funcionario.id_departamento = Departamento.objects.filter(pk=int(id_departamento)).first()
             else:
                 funcionario.id_departamento = None
 
+            # Cargo
             if id_cargo and id_cargo.isdigit():
-                try:
-                    funcionario.id_cargo = Cargo.objects.get(pk=int(id_cargo))
-                except Cargo.DoesNotExist:
-                    funcionario.id_cargo = None
+                funcionario.id_cargo = Cargo.objects.filter(pk=int(id_cargo)).first()
             else:
                 funcionario.id_cargo = None
 
-            # Aplicar validaciones del modelo
-            funcionario.full_clean()
-            funcionario.save()
-            
+            # -------------------
+            # Validar y guardar dentro de una transacción
+            # -------------------
+            with transaction.atomic():
+                funcionario.full_clean()
+                funcionario.save()
+
+                # --------- LÓGICA DE JEFE DE DEPARTAMENTO ---------
+                # Ejecutar solamente si el rol asignado es Jefe_depto (id_rol == 3)
+                if funcionario.id_rol and funcionario.id_rol.nombre == "Jefe_depto":
+
+                    # 1) Si este funcionario era jefe en otro departamento distinto, limpiarlo
+                    otro_depto = Departamento.objects.filter(jefe_departamento=funcionario).exclude(
+                        pk=(funcionario.id_departamento.id_departamento if funcionario.id_departamento else None)
+                    ).first()
+                    if otro_depto:
+                        otro_depto.jefe_departamento = None
+                        otro_depto.save()
+
+                    # 2) Actualizar el departamento actual para que apunte a este funcionario
+                    if funcionario.id_departamento:
+                        depto = funcionario.id_departamento
+                        depto.jefe_departamento = funcionario
+                        depto.save()
+
+                        # 3) Quitar rol de Jefe al jefe anterior de este departamento (si existe y no es este funcionario)
+                        jefe_anterior = Usuario.objects.filter(
+                            id_rol__nombre="Jefe_depto",
+                            id_departamento=depto
+                        ).exclude(id_usuario=funcionario.id_usuario).first()
+
+                        if jefe_anterior:
+                            jefe_anterior.id_rol = RolUsuario.objects.get(nombre="Funcionario")
+                            jefe_anterior.save()
+
+                else:
+                    # Si ya no es Jefe_depto, asegurarse de que el departamento deje de apuntar a este usuario
+                    departamentos_que_apuntan = Departamento.objects.filter(jefe_departamento=funcionario)
+                    for d in departamentos_que_apuntan:
+                        d.jefe_departamento = None
+                        d.save()
+
             messages.success(request, f"Funcionario {funcionario.nombre} actualizado exitosamente.")
             return redirect("lista_funcionarios")
-            
+
         except Exception as e:
             messages.error(request, f"Error al actualizar funcionario: {str(e)}")
-            return render(request, "pages/funcionarios/editar_funcionario.html", {
-                "funcionario": funcionario,
-                "roles": roles,
-                "departamentos": departamentos,
-                "cargos": cargos,
-            })
+            # continuar al render final para mostrar formulario con datos actuales
 
     # GET request - mostrar formulario con datos actuales
     return render(
@@ -252,6 +306,8 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
             "cargos": cargos,
         }
     )
+
+
 
 
 

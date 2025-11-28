@@ -117,7 +117,7 @@ def rechazar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
 
     try:
         solicitud.aprobacion_jefe = False
-        estado_rechazado = EstadoSolicitud.objects.get(nombre="Rechazada")
+        estado_rechazado = EstadoSolicitud.objects.get(nombre="Rechazado")
         solicitud.estado_solicitud = estado_rechazado
         solicitud.save()
         messages.success(request, "Solicitud rechazada.")
