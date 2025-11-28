@@ -115,35 +115,52 @@ def index(request: HttpRequest) -> HttpResponse:
             dia_fin__gte=date.today()
         ).count
         # Eventos próximos del usuario (próximos 7 días)
-        from datetime import timedelta
+        from datetime import date, timedelta
         eventos_proximos = Calendario.objects.filter(
-            id_usuario=usuario,
-            fecha__range=[date.today(), date.today() + timedelta(days=7)]
-        ).count()
+            fecha__gte=date.today()
+        ).select_related('id_usuario').order_by('fecha')[:5]
 
         # Registrar inicio de sesión (log de actividad)
         InicioRegistrado.objects.create(id_usuario=usuario)
+        
+        eventos_data = []
+        for evento in eventos_proximos:
+            eventos_data.append({
+                'id': evento.id_calendario,
+                'titulo': evento.titulo or 'Evento sin título',
+                'fecha': evento.fecha,
+                'fecha_formateada': evento.fecha.strftime('%d %b') if evento.fecha else '',
+                'descripcion': evento.descripcion or '',
+                'usuario_nombre': evento.id_usuario.nombre if evento.id_usuario else 'Sistema'
+            })
 
         context = {
             "usuario": usuario,
             "avisos": avisos,
             "documentos_count": documentos_count,
             "solicitudes_pendientes": solicitudes_pendientes,
+            "solicitudes_aceptadas": solicitudes_aceptadas,
+            "solicitudes_rechazadas": solicitudes_rechazadas,
+            "solicitudes_recibidas": solicitudes_recibidas,
             "licencias_activas": licencias_activas,
-            "eventos_proximos": eventos_proximos,
+            "eventos_proximos": eventos_data,  # ← Datos serializados
+            "eventos_proximos_count": len(eventos_data),
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
         }
         
         return render(request, "pages/index.html", context)
 
     except Exception as e:
-        # En caso de error, mostrar dashboard básico
+        print(f"Error en dashboard: {e}")
         messages.warning(request, "Algunos datos no pudieron cargarse correctamente.")
         context = {
             "usuario": usuario,
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
+            "eventos_proximos": [],
+            "eventos_proximos_count": 0
         }
         return render(request, "pages/index.html", context)
+    
 
 
 def dashboard_admin(request: HttpRequest) -> HttpResponse:

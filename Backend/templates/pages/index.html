@@ -135,50 +135,37 @@
                 </div>
             </section>
             
-            <!-- PRÓXIMAS ACTIVIDADES -->
-            <section class="card card--calendar">
-                <header class="card__header">
-                    <h3 class="card__title">Próximas Actividades</h3>
-                    <span class="card__action-link">{{ eventos_proximos|default:"0" }} eventos</span>
-                </header>
-                
-                <div class="calendar-list">
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">05</span>
-                        </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Reunión General de Equipo</div>
-                            <div class="calendar-item__time">09:00 - 11:00</div>
-                        </div>
-                    </div>
+            <!-- En index.html - reemplazar la sección de Próximas Actividades -->
+                <section class="card card--calendar">
+                    <header class="card__header">
+                        <h3 class="card__title">Próximas Actividades</h3>
+                        <span class="card__action-link">{{ eventos_proximos_count }} eventos</span>
+                    </header>
                     
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">08</span>
-                        </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Capacitación SOME Digital</div>
-                            <div class="calendar-item__time">14:00 - 16:00</div>
-                        </div>
+                    <div class="calendar-list">
+                        {% if eventos_proximos %}
+                            {% for evento in eventos_proximos %}
+                            <div class="calendar-item" data-event-id="{{ evento.id }}">
+                                <div class="calendar-item__date">
+                                    <span class="calendar-item__month">{{ evento.fecha|date:"M" }}</span>
+                                    <span class="calendar-item__day">{{ evento.fecha|date:"d" }}</span>
+                                </div>
+                                <div class="calendar-item__info">
+                                    <div class="calendar-item__title">{{ evento.titulo }}</div>
+                                    <div class="calendar-item__meta">
+                                        <small>Creado por: {{ evento.usuario_nombre }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <p>No hay eventos próximos</p>
+                                <a href="{% url 'calendario' %}" class="btn-light">Crear primer evento</a>
+                            </div>
+                        {% endif %}
                     </div>
-                    
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">15</span>
-                        </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Evaluación Trimestral</div>
-                            <div class="calendar-item__time">10:00 - 12:00</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
+                </section>
     
     <!-- SOPORTE -->
     <section class="support-card">

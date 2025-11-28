@@ -29,9 +29,9 @@ urlpatterns = [
     # =============================================
     # CALENDARIO
     # =============================================
-    path('calendario/', calendario_views.calendario, name='calendario'),
-    path('api/eventos/', calendario_views.eventos_api, name='eventos_api'),
-    path('api/eventos/<int:id>/', calendario_views.evento_detalle_api, name='evento_api'),
+    path('calendario/', calendario, name='calendario'),
+    path('api/eventos/', eventos_api, name='eventos_api'),
+    path('api/eventos/<int:id>/', evento_detalle_api, name='evento_api'),
 
     # =============================================
     # SOLICITUDES
