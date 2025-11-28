@@ -12,26 +12,27 @@ from django.contrib.auth import logout
 
 from typing import Optional
 
-# calendario_views.py - CORREGIR LA FUNCIÓN get_usuario_actual
-def get_usuario_actual(request):
-    """Obtiene el usuario actual desde la sesión - VERSIÓN MEJORADA"""
+def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
+    """Obtiene el usuario actual desde la sesión"""
+    user_id = request.session.get("id_usuario")
+    print(f"=== DEBUG get_usuario_actual ===")
+    print(f"Session ID: {user_id}")
+    print(f"Session keys: {list(request.session.keys())}")
+    print(f"Session data: {dict(request.session)}")
+    
+    if not user_id:
+        print("NO hay user_id en sesión - retornando None")
+        return None
+    
     try:
-        user_id = request.session.get("id_usuario")
-        print(f"DEBUG: Buscando usuario con ID: {user_id}")
-        
-        if not user_id:
-            print("DEBUG: No hay user_id en sesión")
-            return None
-        
         usuario = Usuario.objects.get(id_usuario=user_id)
-        print(f"DEBUG: Usuario encontrado: {usuario.nombre}")
+        print(f"Usuario encontrado: {usuario.nombre} (ID: {usuario.id_usuario})")
         return usuario
-        
     except Usuario.DoesNotExist:
-        print(f"DEBUG: Usuario con ID {user_id} no existe")
+        print(f"Usuario con ID {user_id} no existe en BD - retornando None")
         return None
     except Exception as e:
-        print(f"DEBUG: Error al buscar usuario: {e}")
+        print(f"Error al buscar usuario: {e} - retornando None")
         return None
 
 def inicio(request: HttpRequest) -> HttpResponse:
@@ -114,52 +115,35 @@ def index(request: HttpRequest) -> HttpResponse:
             dia_fin__gte=date.today()
         ).count
         # Eventos próximos del usuario (próximos 7 días)
-        from datetime import date, timedelta
+        from datetime import timedelta
         eventos_proximos = Calendario.objects.filter(
-            fecha__gte=date.today()
-        ).select_related('id_usuario').order_by('fecha')[:5]
+            id_usuario=usuario,
+            fecha__range=[date.today(), date.today() + timedelta(days=7)]
+        ).count()
 
         # Registrar inicio de sesión (log de actividad)
         InicioRegistrado.objects.create(id_usuario=usuario)
-        
-        eventos_data = []
-        for evento in eventos_proximos:
-            eventos_data.append({
-                'id': evento.id_calendario,
-                'titulo': evento.titulo or 'Evento sin título',
-                'fecha': evento.fecha,
-                'fecha_formateada': evento.fecha.strftime('%d %b') if evento.fecha else '',
-                'descripcion': evento.descripcion or '',
-                'usuario_nombre': evento.id_usuario.nombre if evento.id_usuario else 'Sistema'
-            })
 
         context = {
             "usuario": usuario,
             "avisos": avisos,
             "documentos_count": documentos_count,
             "solicitudes_pendientes": solicitudes_pendientes,
-            "solicitudes_aceptadas": solicitudes_aceptadas,
-            "solicitudes_rechazadas": solicitudes_rechazadas,
-            "solicitudes_recibidas": solicitudes_recibidas,
             "licencias_activas": licencias_activas,
-            "eventos_proximos": eventos_data,  # ← Datos serializados
-            "eventos_proximos_count": len(eventos_data),
+            "eventos_proximos": eventos_proximos,
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
         }
         
         return render(request, "pages/index.html", context)
 
     except Exception as e:
-        print(f"Error en dashboard: {e}")
+        # En caso de error, mostrar dashboard básico
         messages.warning(request, "Algunos datos no pudieron cargarse correctamente.")
         context = {
             "usuario": usuario,
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
-            "eventos_proximos": [],
-            "eventos_proximos_count": 0
         }
         return render(request, "pages/index.html", context)
-    
 
 
 def dashboard_admin(request: HttpRequest) -> HttpResponse:
@@ -271,26 +255,3 @@ def logout_personalizado(request):
     messages.info(request, "Sesión cerrada correctamente.")
     # Volver a la portada (inicio)
     return redirect('inicio')
-
-# base_views.py - AGREGAR ESTA FUNCIÓN PARA DEBUG
-def debug_sesion(request):
-    """Función temporal para debug de sesión"""
-    print("=== DEBUG SESIÓN ===")
-    print(f"Session ID: {request.session.session_key}")
-    print(f"Session keys: {list(request.session.keys())}")
-    print(f"id_usuario en sesión: {request.session.get('id_usuario')}")
-    print(f"usuario_nombre en sesión: {request.session.get('usuario_nombre')}")
-    print(f"usuario_rol en sesión: {request.session.get('usuario_rol')}")
-    
-    usuario = get_usuario_actual(request)
-    if usuario:
-        print(f"Usuario encontrado: {usuario.nombre} (ID: {usuario.id_usuario})")
-    else:
-        print("Usuario NO encontrado")
-    
-    return JsonResponse({
-        'session_id': request.session.session_key,
-        'id_usuario': request.session.get('id_usuario'),
-        'usuario_nombre': request.session.get('usuario_nombre'),
-        'usuario_encontrado': bool(usuario)
-    })

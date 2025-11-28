@@ -199,7 +199,9 @@
 
                     {% if rol_usuario == "Director" %}
                     <td>
-                        {% if s.aprobacion_director == True %}
+                        {% if s.aprobacion_jefe == False %}
+                            <span style="color:#6c757d;"> — </span>
+                        {% elif s.aprobacion_director == True %}
                             <span style="color:#4caf50;"> Aprobado</span>
                         {% elif s.aprobacion_director == False %}
                             <span style="color:#dc2626;"> Rechazado</span>
@@ -208,6 +210,7 @@
                         {% endif %}
                     </td>
                     {% endif %}
+
 
                     <td>
                         <!-- Editar (solo para solicitudes pendientes del usuario) -->
@@ -219,7 +222,7 @@
 
                         <!-- Aprobación Jefe -->
                          
-                        {% if rol_usuario == "Jefe_depto" and s.estado_solicitud.nombre == "Pendiente" %}
+                        {% if rol_usuario == "Jefe_depto" and s.aprobacion_jefe == None %}
                             <a href="{% url 'aprobar_jefe' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Jefe">
                                 <i class="fa-solid fa-check"></i>
                             </a>
@@ -229,7 +232,7 @@
                         {% endif %}
 
                         <!-- Aprobación Director -->
-                        {% if rol_usuario == "Director" and s.aprobacion_director == None %}
+                        {% if rol_usuario == "Director" and s.aprobacion_director == None and s.aprobacion_jefe != False %}
                             <a href="{% url 'aprobar_director' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Director">
                                 <i class="fa-solid fa-check"></i>
                             </a>
@@ -237,6 +240,7 @@
                                 <i class="fa-solid fa-xmark"></i>
                             </a>
                         {% endif %}
+
 
                         <!-- Eliminar (solo para solicitudes pendientes del usuario) -->
                         {% if s.estado_solicitud.nombre == "Pendiente" and s.id_usuario.id_usuario == usuario.id_usuario %}
