@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Comunicados — Intranet CESFAM{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/comunicados.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">Comunicados</h2>
+
+<section class="card form-card">
+    <h3 class="card-title">Crear comunicado</h3>
+
+    <form id="form-comunicado" class="form-grid">
+        {% csrf_token %}
+
+        <input type="text" name="titulo" placeholder="Título del comunicado" required>
+
+        <textarea name="descripcion" placeholder="Contenido del comunicado" required></textarea>
+
+        <button type="submit" class="btn-primary">Publicar comunicado</button>
+    </form>
+</section>
+
+<section class="card" style="margin-top: 1.5rem;">
+    <h3 class="card-title">Comunicados publicados</h3>
+
+    <ul id="lista-comunicados" class="items"></ul>
+
+    <div id="comunicados-empty" class="empty-state" hidden>
+        <p>No hay comunicados publicados.</p>
+    </div>
+</section>
+
+<script src="{% static 'js/comunicados.js' %}"></script>
+
+{% endblock %}
