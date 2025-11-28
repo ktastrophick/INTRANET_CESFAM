@@ -1,8 +1,10 @@
-# calendario_views.py - VERSIÓN CORREGIDA CON PERMISOS
-from django.http import JsonResponse, HttpResponseBadRequest
+# calendario_views.py - VERSIÓN COMPLETA Y CORREGIDA
+from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_date
 from api_intranet.models import Calendario, Usuario
+from django.contrib import messages
 import json
 
 def get_usuario_actual(request):
@@ -14,6 +16,22 @@ def get_usuario_actual(request):
         return Usuario.objects.get(id_usuario=user_id)
     except Usuario.DoesNotExist:
         return None
+
+def calendario(request: HttpRequest) -> HttpResponse:
+    """
+    Vista principal del calendario
+    """
+    usuario = get_usuario_actual(request)
+    if not usuario:
+        messages.error(request, "Debes iniciar sesión para acceder al calendario.")
+        return redirect("login")
+    
+    context = {
+        "usuario": usuario,
+        "rol_usuario": usuario.id_rol.nombre if usuario.id_rol else "Funcionario"
+    }
+    
+    return render(request, "pages/calendario.html", context)
 
 def tiene_permiso_edicion(usuario, evento):
     """Verifica si el usuario tiene permisos para editar/eliminar el evento"""
@@ -32,13 +50,17 @@ def tiene_permiso_edicion(usuario, evento):
     
     return False
 
+# calendario_views.py - MEJORAR MANEJO DE AUTENTICACIÓN
 @require_http_methods(["GET", "POST"])
 def eventos_api(request):
-    """API para listar y crear eventos"""
+    """API para listar y crear eventos - VERSIÓN MEJORADA"""
     
     usuario = get_usuario_actual(request)
     if not usuario:
-        return HttpResponseBadRequest('Usuario no autenticado')
+        print("DEBUG: eventos_api - Usuario no autenticado")
+        return JsonResponse({'error': 'Usuario no autenticado', 'code': 'NOT_AUTHENTICATED'}, status=401)
+
+    print(f"DEBUG: eventos_api - Usuario: {usuario.nombre}, Método: {request.method}")
 
     if request.method == 'GET':
         try:
@@ -47,6 +69,8 @@ def eventos_api(request):
             # Filtros de fecha
             start = request.GET.get('start')
             end = request.GET.get('end')
+            
+            print(f"DEBUG: Filtros - start: {start}, end: {end}")
             
             if start:
                 sd = parse_date(start)
@@ -75,30 +99,34 @@ def eventos_api(request):
                     'puede_editar': tiene_permiso_edicion(usuario, evento)
                 })
             
+            print(f"DEBUG: eventos_api - {len(data)} eventos encontrados")
             return JsonResponse({'results': data}, status=200)
             
         except Exception as e:
-            return HttpResponseBadRequest(f'Error al cargar eventos: {str(e)}')
+            print(f"DEBUG: eventos_api GET - Error: {str(e)}")
+            return JsonResponse({'error': f'Error al cargar eventos: {str(e)}'}, status=500)
 
     # POST - Crear nuevo evento
     elif request.method == 'POST':
         try:
             payload = json.loads(request.body.decode('utf-8'))
-        except Exception:
-            return HttpResponseBadRequest('JSON inválido')
+            print(f"DEBUG: eventos_api POST - Payload: {payload}")
+        except Exception as e:
+            print(f"DEBUG: eventos_api POST - JSON inválido: {e}")
+            return JsonResponse({'error': 'JSON inválido'}, status=400)
 
         titulo = payload.get('titulo', '').strip()
         fecha_str = payload.get('fecha')
         
         if not titulo:
-            return HttpResponseBadRequest('El título es obligatorio')
+            return JsonResponse({'error': 'El título es obligatorio'}, status=400)
         
         if not fecha_str:
-            return HttpResponseBadRequest('La fecha es obligatoria')
+            return JsonResponse({'error': 'La fecha es obligatoria'}, status=400)
 
         fecha = parse_date(fecha_str)
         if not fecha:
-            return HttpResponseBadRequest('Formato de fecha inválido')
+            return JsonResponse({'error': 'Formato de fecha inválido. Use YYYY-MM-DD'}, status=400)
 
         try:
             evento = Calendario.objects.create(
@@ -109,6 +137,8 @@ def eventos_api(request):
                 todo_el_dia=payload.get('todo_el_dia', True),
                 id_usuario=usuario
             )
+            
+            print(f"DEBUG: Evento creado - ID: {evento.id_calendario}, Título: {evento.titulo}")
             
             # Retornar el evento creado
             return JsonResponse({
@@ -123,7 +153,8 @@ def eventos_api(request):
             }, status=201)
             
         except Exception as e:
-            return HttpResponseBadRequest(f'Error al crear evento: {str(e)}')
+            print(f"DEBUG: eventos_api POST - Error al crear: {str(e)}")
+            return JsonResponse({'error': f'Error al crear evento: {str(e)}'}, status=500)
 
 @require_http_methods(["GET", "PUT", "DELETE"])
 def evento_detalle_api(request, id):

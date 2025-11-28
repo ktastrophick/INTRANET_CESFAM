@@ -12,27 +12,26 @@ from django.contrib.auth import logout
 
 from typing import Optional
 
-def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
-    """Obtiene el usuario actual desde la sesión"""
-    user_id = request.session.get("id_usuario")
-    print(f"=== DEBUG get_usuario_actual ===")
-    print(f"Session ID: {user_id}")
-    print(f"Session keys: {list(request.session.keys())}")
-    print(f"Session data: {dict(request.session)}")
-    
-    if not user_id:
-        print("NO hay user_id en sesión - retornando None")
-        return None
-    
+# calendario_views.py - CORREGIR LA FUNCIÓN get_usuario_actual
+def get_usuario_actual(request):
+    """Obtiene el usuario actual desde la sesión - VERSIÓN MEJORADA"""
     try:
+        user_id = request.session.get("id_usuario")
+        print(f"DEBUG: Buscando usuario con ID: {user_id}")
+        
+        if not user_id:
+            print("DEBUG: No hay user_id en sesión")
+            return None
+        
         usuario = Usuario.objects.get(id_usuario=user_id)
-        print(f"Usuario encontrado: {usuario.nombre} (ID: {usuario.id_usuario})")
+        print(f"DEBUG: Usuario encontrado: {usuario.nombre}")
         return usuario
+        
     except Usuario.DoesNotExist:
-        print(f"Usuario con ID {user_id} no existe en BD - retornando None")
+        print(f"DEBUG: Usuario con ID {user_id} no existe")
         return None
     except Exception as e:
-        print(f"Error al buscar usuario: {e} - retornando None")
+        print(f"DEBUG: Error al buscar usuario: {e}")
         return None
 
 def inicio(request: HttpRequest) -> HttpResponse:
@@ -272,3 +271,26 @@ def logout_personalizado(request):
     messages.info(request, "Sesión cerrada correctamente.")
     # Volver a la portada (inicio)
     return redirect('inicio')
+
+# base_views.py - AGREGAR ESTA FUNCIÓN PARA DEBUG
+def debug_sesion(request):
+    """Función temporal para debug de sesión"""
+    print("=== DEBUG SESIÓN ===")
+    print(f"Session ID: {request.session.session_key}")
+    print(f"Session keys: {list(request.session.keys())}")
+    print(f"id_usuario en sesión: {request.session.get('id_usuario')}")
+    print(f"usuario_nombre en sesión: {request.session.get('usuario_nombre')}")
+    print(f"usuario_rol en sesión: {request.session.get('usuario_rol')}")
+    
+    usuario = get_usuario_actual(request)
+    if usuario:
+        print(f"Usuario encontrado: {usuario.nombre} (ID: {usuario.id_usuario})")
+    else:
+        print("Usuario NO encontrado")
+    
+    return JsonResponse({
+        'session_id': request.session.session_key,
+        'id_usuario': request.session.get('id_usuario'),
+        'usuario_nombre': request.session.get('usuario_nombre'),
+        'usuario_encontrado': bool(usuario)
+    })
