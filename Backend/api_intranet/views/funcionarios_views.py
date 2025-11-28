@@ -26,10 +26,10 @@ def lista_funcionarios(request: HttpRequest) -> HttpResponse:
     rol_usuario = getattr(usuario.id_rol, 'nombre', 'Funcionario') if usuario.id_rol else "Funcionario"
     
     # Base queryset
-    if rol_usuario in ["Admin", "Director"]:
+    if rol_usuario == "Director":
         # Admin y Director ven todos los funcionarios
         funcionarios = Usuario.objects.all()
-    elif rol_usuario == "Jefe de Departamento" and usuario.id_departamento:
+    elif rol_usuario == "Jefe_depto" and usuario.id_departamento:
         # Jefe ve solo funcionarios de su departamento
         funcionarios = Usuario.objects.filter(id_departamento=usuario.id_departamento)
     else:
@@ -65,7 +65,7 @@ def lista_funcionarios(request: HttpRequest) -> HttpResponse:
     }
     return render(request, "pages/funcionarios/lista_funcionarios.html", context)
 
-@login_required
+
 def form_funcionario(request: HttpRequest) -> HttpResponse:
     """Crear nuevo funcionario (solo Admin)"""
     usuario = get_usuario_actual(request)
@@ -74,7 +74,7 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
 
     # Solo Admin puede crear funcionarios
     rol_nombre = getattr(usuario.id_rol, 'nombre', '') if usuario.id_rol else ''
-    if rol_nombre != "Admin":
+    if rol_nombre != "Director":
         messages.error(request, "No tienes permisos para crear funcionarios.")
         return redirect("lista_funcionarios")
 
@@ -155,7 +155,6 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
         }
     )
 
-@login_required
 def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
     """Editar funcionario existente (solo Admin)"""
     usuario = get_usuario_actual(request)
@@ -164,7 +163,7 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
 
     # Solo Admin puede editar funcionarios
     rol_nombre = getattr(usuario.id_rol, 'nombre', '') if usuario.id_rol else ''
-    if rol_nombre != "Admin":
+    if rol_nombre != "Director":
         messages.error(request, "No tienes permisos para editar funcionarios.")
         return redirect("lista_funcionarios")
 
@@ -264,7 +263,7 @@ def eliminar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
 
     # Solo Admin puede eliminar funcionarios
     rol_nombre = getattr(usuario.id_rol, 'nombre', '') if usuario.id_rol else ''
-    if rol_nombre != "Admin":
+    if rol_nombre != "Director":
         messages.error(request, "No tienes permisos para eliminar funcionarios.")
         return redirect("lista_funcionarios")
 

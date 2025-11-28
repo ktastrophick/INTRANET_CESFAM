@@ -44,7 +44,10 @@
     .rut-group input[name="dv"] {
         max-width: 80px;
     }
-    button.submit-btn {
+    .submit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         background: #2563eb;
         color: white;
         border: none;
@@ -53,10 +56,16 @@
         cursor: pointer;
         font-weight: 500;
         transition: background 0.3s;
+        text-decoration: none;
+        height: 42px; /* asegura mis alturas iguales */
     }
-    button.submit-btn:hover {
+
+
+    .submit-btn:hover {
         background: #1d4ed8;
     }
+
+
 </style>
 {% endblock %}
 
@@ -135,9 +144,15 @@
                 </select>
             </div>
 
+            <a href="{% url 'lista_funcionarios' %}" class="submit-btn">
+                Cancelar
+            </a>
+
             <button class="submit-btn" type="submit">
-                <i class="fa-solid fa-pen"></i> Guardar Cambios
+                Guardar Cambios
             </button>
+
+
         </form>
     </div>
 </section>
