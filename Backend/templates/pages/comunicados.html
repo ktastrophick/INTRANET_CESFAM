@@ -10,7 +10,7 @@
 {% block content %}
 
 <h2 class="page-title">Comunicados</h2>
-
+{% if rol_usuario == "Director" %}
 <section class="card form-card">
     <h3 class="card-title">Crear comunicado</h3>
 
@@ -24,7 +24,7 @@
         <button type="submit" class="btn-primary">Publicar comunicado</button>
     </form>
 </section>
-
+{% endif %}
 <section class="card" style="margin-top: 1.5rem;">
     <h3 class="card-title">Comunicados publicados</h3>
 
