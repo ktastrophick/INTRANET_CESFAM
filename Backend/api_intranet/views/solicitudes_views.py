@@ -5,6 +5,8 @@ from api_intranet.models import Solicitud, TipoSolicitud, EstadoSolicitud, Usuar
 from django.utils import timezone
 from typing import Optional
 from datetime import date
+from reportlab.pdfgen import canvas
+import io
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
     """Obtiene el usuario actual desde la sesión"""
@@ -28,7 +30,7 @@ def lista_solicitudes(request: HttpRequest) -> HttpResponse:
     if rol == "Funcionario":
         # Funcionario ve solo sus propias solicitudes
         solicitudes = Solicitud.objects.filter(id_usuario=usuario)
-    elif rol == "Jefe de Departamento":
+    elif rol == "Jefe_depto":
         # Jefe ve solicitudes de su departamento
         if usuario.id_departamento:
             solicitudes = Solicitud.objects.filter(
@@ -36,7 +38,7 @@ def lista_solicitudes(request: HttpRequest) -> HttpResponse:
             )
         else:
             solicitudes = Solicitud.objects.none()
-    elif rol == "Admin" or rol == "Director":
+    elif rol == "Director":
         # Admin/Director ve todas las solicitudes
         solicitudes = Solicitud.objects.all()
     else:
@@ -62,7 +64,7 @@ def aprobar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
         return redirect("login")
 
     # Verificar que sea jefe de departamento
-    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe de Departamento":
+    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe_depto":
         messages.error(request, "No tienes permisos para aprobar solicitudes.")
         return redirect("lista_solicitudes")
 
@@ -98,7 +100,7 @@ def rechazar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
         return redirect("login")
 
     # Verificar que sea jefe de departamento
-    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe de Departamento":
+    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe_depto":
         messages.error(request, "No tienes permisos para rechazar solicitudes.")
         return redirect("lista_solicitudes")
 
@@ -125,15 +127,14 @@ def rechazar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
     return redirect("lista_solicitudes")
 
 
-def aprobar_director(request: HttpRequest, id_solicitud: int) -> HttpResponse:
-    """Director aprueba una solicitud"""
+def aprobar_director(request, id_solicitud):
     usuario = get_usuario_actual(request)
     if not usuario:
         return redirect("login")
 
-    # Verificar que sea director o admin
-    if usuario.id_rol.nombre not in ["Admin", "Director"]:
-        messages.error(request, "No tienes permisos para aprobar solicitudes como director.")
+    # Solo director
+    if usuario.id_rol.nombre != "Director":
+        messages.error(request, "No tienes permisos para aprobar como director.")
         return redirect("lista_solicitudes")
 
     solicitud = get_object_or_404(Solicitud, id_solicitud=id_solicitud)
@@ -144,18 +145,24 @@ def aprobar_director(request: HttpRequest, id_solicitud: int) -> HttpResponse:
 
     try:
         solicitud.aprobacion_director = True
-        
-        # Si jefe aprobó y director aprueba → estado final aprobado
-        if solicitud.aprobacion_jefe and solicitud.aprobacion_director:
-            estado_aprobado = EstadoSolicitud.objects.get(nombre="Aprobada")
+
+        # Si jefe aprobó, queda aprobada
+        if solicitud.aprobacion_jefe is True:
+            estado_aprobado = EstadoSolicitud.objects.get(nombre="Aprobado")
             solicitud.estado_solicitud = estado_aprobado
-        
+        else:
+            # si jefe no ha aprobado → permanece pendiente
+            estado_pendiente = EstadoSolicitud.objects.get(nombre="Pendiente")
+            solicitud.estado_solicitud = estado_pendiente
+
         solicitud.save()
-        messages.success(request, "Solicitud aprobada completamente.")
+        messages.success(request, "Solicitud aprobada por el Director.")
+
     except Exception as e:
-        messages.error(request, f"Error al aprobar la solicitud: {str(e)}")
+        messages.error(request, f"Error al aprobar: {e}")
 
     return redirect("lista_solicitudes")
+
 
 
 def rechazar_director(request: HttpRequest, id_solicitud: int) -> HttpResponse:
@@ -164,8 +171,8 @@ def rechazar_director(request: HttpRequest, id_solicitud: int) -> HttpResponse:
     if not usuario:
         return redirect("login")
 
-    # Verificar que sea director o admin
-    if usuario.id_rol.nombre not in ["Admin", "Director"]:
+    # Verificar que sea director
+    if usuario.id_rol.nombre != "Director":
         messages.error(request, "No tienes permisos para rechazar solicitudes como director.")
         return redirect("lista_solicitudes")
 
@@ -177,7 +184,7 @@ def rechazar_director(request: HttpRequest, id_solicitud: int) -> HttpResponse:
 
     try:
         solicitud.aprobacion_director = False
-        estado_rechazado = EstadoSolicitud.objects.get(nombre="Rechazada")
+        estado_rechazado = EstadoSolicitud.objects.get(nombre="Rechazado")
         solicitud.estado_solicitud = estado_rechazado
         solicitud.save()
         messages.success(request, "Solicitud rechazada por el Director.")
@@ -363,3 +370,21 @@ def eliminar_solicitud(request: HttpRequest, id_solicitud: int) -> HttpResponse:
         "pages/solicitudes/eliminar_solicitud.html",
         {"solicitud": solicitud}
     )
+
+def descargar_solicitud(request, id_solicitud):
+    solicitud = Solicitud.objects.get(id_solicitud=id_solicitud)
+
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer)
+
+    pdf.drawString(50, 800, f"Solicitud N° {solicitud.id_solicitud}")
+    pdf.drawString(50, 780, f"Tipo: {solicitud.tipo_solicitud.nombre}")
+    pdf.drawString(50, 760, f"Funcionario: {solicitud.id_usuario.nombre}")
+    pdf.drawString(50, 740, f"Fecha inicio: {solicitud.dia_inicio}")
+    pdf.drawString(50, 720, f"Fecha fin: {solicitud.dia_fin}")
+    pdf.drawString(50, 700, f"Estado: {solicitud.estado_solicitud.nombre}")
+
+    pdf.save()
+    buffer.seek(0)
+
+    return HttpResponse(buffer, content_type='application/pdf')
