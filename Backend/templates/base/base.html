@@ -59,10 +59,12 @@
                     <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
                 </a>
 
+                {% if rol_usuario == "Subdirector" %}
                 <a href="{% url 'lista_licencias' %}"
                     class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
                     <i class="fa-solid fa-id-card"></i><span>Licencias</span>
                 </a>
+                {% endif %}
 
                 <a href="{% url 'lista_solicitudes' %}"
                     class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">

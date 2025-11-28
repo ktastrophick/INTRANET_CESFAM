@@ -157,8 +157,12 @@
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
                     <th>Estado</th>
+                    {% if rol_usuario == "Jefe_depto" %}
                     <th>Aprobación Jefe</th>
+                    {% endif %}
+                    {% if rol_usuario == "Director" %}
                     <th>Aprobación Director</th>
+                    {% endif %}
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -180,7 +184,8 @@
                             <span class="status-badge">---</span>
                         {% endif %}
                     </td>
-                    
+
+                    {% if rol_usuario == "Jefe_depto" %}
                     <td>
                         {% if s.aprobacion_jefe == True %}
                             <span style="color:#4caf50;"> Aprobado</span>
@@ -190,7 +195,9 @@
                             <span style="color:#ff9800;"> Pendiente</span>
                         {% endif %}
                     </td>
-                    
+                    {% endif %}
+
+                    {% if rol_usuario == "Director" %}
                     <td>
                         {% if s.aprobacion_director == True %}
                             <span style="color:#4caf50;"> Aprobado</span>
@@ -200,7 +207,8 @@
                             <span style="color:#ff9800;"> Pendiente</span>
                         {% endif %}
                     </td>
-                    
+                    {% endif %}
+
                     <td>
                         <!-- Editar (solo para solicitudes pendientes del usuario) -->
                         {% if s.estado_solicitud.nombre == "Pendiente" and s.id_usuario.id_usuario == usuario.id_usuario %}
@@ -210,7 +218,8 @@
                         {% endif %}
 
                         <!-- Aprobación Jefe -->
-                        {% if rol_usuario == "Jefe de Departamento" and s.estado_solicitud.nombre == "Pendiente" %}
+                         
+                        {% if rol_usuario == "Jefe_depto" and s.estado_solicitud.nombre == "Pendiente" %}
                             <a href="{% url 'aprobar_jefe' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Jefe">
                                 <i class="fa-solid fa-check"></i>
                             </a>
@@ -220,7 +229,7 @@
                         {% endif %}
 
                         <!-- Aprobación Director -->
-                        {% if rol_usuario == "Director" and s.estado_solicitud.nombre == "Pendiente" %}
+                        {% if rol_usuario == "Director" and s.aprobacion_director == None %}
                             <a href="{% url 'aprobar_director' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Director">
                                 <i class="fa-solid fa-check"></i>
                             </a>
@@ -235,6 +244,14 @@
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         {% endif %}
+                        {% if s.aprobacion_jefe == True and s.aprobacion_director == True and s.id_usuario.id_usuario == usuario.id_usuario %}
+                        <a href="{% url 'descargar_solicitud' s.id_solicitud %}" 
+                            class="action-btn download" 
+                            title="Descargar solicitud en PDF">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    {% endif %}
+
                     </td>
                 </tr>
                 {% empty %}

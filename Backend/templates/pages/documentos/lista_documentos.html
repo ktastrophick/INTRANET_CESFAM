@@ -286,7 +286,7 @@ tr:hover {
         <div class="documentos-header">
             <h2> Gestión de Documentos Institucionales</h2>
 
-            {% if usuario.id_rol and usuario.id_rol.nombre == "Admin" %}
+            {% if rol_usuario == "Director" %}
             <a href="{% url 'form_documento' %}" class="upload-btn">
                 <i class="fa-solid fa-plus"></i> Subir Documento
             </a>

@@ -46,7 +46,7 @@ urlpatterns = [
     path('solicitudes/rechazar-jefe/<int:id_solicitud>/', solicitudes_views.rechazar_jefe, name='rechazar_jefe'),
     path('solicitudes/aprobar-director/<int:id_solicitud>/', solicitudes_views.aprobar_director, name='aprobar_director'),
     path('solicitudes/rechazar-director/<int:id_solicitud>/', solicitudes_views.rechazar_director, name='rechazar_director'),
-
+    path('solicitud/<int:id_solicitud>/descargar/', solicitudes_views.descargar_solicitud, name='descargar_solicitud'),
     # =============================================
     # PERFIL DE USUARIO
     # =============================================

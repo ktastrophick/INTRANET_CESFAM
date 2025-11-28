@@ -162,11 +162,11 @@ class Usuario(models.Model):
         return f"{self.rut}-{self.dv}"
     
     def puede_aprobar_solicitudes(self) -> bool:
-        """Verifica si el usuario puede aprobar solicitudes"""
         return bool(
             self.id_rol and 
-            self.id_rol.nombre in ['Admin', 'Jefe de Departamento']
+            self.id_rol.nombre in ['Director', 'Subdirector', 'Jefe_depto']
         )
+
 
 class Avisos(models.Model):
     id_aviso = models.AutoField(primary_key=True)
