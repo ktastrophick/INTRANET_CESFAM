@@ -27,8 +27,8 @@ urlpatterns = [
     # CALENDARIO - IMPORTACIONES DIRECTAS
     # =============================================
     path('calendario/', calendario, name='calendario'),
-    path('api/eventos/', eventos_api, name='eventos_api'),
-    path('api/eventos/<int:id>/', evento_detalle_api, name='evento_api'),
+    path('eventos/', eventos_api, name='eventos_api'),
+    path('eventos/<int:id>/', evento_detalle_api, name='evento_api'),
 
     # =============================================
     # DOCUMENTOS
