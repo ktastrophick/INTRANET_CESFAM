@@ -61,6 +61,13 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+    {% for m in messages %}
+        <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+    {% endfor %}
+{% endif %}
+
+
 <section class="page-content">
     <div class="funcionario-container">
         <h2>Agregar Nuevo Funcionario</h2>
@@ -104,7 +111,7 @@
                 <select id="id_rol" name="id_rol">
                     <option value="">Seleccione un rol</option>
                     {% for rol in roles %}
-                        <option value="{{ rol.id_rol }}">{{ rol.nombre_rol }}</option>
+                        <option value="{{ rol.id_rol }}">{{ rol.nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -114,7 +121,7 @@
                 <select id="id_departamento" name="id_departamento">
                     <option value="">Seleccione un departamento</option>
                     {% for depto in departamentos %}
-                        <option value="{{ depto.id_departamento }}">{{ depto.nombre_departamento }}</option>
+                        <option value="{{ depto.id_departamento }}">{{ depto.nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -124,7 +131,7 @@
                 <select id="id_cargo" name="id_cargo">
                     <option value="">Seleccione un cargo</option>
                     {% for cargo in cargos %}
-                        <option value="{{ cargo.id_cargo }}">{{ cargo.nombre_cargo }}</option>
+                        <option value="{{ cargo.id_cargo }}">{{ cargo.nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
