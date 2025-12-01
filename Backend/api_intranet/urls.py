@@ -4,11 +4,12 @@ from .views import (base_views, calendario_views, solicitudes_views, perfil_view
                     documentos_views, licencias_views, comunicado_views)
 
 urlpatterns = [
-    # =============================================
-    # PÁGINAS BASE
-    # =============================================
+
+
+
     path('', base_views.inicio, name='inicio'),    
     path('index/', base_views.index, name='index'),
+
 
     # =============================================
     # DOCUMENTOS
