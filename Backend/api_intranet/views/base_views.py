@@ -255,3 +255,16 @@ def logout_personalizado(request):
     messages.info(request, "Sesión cerrada correctamente.")
     # Volver a la portada (inicio)
     return redirect('inicio')
+
+def index(request):
+    usuario = get_usuario_actual(request)
+    rol = usuario.id_rol.nombre if usuario and usuario.id_rol else None
+
+    # AQUÍ AGREGA ESTO:
+    avisos = Avisos.objects.select_related("id_usuario").order_by("-fecha_registro")[:5]
+
+    return render(request, "pages/index.html", {
+        "usuario": usuario,
+        "rol": rol,
+        "avisos": avisos,  # <── DEBES ENVIAR ESTO
+    })

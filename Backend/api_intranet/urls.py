@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import (base_views, calendario_views, solicitudes_views, perfil_views, funcionarios_views, 
-                    documentos_views, licencias_views)
+                    documentos_views, licencias_views, comunicado_views)
 
 urlpatterns = [
 
@@ -33,6 +33,12 @@ urlpatterns = [
     path('calendario/', calendario_views.calendario, name='calendario'),
     path('api/eventos/', calendario_views.eventos_api, name='eventos_api'),
     path('api/eventos/<int:id>/', calendario_views.evento_detalle_api, name='evento_api'),
+
+    path("comunicados/", comunicado_views.listar_comunicados, name="comunicados"),
+    path("comunicados/crear/", comunicado_views.crear_comunicado, name="crear_comunicado"),
+    path("comunicados/listar/", comunicado_views.listar_comunicados_json, name="comunicados_listar"),
+
+
 
     # =============================================
     # SOLICITUDES

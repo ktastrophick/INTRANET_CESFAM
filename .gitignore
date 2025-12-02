@@ -1,2 +1,7 @@
 Backend/templates/pages/solicitudes.html
 Backend/templates/pages/documentos.html
+.vscode
+/venv
+.env
+__pycache__/
+*.pyc
