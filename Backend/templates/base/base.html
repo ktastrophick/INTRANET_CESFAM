@@ -1,6 +1,9 @@
+<!--PLANTILLA OFICIAL COMPLETA DE LA BASE DEL PROYECTO -->
+
 {% load static %}
 <!doctype html>
 <html lang="es" data-theme="light">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,12 +14,10 @@
     <meta name="description" content="Intranet del CESFAM Santa Rosa">
 
     <link rel="icon" href="{% static 'assets/images/cesfam.ico' %}" type="image/x-icon">
-
-    <!-- Fonts / Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <!-- CSS principal -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/chat.css' %}">
@@ -25,9 +26,9 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+
 <header class="site-header">
     <div class="header-container">
-
         <!-- Logo + título -->
         <div class="logo-section">
             <div class="logo">
@@ -38,45 +39,13 @@
                 <p>Temuco, Chile</p>
             </div>
         </div>
+        <!---->
 
         {# NAV y zona de usuario: se ocultan SOLO en la vista de login #}
         {% if request.resolver_match.url_name != 'login' %}
-
         {% with usuario_activo=request.session.id_usuario usuario_nombre=request.session.usuario_nombre %}
-
         <!-- NAVEGACIÓN SUPERIOR -->
         <nav class="main-nav" aria-label="Navegación principal">
-
-            {# Links del menú solo para usuarios con sesión activa #}
-            {% if usuario_activo %}
-                <a href="{% url 'index' %}"
-                    class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-                    <i class="fa-solid fa-house"></i><span>Inicio</span>
-                </a>
-
-                <a href="{% url 'lista_documentos' %}"
-                    class="{% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
-                    <i class="fa-solid fa-file-lines"></i><span>Documentos</span>
-                </a>
-
-                {% if rol_usuario == "Subdirector" %}
-                <a href="{% url 'lista_licencias' %}"
-                    class="{% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
-                    <i class="fa-solid fa-id-card"></i><span>Licencias</span>
-                </a>
-                {% endif %}
-
-                <a href="{% url 'lista_solicitudes' %}"
-                    class="{% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
-                    <i class="fa-solid fa-clock"></i><span>Solicitudes</span>
-                </a>
-
-                <a href="{% url 'lista_funcionarios' %}"
-                    class="{% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
-                    <i class="fa-solid fa-users"></i><span>Funcionarios</span>
-                </a>
-            {% endif %}
-
             {# Botón de INICIAR SESIÓN cuando NO hay sesión activa #}
             {% if not usuario_activo %}
                 <a href="{% url 'login' %}" class="btn-login-nav">
@@ -84,38 +53,24 @@
                     <span>Iniciar sesión</span>
                 </a>
             {% endif %}
-
         </nav>
-
-        {# Dropdown de usuario solo para usuarios con sesión activa #}
+        {# Información del usuario solo para usuarios con sesión activa #}
         {% if usuario_activo %}
-        <div class="user-section" id="userDropdownToggle">
+        <div class="user-section" id="userInfo">
             <!-- INFO DEL USUARIO -->
             <div class="user-info">
-                <p>{{ usuario_nombre|default:"Funcionario/a" }}</p>
-                <span></span>
-            </div>
-
-            <!-- ICONO -->
-            <i class="fas fa-chevron-down"></i>
-
-            <!-- MENÚ DESPLEGABLE -->
-            <div class="dropdown" id="userDropdown">
-                
-                <!-- Cerrar sesión -->
-                <form action="{% url 'logout' %}" method="post" class="logout-form">
-                    {% csrf_token %}
-                    <button type="submit" class="dropdown-item logout-btn">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
-                    </button>
-                </form>
+                <div class="user-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ usuario_nombre|default:"Funcionario/a" }}</div>
+                    <div class="user-role">{{ rol_usuario|default:"Usuario" }}</div>
+                </div>
             </div>
         </div>
         {% endif %}
-
         {% endwith %} {# fin with usuario_activo/usuario_nombre #}
         {% endif %} {# fin if != 'login' #}
-
     </div>
 </header>
 
@@ -147,6 +102,103 @@
     </div>
 </footer>
 
+<!-- === SIDEBAR DERECHA DESPLEGABLE === -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-content">
+        <!-- Cabecera con botón cerrar -->
+        <div class="sidebar-header">
+            <h5 class="mb-0">Mi Perfil</h5>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+
+        <!-- Perfil -->
+        <div class="profile-section">
+            <div class="profile-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="profile-info">
+                {% with nombre=request.session.usuario_nombre rol=rol_usuario %}
+                <div class="profile-name">{{ nombre|default:"Funcionario/a" }}</div>
+                <div class="profile-role">{{ rol|default:"Usuario" }}</div>
+                {% endwith %}
+                <a href="{% url 'perfil' %}" class="view-profile-btn mt-2">
+                    <i class="bi bi-person-circle"></i>
+                    Ver perfil completo
+                </a>
+            </div>
+        </div>
+
+        <!-- Menú de navegación -->
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-title">Navegación</div>
+                <div class="nav-item">
+                    <a href="{% url 'inicio' %}" class="nav-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+                        <i class="bi bi-house-door"></i>
+                        INICIO
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'lista_documentos' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_documentos' %}active{% endif %}">
+                        <i class="bi bi-folder"></i>
+                        DOCUMENTOS
+                    </a>
+                </div>
+                {% if rol_usuario == "Subdirector" %}
+                <div class="nav-item">
+                    <a href="{% url 'lista_licencias' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_licencias' %}active{% endif %}">
+                        <i class="bi bi-calendar-check"></i>
+                        LICENCIAS
+                    </a>
+                </div>
+                {% endif %}
+                <div class="nav-item">
+                    <a href="{% url 'lista_solicitudes' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}">
+                        <i class="bi bi-clipboard"></i>
+                        SOLICITUDES
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="nav-section">
+                <div class="nav-title">Administración</div>
+                <div class="nav-item">
+                    <a href="{% url 'lista_funcionarios' %}" class="nav-link {% if request.resolver_match.url_name == 'lista_funcionarios' %}active{% endif %}">
+                        <i class="bi bi-people"></i>
+                        FUNCIONARIOS
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sección de ayuda -->
+        <div class="support-section">
+            <div class="support-title">¿Necesitas ayuda?</div>
+            <div class="support-description">
+                Nuestro equipo de soporte está disponible para asistirte con cualquier problema o consulta que tengas.
+            </div>
+            <button class="support-button">
+                <i class="bi bi-headphones"></i>
+                Contactar Soporte
+            </button>
+        </div>
+
+        <!-- Botón cerrar sesión -->
+        <form action="{% url 'logout' %}" method="post" class="logout-form" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Cerrar sesión
+            </button>
+        </form>
+    </div>
+</div>
 
 <!-- CHAT (solo si existen funcionarios en contexto) -->
 {% if funcionarios %}
@@ -200,7 +252,396 @@
 
 <script src="{% static 'js/main.js' %}" defer></script>
 <script src="{% static 'js/chat.js' %}" defer></script>
+
+<!-- Estilos para el sidebar -->
+<style>
+    /* === SIDEBAR DERECHA DESPLEGABLE === */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+    .sidebar {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        width: 300px;
+        position: fixed;
+        right: -300px;
+        top: 0;
+        bottom: 0;
+        z-index: 2000;
+        box-shadow: -2px 0 12px rgba(0,0,0,0.08);
+        transition: all .35s ease;
+        padding: 1.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar.open {
+        right: 0;
+    }
+
+    .sidebar-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6B7280;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #1A1A1A;
+    }
+
+    /* Perfil en sidebar */
+    .profile-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #0B2C4A, #2b4a6f);
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-name {
+        font-weight: 700;
+        color: #1A1A1A;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-role {
+        font-size: 0.85rem;
+        color: #6B7280;
+        margin-bottom: 0.75rem;
+    }
+
+    .view-profile-btn {
+        color: #0B2C4A;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid #0B2C4A;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .view-profile-btn:hover {
+        background: #0B2C4A;
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Menú de navegación sidebar */
+    .nav-menu {
+        flex: 1;
+    }
+
+    .nav-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .nav-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        padding-left: 0.5rem;
+    }
+
+    .nav-item {
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        color: #1A1A1A;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: rgba(11, 44, 74, 0.1);
+        color: #0B2C4A;
+    }
+
+    .nav-link i {
+        font-size: 1.1rem;
+        width: 20px;
+    }
+
+    .nav-divider {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.05);
+        margin: 1.5rem 0;
+    }
+
+    /* Sección de ayuda en sidebar */
+    .support-section {
+        background: linear-gradient(135deg, #f0f7ff 0%, #f8fbff 100%);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #0B2C4A;
+    }
+
+    .support-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1A1A1A;
+        margin-bottom: 0.5rem;
+    }
+
+    .support-description {
+        font-size: 0.85rem;
+        color: #6B7280;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .support-button {
+        background: #0B2C4A;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .support-button:hover {
+        background: #0a2440;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(11, 44, 74, 0.3);
+    }
+
+    /* Botón cerrar sesión */
+    .logout-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: auto;
+        cursor: pointer;
+    }
+
+    .logout-btn:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Información del usuario en header */
+    .user-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        position: relative;
+        color: #F2F7FF;
+    }
+
+    .user-section:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #F2F7FF;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .user-section:hover .user-avatar {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #F2F7FF;
+        font-size: 0.95rem;
+    }
+
+    .user-role {
+        font-size: 0.8rem;
+        color: #CFE6FF;
+    }
+
+    .user-section::after {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-right: 2px solid #CFE6FF;
+        border-bottom: 2px solid #CFE6FF;
+        transform: rotate(-45deg);
+        margin-left: 0.5rem;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+
+    .user-section:hover::after {
+        border-color: #F2F7FF;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 280px;
+            right: -280px;
+        }
+        
+        .user-details {
+            display: none;
+        }
+        
+        .user-section::after {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .sidebar {
+            width: 100%;
+            right: -100%;
+        }
+    }
+</style>
+
+<!-- Script para el sidebar -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== SIDEBAR DERECHA TOGGLE ==========
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const sidebarClose = document.getElementById("sidebarClose");
+        const userInfo = document.getElementById("userInfo");
+
+        // Función para abrir el sidebar
+        function openSidebar() {
+            sidebar.classList.add("open");
+            sidebarOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        // Función para cerrar el sidebar
+        function closeSidebar() {
+            sidebar.classList.remove("open");
+            sidebarOverlay.classList.remove("active");
+            document.body.style.overflow = "auto";
+        }
+
+        // Abrir sidebar al hacer clic en el icono de cuenta
+        if (userInfo) {
+            userInfo.addEventListener("click", openSidebar);
+        }
+
+        // Cerrar sidebar con el botón de cerrar
+        sidebarClose.addEventListener("click", closeSidebar);
+
+        // Cerrar sidebar al hacer clic en el overlay
+        sidebarOverlay.addEventListener("click", closeSidebar);
+
+        // Cerrar sidebar con la tecla ESC
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && sidebar.classList.contains("open")) {
+                closeSidebar();
+            }
+        });
+
+        // Botón de soporte
+        const supportButton = document.querySelector('.support-button');
+        if (supportButton) {
+            supportButton.addEventListener('click', function() {
+                alert('Redirigiendo al sistema de soporte...\nPróximamente disponible.');
+            });
+        }
+    });
+</script>
+
 {% block extra_js %}{% endblock %}
 </body>
 </html>
-

@@ -1,68 +1,705 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Inicio — Intranet CESFAM{% endblock %}
+{% block title %}Dashboard — Intranet CESFAM{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary: #0B2C4A;
+        --secondary: #3A8DFF;
+        --accent: #2E8B57;
+        --danger: #ef4444;
+        --success: #38b000;
+        --warning: #f8961e;
+        --info: #7209b7;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --border-radius: 12px;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        background-color: #f5f7fb;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: #333;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .page-content {
+        flex: 1;
+        padding: 0;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+
+    .view-profile-btn {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--primary);
+        border-radius: 20px;
+        transition: var(--transition);
+    }
+
+    .view-profile-btn:hover {
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+    }
+
+
+    /* Información del usuario en header */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        position: relative;
+        color: #F2F7FF;
+    }
+
+    .user-info:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+
+
+    .user-info:hover .user-avatar {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+
+    .user-info::after {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-right: 2px solid #CFE6FF;
+        border-bottom: 2px solid #CFE6FF;
+        transform: rotate(-45deg);
+        margin-left: 0.5rem;
+        opacity: 0.7;
+        transition: var(--transition);
+    }
+
+    .user-info:hover::after {
+        border-color: #F2F7FF;
+    }
+
+    /* Dashboard Container */
+    .dashboard-container {
+        flex: 1;
+        padding: 0;
+    }
+
+    /* Widgets de comunicados */
+    .announcement-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .announcement-item:hover {
+        background-color: rgba(11, 44, 74, 0.05);
+        border-radius: 8px;
+        padding-left: 0.5rem;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .announcement-item:last-child {
+        border-bottom: none;
+    }
+
+    .see-more-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .see-more-link:hover {
+        color: #0a2440;
+        text-decoration: underline;
+    }
+
+    /* Estado de solicitudes - Nuevo diseño */
+    .requests-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .request-item {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        border-left: 4px solid var(--primary);
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .request-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .request-item--received {
+        border-left-color: #448fda;
+        background: linear-gradient(135deg, #e3f2fd 0%, #f9fcff 100%);
+    }
+
+    .request-item--accepted {
+        border-left-color: #4caf50;
+        background: linear-gradient(135deg, #e8f5e8 0%, #f9fff9 100%);
+    }
+
+    .request-item--pending {
+        border-left-color: #ff9800;
+        background: linear-gradient(135deg, #fff3e0 0%, #fffcf7 100%);
+    }
+
+    .request-item--rejected {
+        border-left-color: #f44336;
+        background: linear-gradient(135deg, #ffebee 0%, #fff9f9 100%);
+    }
+
+    .request-label {
+        font-size: 0.85rem;
+        color: var(--secondary);
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .request-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .request-description {
+        font-size: 0.8rem;
+        color: var(--secondary);
+    }
+
+    .request-value--received { color: #448fda; }
+    .request-value--accepted { color: #4caf50; }
+    .request-value--pending { color: #ff9800; }
+    .request-value--rejected { color: #f44336; }
+
+    /* Resumen días libres - ESTILOS NUEVOS */
+    .days-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .days-type {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+    
+    .vacation-days {
+        background-color: rgba(46, 139, 87, 0.1);
+        border-left: 5px solid var(--accent);
+    }
+    
+    .admin-days {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-left: 5px solid var(--danger);
+    }
+    
+    .type-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .type-icon {
+        font-size: 1.5rem;
+    }
+    
+    .vacation-days .type-icon {
+        color: var(--accent);
+    }
+    
+    .admin-days .type-icon {
+        color: var(--danger);
+    }
+    
+    .type-name {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    
+    .type-available {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .vacation-days .type-available {
+        color: var(--accent);
+    }
+    
+    .admin-days .type-available {
+        color: var(--danger);
+    }
+    
+    .days-total {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .days-available {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary);
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+    
+    .days-label {
+        font-size: 1rem;
+        color: var(--secondary);
+    }
+
+    /* Calendario */
+    .calendar-mini {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1rem;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+
+    .calendar-day-header {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--secondary);
+        padding: 0.5rem 0;
+    }
+
+    .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: var(--dark);
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .calendar-day:hover {
+        background: rgba(11, 44, 74, 0.1);
+    }
+
+    .calendar-day.today {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+    }
+    
+    .calendar-day.event-day {
+        font-weight: 600;
+    }
+    
+    .event-indicator {
+        position: absolute;
+        bottom: 2px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+    }
+    
+    .vacation-indicator {
+        background-color: var(--accent);
+    }
+    
+    .admin-indicator {
+        background-color: var(--danger);
+    }
+
+    /* Próximas actividades */
+    .activities-list {
+        max-height: 250px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .activity-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-date {
+        min-width: 60px;
+        text-align: center;
+        background: rgba(11, 44, 74, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+
+    .activity-month {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .activity-day {
+        display: block;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    /* Dashboard cards */
+    .dashboard-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+        border: none;
+        transition: var(--transition);
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    /* MODAL PARA AGREGAR EVENTO */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+    }
+    
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .event-modal {
+        background-color: white;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 450px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        transition: transform 0.3s;
+    }
+    
+    .modal-overlay.active .event-modal {
+        transform: translateY(0);
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .modal-title {
+        font-size: 1.3rem;
+        color: var(--primary);
+    }
+    
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+    }
+    
+    .close-modal:hover {
+        color: var(--text-color);
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(11, 44, 74, 0.1);
+    }
+    
+    .optional-label {
+        color: #999;
+        font-weight: normal;
+    }
+    
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0a2440;
+    }
+    
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: var(--dark);
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+    }
+    
+    .event-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .delete-btn {
+        background-color: #ffebee;
+        color: #d32f2f;
+        border: 1px solid #ffcdd2;
+        padding: 6px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+    }
+    
+    .delete-btn:hover {
+        background-color: #ffcdd2;
+    }
+
+    /* Ajustes para mantener la barra de navegación del proyecto */
+    .main-content-area {
+        padding-top: 20px;
+    }
+
+
+    
+    @media (max-width: 576px) {
+        .requests-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .event-modal {
+            width: 95%;
+            padding: 20px;
+        }
+    }
+
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<!-- Modal para agregar/editar eventos -->
+<div class="modal-overlay" id="event-modal">
+    <div class="event-modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">Agregar Evento</h3>
+            <button class="close-modal" id="close-modal">&times;</button>
+        </div>
+        
+        <form id="event-form">
+            <input type="hidden" id="event-date">
+            <input type="hidden" id="event-id">
+            
+            <div class="form-group">
+                <label for="event-title">Título del evento <span class="optional-label">(obligatorio)</span></label>
+                <input type="text" id="event-title" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="event-type">Tipo de día</label>
+                <select id="event-type" class="form-control">
+                    <option value="vacation">Vacaciones</option>
+                    <option value="admin">Administrativo</option>
+                    <option value="other">Otro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="event-time">Hora <span class="optional-label">(opcional)</span></label>
+                <input type="time" id="event-time" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="event-location">Ubicación <span class="optional-label">(opcional)</span></label>
+                <input type="text" id="event-location" class="form-control" placeholder="Ej: Oficina, Casa, etc.">
+            </div>
+            
+            <div class="form-group">
+                <label for="event-description">Descripción <span class="optional-label">(opcional, no se mostrará en el calendario)</span></label>
+                <textarea id="event-description" class="form-control" rows="3" placeholder="Detalles adicionales sobre el evento..."></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-event">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="save-event">Guardar Evento</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="dashboard-container">
-    
-    <!-- BANNER COMPACTO -->
-    <section class="welcome-banner">
+    <!-- Banner de bienvenida -->
+    <section class="welcome-banner" style="background: linear-gradient(135deg, var(--primary), #2b4a6f); color: white; border-radius: var(--border-radius); padding: 1.5rem; margin-bottom: 1.5rem;">
         {% with nombre=usuario.nombre|default:request.session.usuario_nombre %}
-        <h2 class="welcome-banner__title">
-            ¡Bienvenido/a, {{ nombre|default:"Funcionario/a" }}!
+        <h2 class="welcome-banner__title" style="margin: 0 0 0.5rem 0;">
+            ¡Bienvenido/a, {{ nombre }}!
         </h2>
         {% endwith %}
-        <p class="welcome-banner__subtitle">
+        <p class="welcome-banner__subtitle" style="margin: 0; opacity: 0.9;">
             Su espacio de gestión y comunicación interna del CESFAM Santa Rosa
         </p>
     </section>
     
-    <!-- LAYOUT PRINCIPAL EQUILIBRADO -->
-    <div class="dashboard-layout">
-        
-        <!-- COLUMNA PRINCIPAL -->
-        <div class="dashboard-main">
-            
-            <!-- RESUMEN PERSONAL -->
-            <section class="card card--summary">
-                <header class="card__header">
-                    <h3 class="card__title">Mi Resumen</h3>
-                    <a href="{% url 'perfil' %}" class="card__action-link">Ver Perfil</a>
-                </header>
-                
-                <div class="summary-grid">
-                    <div class="summary-item summary-item--admin">
-                        <div class="summary-item__label">Mi Rol</div>
-                        <div class="summary-item__value">{{ rol|default:"Funcionario" }}</div>
-                        <div class="summary-item__description">Centro de Salud Familiar</div>
-                    </div>
-                    
-                    <div class="summary-item summary-item--vacation">
-                        <div class="summary-item__label">Días Disponibles</div>
-                        <div class="summary-item__value">15</div>
-                        <div class="summary-item__description">Vacaciones este año</div>
-                    </div>
+    <!-- Área de widgets -->
+    <div class="row g-3">
+        <!-- Columna izquierda -->
+        <div class="col-md-4">
+            <!-- Comunicados Recientes -->
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="card-title m-0">Comunicados Recientes</h3>
+                    <a href="{% url 'comunicados' %}" class="see-more-link">
+                        ver más <i class="bi bi-chevron-right"></i>
+                    </a>
                 </div>
-            </section>
-            
-            <!-- COMUNICADOS RECIENTES -->
-            <section class="card card--announcements">
-                <header class="card__header">
-                    <h3 class="card__title">Comunicados Recientes</h3>
-                    <a href="{% url 'comunicados' %}" class="card__action-link">Ver todos</a>
-                </header>
-                
                 <div class="announcements-list">
                     {% if avisos %}
-                        {% for aviso in avisos %}
+                        {% for aviso in avisos|slice:":3" %}
                             <a href="#" class="announcement-item">
-                                <div class="announcement-item__title">{{ aviso.titulo }}</div>
-                                <div class="announcement-item__meta">
+                                <div class="fw-semibold">{{ aviso.titulo }}</div>
+                                <div class="text-muted small">
                                     {{ aviso.fecha_registro|date:"d M Y" }} • 
                                     {{ aviso.id_usuario.nombre|default:"Dirección" }}
                                 </div>
@@ -70,297 +707,549 @@
                         {% endfor %}
                     {% else %}
                         <div class="announcement-item">
-                            <div class="announcement-item__title">No hay comunicados recientes</div>
-                            <div class="announcement-item__meta">Los nuevos avisos aparecerán aquí</div>
+                            <div class="fw-semibold">No hay comunicados recientes</div>
+                            <div class="text-muted small">Los nuevos avisos aparecerán aquí</div>
                         </div>
                     {% endif %}
                 </div>
-            </section>
-            
-            <!-- SOLICITUDES -->
-            <section class="card card--solicitudes">
-                <header class="card__header">
-                    <h3 class="card__title">Estado de Solicitudes</h3>
-                    <a href="{% url 'lista_solicitudes' %}" class="card__action-link">Ver todas</a>
-                </header>
-                
-                <div class="summary-grid">
-                    <div class="summary-item" style="background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%); border-left-color: #448fda;">
-                        <div class="summary-item__label">Recibidas</div>
-                        <div class="summary-item__value" style="color: #448fda;">{{ solicitudes_recibidas|default:"0" }}</div>
-                        <div class="summary-item__description">Total este mes</div>
+            </div>
+
+            <!-- Estado de Solicitudes -->
+            <div class="dashboard-card">
+                <h3 class="card-title">Estado de Solicitudes</h3>
+                <div class="requests-grid">
+                    <div class="request-item request-item--received">
+                        <div class="request-label">Recibidas</div>
+                        <div class="request-value request-value--received">{{ solicitudes_recibidas|default:"0" }}</div>
+                        <div class="request-description">Total este mes</div>
                     </div>
                     
-                    <div class="summary-item" style="background: linear-gradient(135deg, #fff3e0 0%, #f5f5f5 100%); border-left-color: #ff9800;">
-                        <div class="summary-item__label">Pendientes</div>
-                        <div class="summary-item__value" style="color: #ff9800;">{{ solicitudes_pendientes|default:"0" }}</div>
-                        <div class="summary-item__description">En revisión</div>
+                    <div class="request-item request-item--accepted">
+                        <div class="request-label">Aceptadas</div>
+                        <div class="request-value request-value--accepted">{{ solicitudes_aceptadas|default:"0" }}</div>
+                        <div class="request-description">Este período</div>
                     </div>
                     
-                    <div class="summary-item" style="background: linear-gradient(135deg, #e8f5e8 0%, #f5f5f5 100%); border-left-color: #4caf50;">
-                        <div class="summary-item__label">Aceptadas</div>
-                        <div class="summary-item__value" style="color: #4caf50;">{{ solicitudes_aceptadas|default:"0" }}</div>
-                        <div class="summary-item__description">Este período</div>
+                    <div class="request-item request-item--pending">
+                        <div class="request-label">Pendientes</div>
+                        <div class="request-value request-value--pending">{{ solicitudes_pendientes|default:"0" }}</div>
+                        <div class="request-description">En revisión</div>
                     </div>
                     
-                    <div class="summary-item" style="background: linear-gradient(135deg, #ffebee 0%, #f5f5f5 100%); border-left-color: #f44336;">
-                        <div class="summary-item__label">Rechazadas</div>
-                        <div class="summary-item__value" style="color: #f44336;">{{ solicitudes_rechazadas|default:"0" }}</div>
-                        <div class="summary-item__description">Este período</div>
+                    <div class="request-item request-item--rejected">
+                        <div class="request-label">Rechazadas</div>
+                        <div class="request-value request-value--rejected">{{ solicitudes_rechazadas|default:"0" }}</div>
+                        <div class="request-description">Este período</div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- Resumen de días libres - MEJORADO -->
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="card-title m-0">Resumen de días libres</h3>
+                    <button class="delete-btn" id="reset-events">
+                        <i class="fas fa-redo"></i> Reiniciar
+                    </button>
+                </div>
+                
+                <div class="days-total">
+                    <div class="days-available" id="total-days">15</div>
+                    <div class="days-label">Disponibles este año</div>
+                </div>
+                
+                <div class="days-breakdown">
+                    <div class="days-type vacation-days">
+                        <div class="type-info">
+                            <i class="fas fa-umbrella-beach type-icon"></i>
+                            <div>
+                                <div class="type-name">Días de Vacaciones</div>
+                                <div class="type-desc">Para descanso y tiempo libre</div>
+                            </div>
+                        </div>
+                        <div class="type-available" id="vacation-days">10</div>
+                    </div>
+                    
+                    <div class="days-type admin-days">
+                        <div class="type-info">
+                            <i class="fas fa-briefcase type-icon"></i>
+                            <div>
+                                <div class="type-name">Días Administrativos</div>
+                                <div class="type-desc">Para trámites y asuntos personales</div>
+                            </div>
+                        </div>
+                        <div class="type-available" id="admin-days">5</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <!-- SIDEBAR -->
-        <div class="dashboard-sidebar">
-            
-            <!-- CALENDARIO FUNCIONAL -->
-            <section class="card card--calendar">
-                <header class="card__header">
-                    <h3 class="card__title">Calendario</h3>
-                    <a href="{% url 'calendario' %}" class="card__action-link">Ver completo</a>
-                </header>
-                
-                <div class="calendar-mini" id="calendar-mini">
-                    <!-- El calendario se generará con JavaScript -->
+
+        <!-- Columna derecha -->
+        <div class="col-md-8">
+            <!-- Calendario con funcionalidad de eventos -->
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="card-title m-0">CALENDARIO</h3>
+                    <a href="{% url 'calendario' %}" class="see-more-link">
+                        ver completo <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="calendar-mini">
                     <div class="calendar-header">
-                        <button id="prev-month" class="calendar-nav">‹</button>
-                        <h4 id="current-month">Octubre 2025</h4>
-                        <button id="next-month" class="calendar-nav">›</button>
+                        <button class="btn btn-sm btn-outline-primary" id="prevMonth">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <h5 class="m-0" id="currentMonth">Octubre 2023</h5>
+                        <button class="btn btn-sm btn-outline-primary" id="nextMonth">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
                     </div>
-                    <div class="calendar-grid" id="calendar-grid">
-                        <!-- Días generados dinámicamente -->
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Los días del calendario se generan con JavaScript -->
                     </div>
-                </div>
-            </section>
-            
-            <!-- PRÓXIMAS ACTIVIDADES -->
-            <section class="card card--calendar">
-                <header class="card__header">
-                    <h3 class="card__title">Próximas Actividades</h3>
-                    <span class="card__action-link">{{ eventos_proximos|default:"0" }} eventos</span>
-                </header>
-                
-                <div class="calendar-list">
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">05</span>
+                    <div class="event-actions mt-3">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="d-flex align-items-center gap-1">
+                                <div style="width: 12px; height: 12px; background-color: var(--accent); border-radius: 2px;"></div>
+                                <small>Vacaciones</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-1">
+                                <div style="width: 12px; height: 12px; background-color: var(--danger); border-radius: 2px;"></div>
+                                <small>Administrativos</small>
+                            </div>
                         </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Reunión General de Equipo</div>
-                            <div class="calendar-item__time">09:00 - 11:00</div>
-                        </div>
-                    </div>
-                    
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">08</span>
-                        </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Capacitación SOME Digital</div>
-                            <div class="calendar-item__time">14:00 - 16:00</div>
-                        </div>
-                    </div>
-                    
-                    <div class="calendar-item">
-                        <div class="calendar-item__date">
-                            <span class="calendar-item__month">Oct</span>
-                            <span class="calendar-item__day">15</span>
-                        </div>
-                        <div class="calendar-item__info">
-                            <div class="calendar-item__title">Evaluación Trimestral</div>
-                            <div class="calendar-item__time">10:00 - 12:00</div>
+                        <div class="text-muted small">
+                            <i class="bi bi-info-circle"></i> Haz clic en una fecha para agregar un evento
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- Próximas actividades -->
+            <div class="dashboard-card">
+                <h3 class="card-title">Próximas actividades</h3>
+                <div class="activities-list" id="upcoming-activities">
+                    <!-- Las actividades se cargarán dinámicamente -->
+                </div>
+            </div>
         </div>
     </div>
-    
-    <!-- SOPORTE -->
-    <section class="support-card">
-        <h3 class="support-card__title">¿Necesitas ayuda?</h3>
-        <p class="support-card__description">
-            Nuestro equipo de soporte está disponible para asistirte con cualquier problema o consulta que tengas.
-        </p>
-        <button class="support-card__button">
-            <i data-lucide="headphones"></i>
-            Contactar Soporte
-        </button>
-    </section>
 </div>
 
-<!-- JavaScript para el calendario funcional -->
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Calendario funcional
-        const calendarGrid = document.getElementById('calendar-grid');
-        const currentMonthElement = document.getElementById('current-month');
-        const prevMonthBtn = document.getElementById('prev-month');
-        const nextMonthBtn = document.getElementById('next-month');
-        
-        let currentDate = new Date();
-        
-        function renderCalendar(date) {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            
-            // Actualizar el título del mes
-            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-            currentMonthElement.textContent = `${monthNames[month]} ${year}`;
-            
-            // Obtener primer día del mes y último día
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            
-            // Días de la semana
-            const dayNames = ["L", "M", "M", "J", "V", "S", "D"];
-            
-            // Limpiar calendario
-            calendarGrid.innerHTML = '';
-            
-            // Añadir encabezados de días
-            dayNames.forEach(day => {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day-header';
-                dayElement.textContent = day;
-                calendarGrid.appendChild(dayElement);
-            });
-            
-            // Añadir días vacíos al inicio
-            const startingDay = firstDay.getDay();
-            // Ajustar para que la semana empiece en lunes
-            const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
-            
-            for (let i = 0; i < adjustedStartingDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day empty';
-                calendarGrid.appendChild(emptyDay);
-            }
-            
-            // Añadir días del mes
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                dayElement.textContent = day;
-                
-                // Marcar el día actual
-                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                    dayElement.classList.add('today');
-                }
-                
-                calendarGrid.appendChild(dayElement);
-            }
-        }
-        
-        // Navegación del calendario
+    // ========== SISTEMA DE GESTIÓN DE DÍAS LIBRES ==========
+    // Variables globales
+    let currentDate = new Date();
+    let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+    let vacationDays = 10;
+    let adminDays = 5;
+    
+    // Elementos del DOM para el sistema de días libres
+    const calendarGrid = document.getElementById('calendarGrid');
+    const currentMonthElement = document.getElementById('currentMonth');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    const eventModal = document.getElementById('event-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const cancelEventBtn = document.getElementById('cancel-event');
+    const eventForm = document.getElementById('event-form');
+    const modalTitle = document.getElementById('modal-title');
+    const eventDateInput = document.getElementById('event-date');
+    const eventIdInput = document.getElementById('event-id');
+    const eventTitleInput = document.getElementById('event-title');
+    const eventTypeInput = document.getElementById('event-type');
+    const eventTimeInput = document.getElementById('event-time');
+    const eventLocationInput = document.getElementById('event-location');
+    const eventDescriptionInput = document.getElementById('event-description');
+    const resetEventsBtn = document.getElementById('reset-events');
+    const vacationDaysEl = document.getElementById('vacation-days');
+    const adminDaysEl = document.getElementById('admin-days');
+    const totalDaysEl = document.getElementById('total-days');
+    const upcomingActivitiesEl = document.getElementById('upcoming-activities');
+    
+    // Nombres de meses en español
+    const monthNames = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    // Días de la semana en español
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    
+    // Inicializar la aplicación
+    function initDaysSystem() {
+        renderCalendar();
+        updateDayCounts();
+        loadUpcomingActivities();
+        setupEventListeners();
+    }
+    
+    // Configurar event listeners
+    function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar(currentDate);
+            renderCalendar();
         });
         
         nextMonthBtn.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar(currentDate);
+            renderCalendar();
         });
         
-        // Inicializar calendario
-        renderCalendar(currentDate);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelEventBtn.addEventListener('click', closeModal);
         
-        // Inicializar iconos de Lucide
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        eventForm.addEventListener('submit', saveEvent);
+        
+        resetEventsBtn.addEventListener('click', resetEvents);
+        
+        // Cerrar modal al hacer clic fuera
+        eventModal.addEventListener('click', (e) => {
+            if (e.target === eventModal) {
+                closeModal();
+            }
+        });
+    }
+    
+    // Renderizar calendario
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        
+        calendarGrid.innerHTML = '';
+        
+        // Encabezados de días de la semana
+        const dayOrder = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+        dayOrder.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day-header';
+            dayElement.textContent = day;
+            calendarGrid.appendChild(dayElement);
+        });
+        
+        const startingDay = firstDay.getDay();
+        const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
+        
+        // Días vacíos al inicio
+        for (let i = 0; i < adjustedStartingDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day empty';
+            calendarGrid.appendChild(emptyDay);
         }
-    });
-</script>
+        
+        const today = new Date();
+        
+        // Días del mes
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            
+            // Formatear la fecha para comparar con eventos
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayElement.dataset.date = dateStr;
+            
+            // Verificar si es hoy
+            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayElement.classList.add('today');
+            }
+            
+            // Verificar si hay eventos para este día
+            const dayEvents = events.filter(event => event.date === dateStr);
+            if (dayEvents.length > 0) {
+                dayElement.classList.add('event-day');
+                
+                // Agregar indicador de tipo de evento
+                const eventIndicator = document.createElement('div');
+                eventIndicator.className = 'event-indicator';
+                
+                // Verificar el tipo de evento (prioridad: administrativo > vacaciones)
+                const hasAdminEvent = dayEvents.some(event => event.type === 'admin');
+                const hasVacationEvent = dayEvents.some(event => event.type === 'vacation');
+                
+                if (hasAdminEvent) {
+                    eventIndicator.classList.add('admin-indicator');
+                } else if (hasVacationEvent) {
+                    eventIndicator.classList.add('vacation-indicator');
+                }
+                
+                dayElement.appendChild(eventIndicator);
+            }
+            
+            // Agregar event listener para abrir modal al hacer clic
+            dayElement.addEventListener('click', () => openModal(dateStr));
+            
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    // Abrir modal para agregar/editar evento
+    function openModal(dateStr, eventId = null) {
+        // Limpiar formulario
+        eventForm.reset();
+        eventIdInput.value = '';
+        
+        // Establecer la fecha seleccionada
+        const [year, month, day] = dateStr.split('-');
+        const dateObj = new Date(year, month - 1, day);
+        const formattedDate = `${day}/${month}/${year}`;
+        
+        eventDateInput.value = dateStr;
+        
+        // Configurar título del modal
+        modalTitle.textContent = eventId ? 'Editar Evento' : `Agregar Evento - ${formattedDate}`;
+        
+        // Si es edición, cargar datos del evento
+        if (eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                eventIdInput.value = event.id;
+                eventTitleInput.value = event.title;
+                eventTypeInput.value = event.type;
+                eventTimeInput.value = event.time || '';
+                eventLocationInput.value = event.location || '';
+                eventDescriptionInput.value = event.description || '';
+            }
+        }
+        
+        // Mostrar modal
+        eventModal.classList.add('active');
+    }
+    
+    // Cerrar modal
+    function closeModal() {
+        eventModal.classList.remove('active');
+    }
+    
+    // Guardar evento
+    function saveEvent(e) {
+        e.preventDefault();
+        
+        // Obtener valores del formulario
+        const eventId = eventIdInput.value;
+        const date = eventDateInput.value;
+        const title = eventTitleInput.value.trim();
+        const type = eventTypeInput.value;
+        const time = eventTimeInput.value;
+        const location = eventLocationInput.value.trim();
+        const description = eventDescriptionInput.value.trim();
+        
+        // Validar título
+        if (!title) {
+            alert('Por favor, ingresa un título para el evento.');
+            return;
+        }
+        
+        // Actualizar contadores de días
+        if (!eventId) {
+            // Es un evento nuevo
+            if (type === 'vacation') {
+                if (vacationDays > 0) {
+                    vacationDays--;
+                } else {
+                    alert('No tienes más días de vacaciones disponibles.');
+                    return;
+                }
+            } else if (type === 'admin') {
+                if (adminDays > 0) {
+                    adminDays--;
+                } else {
+                    alert('No tienes más días administrativos disponibles.');
+                    return;
+                }
+            }
+        } else {
+            // Es una edición, verificar si cambió el tipo
+            const oldEvent = events.find(e => e.id === eventId);
+            if (oldEvent && oldEvent.type !== type) {
+                // Restaurar el día del tipo anterior
+                if (oldEvent.type === 'vacation') {
+                    vacationDays++;
+                } else if (oldEvent.type === 'admin') {
+                    adminDays++;
+                }
+                
+                // Restar del nuevo tipo
+                if (type === 'vacation') {
+                    if (vacationDays > 0) {
+                        vacationDays--;
+                    } else {
+                        alert('No tienes más días de vacaciones disponibles.');
+                        // Revertir cambio
+                        if (oldEvent.type === 'vacation') vacationDays--;
+                        else if (oldEvent.type === 'admin') adminDays--;
+                        return;
+                    }
+                } else if (type === 'admin') {
+                    if (adminDays > 0) {
+                        adminDays--;
+                    } else {
+                        alert('No tienes más días administrativos disponibles.');
+                        // Revertir cambio
+                        if (oldEvent.type === 'vacation') vacationDays--;
+                        else if (oldEvent.type === 'admin') adminDays--;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Crear o actualizar evento
+        if (eventId) {
+            // Actualizar evento existente
+                const eventIndex = events.findIndex(e => e.id === eventId);
+                if (eventIndex !== -1) {
+                    events[eventIndex] = {
+                        ...events[eventIndex],
+                        title,
+                        type,
+                        time,
+                        location,
+                        description
+                    };
+                }
+            } else {
+                // Crear nuevo evento
+                const newEvent = {
+                    id: Date.now().toString(),
+                    date,
+                    title,
+                    type,
+                    time,
+                    location,
+                    description
+                };
+                events.push(newEvent);
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            
+            // Actualizar contadores de días
+            updateDayCounts();
+            
+            // Volver a renderizar calendario
+            renderCalendar();
+            
+            // Actualizar actividades próximas
+            loadUpcomingActivities();
+            
+            // Cerrar modal
+            closeModal();
+            
+            // Mostrar confirmación
+            alert('Evento guardado exitosamente.');
+        }
+        
+        // Reiniciar eventos y contadores
+        function resetEvents() {
+            if (confirm('¿Estás seguro de que quieres reiniciar todos los eventos? Esto eliminará todos los eventos del calendario y restablecerá los contadores de días.')) {
+                events = [];
+                vacationDays = 10;
+                adminDays = 5;
+                
+                localStorage.removeItem('calendarEvents');
+                
+                updateDayCounts();
+                renderCalendar();
+                loadUpcomingActivities();
+                
+                alert('Todos los eventos han sido eliminados y los contadores restablecidos.');
+            }
+        }
+        
+        // Actualizar contadores de días
+        function updateDayCounts() {
+            vacationDaysEl.textContent = vacationDays;
+            adminDaysEl.textContent = adminDays;
+            totalDaysEl.textContent = vacationDays + adminDays;
+        }
+        
+        // Cargar actividades próximas
+        function loadUpcomingActivities() {
+            // Limpiar actividades existentes
+            upcomingActivitiesEl.innerHTML = '';
+            
+            // Obtener eventos futuros (ordenados por fecha)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const futureEvents = events
+                .filter(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate >= today;
+                })
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 4); // Mostrar solo los próximos 4 eventos
+            
+            if (futureEvents.length === 0) {
+                upcomingActivitiesEl.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-calendar-x"></i><br>
+                        No hay eventos programados
+                    </div>
+                `;
+                return;
+            }
+            
+            futureEvents.forEach(event => {
+                const eventDate = new Date(event.date);
+                const month = monthNames[eventDate.getMonth()].substring(0, 3).toUpperCase();
+                const day = eventDate.getDate();
+                
+                // Determinar el tipo de evento
+                const eventTypeClass = event.type === 'vacation' ? 'text-success' : 
+                                        event.type === 'admin' ? 'text-danger' : 'text-primary';
+                const eventTypeIcon = event.type === 'vacation' ? 'fa-umbrella-beach' : 
+                                        event.type === 'admin' ? 'fa-briefcase' : 'fa-calendar';
+                
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                activityItem.innerHTML = `
+                    <div class="activity-date">
+                        <span class="activity-month">${month}</span>
+                        <span class="activity-day">${day}</span>
+                    </div>
+                    <div>
+                        <div class="fw-semibold d-flex align-items-center gap-1">
+                            <i class="fas ${eventTypeIcon} ${eventTypeClass}"></i>
+                            ${event.title}
+                        </div>
+                        <div class="text-muted small">
+                            ${event.time ? event.time + ' • ' : ''}
+                            ${event.location || 'Sin ubicación especificada'}
+                        </div>
+                    </div>
+                `;
+                
+                upcomingActivitiesEl.appendChild(activityItem);
+            });
+        }
+        
+        // ========== SIDEBAR DERECHA TOGGLE ==========
 
-<!-- Estilos específicos para el calendario funcional -->
-<style>
-    .calendar-mini {
-        background: white;
-        border-radius: var(--radius);
-        padding: 1rem;
-    }
-    
-    .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .calendar-header h4 {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text);
-    }
-    
-    .calendar-nav {
-        background: none;
-        border: none;
-        font-size: 1.25rem;
-        cursor: pointer;
-        color: var(--muted);
-        padding: 0.25rem 0.5rem;
-        border-radius: var(--radius-sm);
-        transition: var(--transition);
-    }
-    
-    .calendar-nav:hover {
-        background: var(--border);
-        color: var(--text);
-    }
-    
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.25rem;
-    }
-    
-    .calendar-day-header {
-        text-align: center;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--muted);
-        padding: 0.5rem 0;
-    }
-    
-    .calendar-day {
-        aspect-ratio: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: var(--radius-sm);
-        font-size: 0.875rem;
-        color: var(--text);
-        cursor: pointer;
-        transition: var(--transition);
-    }
-    
-    .calendar-day:hover {
-        background: var(--border);
-    }
-    
-    .calendar-day.today {
-        background: var(--primary);
-        color: white;
-        font-weight: 600;
-    }
-    
-    .calendar-day.empty {
-        background: transparent;
-        cursor: default;
-    }
-    
-    .calendar-day.empty:hover {
-        background: transparent;
-    }
-</style>
-{% endblock %}
+        // Inicializar el sistema de días libres
+        document.addEventListener('DOMContentLoaded', initDaysSystem);
+        
+        // Inicializar carrusel de Bootstrap
+        const newsCarousel = new bootstrap.Carousel(document.getElementById('newsCarousel'), {
+            interval: 5000,
+            wrap: true
+        });
+    </script>
+    {% endblock %}
