@@ -29,7 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #66b2ff;
+    color: #0B2C4A;
     background: #e3f2fd;
     border-radius: 50%;
 }
@@ -66,7 +66,7 @@
 }
 
 .password-btn {
-    background: #7fffd4;
+    background: #7f9dff;
     color: #1a1a1a;
 }
 

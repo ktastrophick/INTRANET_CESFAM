@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
     <style>
         :root {
-            --primary-color: #3a86ff;
+            --primary-color: #0B2C4A;
             --secondary-color: #8338ec;
             --vacation-color: #38b000;
             --admin-color: #ff006e;
@@ -703,10 +703,10 @@
         <h1 class="page-title">
             <i class="fas fa-calendar-alt"></i> Calendario 
         </h1>
-        <p class="page-description">
-
-        </p>
-        
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle"></i> Ingrese los eventos en el calendario
+                </div>
+        <br>
         <!-- Columna derecha: Calendario General -->
         <section class="calendar-section">
             <div class="calendar-title">
@@ -753,7 +753,12 @@
                     <span>Administrativos</span>
                 </div>
             </div>
-            
+            <div class="dashboard-card">
+                <h3 class="card-title">Todos los Eventos</h3>
+                <div class="activities-list" id="upcoming-activities">
+                    <!-- Los eventos se deben filtrar desde el mas reciente al mas antiguo -->
+                </div>
+            </div>
         </section>
     </div>
 </div>
@@ -837,6 +842,7 @@
                 <button type="submit" class="btn btn-primary" id="save-announcement">Publicar Comunicado</button>
             </div>
         </form>
+
     </div>
 </div>
 {% endblock %}
