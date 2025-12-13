@@ -29,13 +29,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0B2C4A;
     background: #e3f2fd;
     border-radius: 50%;
 }
 
+/* ESTO ES LO IMPORTANTE - Color del ícono */
 .foto-perfil .fa-user-circle {
     font-size: 72px;
+    color: #0B2C4A; /* Color del ícono */
+}
+
+/* Para la imagen si existe */
+.foto-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 /* DATOS DEL USUARIO */
