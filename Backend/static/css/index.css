@@ -152,12 +152,13 @@
 .announcement-item {
     display: block;
     padding: 1rem;
-    background: #f8f9fa;
+    background: #ebf1f8;
     border-radius: var(--radius-sm);
     text-decoration: none;
     transition: var(--transition);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--primary); /* acento visual */
+    border-left: 4px solid ;
+    border-left-color: #3158ad; /* acento visual */
 }
 
 /* Hover */
@@ -176,15 +177,16 @@
     margin-bottom: 0.35rem;
     line-height: 1.4;
     font-size: 0.95rem;
+    padding-left: 0.5rem; /* 👈 mueve el texto a la derecha */
 }
 
-/* Meta (fecha / autor) */
 .announcement-item__meta {
     font-size: 0.8rem;
     color: var(--muted);
     display: flex;
     align-items: center;
     gap: 0.35rem;
+    padding-left: 0.5rem; /* 👈 mismo desplazamiento */
 }
 
 .announcement-item__meta i {
