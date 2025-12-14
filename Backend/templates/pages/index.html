@@ -14,7 +14,7 @@
 <style>
     :root {
         --primary: #0B2C4A;
-        --secondary: #3A8DFF;
+        --secondary: #134181ff;
         --accent: #2E8B57;
         --danger: #ef4444;
         --success: #38b000;
@@ -173,7 +173,7 @@
     }
 
     .request-item--received {
-        border-left-color: #448fda;
+        border-left-color: #2170beff;
         background: linear-gradient(135deg, #e3f2fd 0%, #f9fcff 100%);
     }
 
@@ -210,7 +210,7 @@
         color: var(--secondary);
     }
 
-    .request-value--received { color: #448fda; }
+    .request-value--received { color: #2769acff; }
     .request-value--accepted { color: #4caf50; }
     .request-value--pending { color: #ff9800; }
     .request-value--rejected { color: #f44336; }
@@ -621,53 +621,7 @@
 
 {% block content %}
 <!-- Modal para agregar/editar eventos -->
-<div class="modal-overlay" id="event-modal">
-    <div class="event-modal">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modal-title">Agregar Evento</h3>
-            <button class="close-modal" id="close-modal">&times;</button>
-        </div>
-        
-        <form id="event-form">
-            <input type="hidden" id="event-date">
-            <input type="hidden" id="event-id">
-            
-            <div class="form-group">
-                <label for="event-title">Título del evento <span class="optional-label">(obligatorio)</span></label>
-                <input type="text" id="event-title" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="event-type">Tipo de día</label>
-                <select id="event-type" class="form-control">
-                    <option value="vacation">Vacaciones</option>
-                    <option value="admin">Administrativo</option>
-                    <option value="other">Otro</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="event-time">Hora <span class="optional-label">(opcional)</span></label>
-                <input type="time" id="event-time" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="event-location">Ubicación <span class="optional-label">(opcional)</span></label>
-                <input type="text" id="event-location" class="form-control" placeholder="Ej: Oficina, Casa, etc.">
-            </div>
-            
-            <div class="form-group">
-                <label for="event-description">Descripción <span class="optional-label">(opcional, no se mostrará en el calendario)</span></label>
-                <textarea id="event-description" class="form-control" rows="3" placeholder="Detalles adicionales sobre el evento..."></textarea>
-            </div>
-            
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="cancel-event">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="save-event">Guardar Evento</button>
-            </div>
-        </form>
-    </div>
-</div>
+<div class="modal-overlay" id="event-modal"></div>
 
 <div class="dashboard-container">
     <!-- Banner de bienvenida -->

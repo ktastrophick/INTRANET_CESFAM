@@ -202,49 +202,18 @@
 
 <!-- CHAT (solo si existen funcionarios en contexto) -->
 {% if funcionarios %}
-<div class="chat-floating-btn" id="chatFloatingBtn" aria-label="Abrir chat">
-    <i class="fas fa-comments"></i>
-</div>
 
-<div class="chat-panel" id="chatPanel">
-
-    <div class="chat-list" id="chatList">
-        <div class="chat-list-header">
-            <h4>Mensajes</h4>
-        </div>
 
         {% for funcionario in funcionarios %}
-        <div class="chat-list-item" data-user="{{ funcionario.id_usuario }}">
-            <div class="avatar">
-                {{ funcionario.nombre|first|upper }}
-            </div>
-            <div class="info">
-                <h5>{{ funcionario.nombre }}</h5>
-                <p>Haz clic para abrir el chat</p>
-            </div>
-        </div>
+
         {% empty %}
         <p>No hay funcionarios disponibles.</p>
         {% endfor %}
 
     </div>
 
-    <div class="chat-window" id="chatWindow">
-        <div class="chat-window-header">
-            <button id="backToList" class="chat-back-btn">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h4 id="chatWith">Chat</h4>
-        </div>
 
-        <div class="chat-messages" id="chatMessages"></div>
 
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
-            <button id="sendBtn" class="chat-send-btn">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
     </div>
 
 </div>

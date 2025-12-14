@@ -36,7 +36,7 @@
 /* ESTO ES LO IMPORTANTE - Color del ícono */
 .foto-perfil .fa-user-circle {
     font-size: 72px;
-    color: #0B2C4A; /* Color del ícono */
+    color: #133c94ff /* Color del ícono */
 }
 
 /* Para la imagen si existe */
@@ -64,7 +64,7 @@
     display: inline-flex;
     align-items: center;
     gap: .5rem;
-    background: #66b2ff;
+    background: #133c94ff;
     color: #fff;
     border: none;
     padding: .6rem 1rem;
