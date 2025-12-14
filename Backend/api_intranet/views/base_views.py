@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from api_intranet.models import Usuario, Avisos, Documento, InicioRegistrado, Licencia, Calendario
 from django.contrib import messages
 from django.contrib.auth import logout 
+from django.db.models import Q
 
 
 from typing import Optional
@@ -115,9 +116,10 @@ def index(request: HttpRequest) -> HttpResponse:
             dia_fin__gte=date.today()
         ).count
         # Eventos próximos del usuario (próximos 7 días)
-        from datetime import timedelta
+        from datetime import date, timedelta
         eventos_proximos = Calendario.objects.filter(
-            id_usuario=usuario,
+            Q(es_general=True) |
+            Q(es_general=False, id_usuario=usuario),
             fecha__range=[date.today(), date.today() + timedelta(days=7)]
         ).count()
 
@@ -131,6 +133,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "solicitudes_pendientes": solicitudes_pendientes,
             "licencias_activas": licencias_activas,
             "eventos_proximos": eventos_proximos,
+            "eventos_proximos_count": eventos_proximos.count(),
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
         }
         

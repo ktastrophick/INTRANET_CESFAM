@@ -98,27 +98,13 @@ def eventos_api(request: HttpRequest) -> Union[JsonResponse, HttpResponseBadRequ
     
     if request.method == 'GET':
         usuario = get_usuario_actual(request)
-        
-        if usuario:
-            # Director ve: sus eventos (personales y generales que creó) + eventos generales de otros
-            if usuario.id_rol and usuario.id_rol.nombre in ['Director']:
-                qs = Calendario.objects.filter(
-                    Q(id_usuario=usuario) |  # Sus propios eventos (personales y generales)
-                    Q(es_general=True)  # Todos los eventos generales
-                ).distinct()
-            # Admin ve todos los eventos
-            elif usuario.id_rol and usuario.id_rol.nombre == 'Admin':
-                qs = Calendario.objects.all()
-            # Funcionarios ven: sus eventos personales + eventos generales de todos
-            else:
-                qs = Calendario.objects.filter(
-                    Q(id_usuario=usuario, es_general=False) |  # Sus eventos personales
-                    Q(es_general=True)  # Eventos generales de todos
-                ).distinct()
-        else:
+        if not usuario:
             return JsonResponse({'results': []}, status=200)
-        
-        qs = qs.order_by('fecha', 'hora_inicio')
+
+        qs = Calendario.objects.filter(
+            Q(es_general=True) |
+            Q(es_general=False, id_usuario=usuario)
+        ).distinct().order_by('fecha', 'hora_inicio')
         
         # Filtros de fecha
         start: str | None = request.GET.get('start')
@@ -231,18 +217,20 @@ def evento_detalle_api(
     # Verificar permisos
     es_general = getattr(evento, 'es_general', False)
     usuario_es_propietario = (evento.id_usuario and 
-                              evento.id_usuario.id_usuario == usuario.id_usuario)
+                                evento.id_usuario.id_usuario == usuario.id_usuario)
     usuario_es_admin = (usuario.id_rol and usuario.id_rol.nombre == 'Admin')
     
     # Para VER: eventos generales todos pueden verlos, personales solo el dueño
-    if not es_general and not usuario_es_propietario and not usuario_es_admin:
+    # nuevo (cumple segregación estricta)
+    if (not es_general) and (not usuario_es_propietario):
         return HttpResponseBadRequest('No tienes permisos para ver este evento')
+
     
     if request.method == 'GET':
         return JsonResponse(_serialize_event(evento), status=200)
 
-    # Para MODIFICAR/ELIMINAR: solo el propietario o admin
-    if not usuario_es_propietario and not usuario_es_admin:
+    # nuevo (solo el creador)
+    if not usuario_es_propietario:
         return HttpResponseBadRequest('No tienes permisos para modificar este evento')
 
     if request.method == 'PUT':

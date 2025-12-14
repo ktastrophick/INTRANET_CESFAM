@@ -761,16 +761,16 @@
                     <div class="event-actions mt-3">
                         <div class="d-flex gap-2 align-items-center">
                             <div class="d-flex align-items-center gap-1">
-                                <div style="width: 12px; height: 12px; background-color: var(--accent); border-radius: 2px;"></div>
-                                <small>Vacaciones</small>
+                                <div style="width: 12px; height: 12px; background-color: #FF6B6B; border-radius: 2px;"></div>
+                                <small>General</small>
                             </div>
                             <div class="d-flex align-items-center gap-1">
-                                <div style="width: 12px; height: 12px; background-color: var(--danger); border-radius: 2px;"></div>
-                                <small>Administrativos</small>
+                                <div style="width: 12px; height: 12px; background-color: #3A8DFF; border-radius: 2px;"></div>
+                                <small>Personal</small>
                             </div>
                         </div>
                         <div class="text-muted small">
-                            <i class="bi bi-info-circle"></i> Haz clic en una fecha para agregar un evento
+                            <i class="bi bi-info-circle"></i> Haz clic para ver más detalles
                         </div>
                     </div>
                 </div>
@@ -780,10 +780,15 @@
             <div class="dashboard-card">
                 <h3 class="card-title">Próximos Eventos</h3>
                 <div class="activities-list" id="upcoming-activities">
-                    <!-- Los eventos se cargarán dinámicamente desde el otro calendario -->
+                    <!-- Los eventos se cargan dinámicamente con JavaScript -->
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-clock-history" style="font-size: 2rem;"></i><br>
+                        Cargando eventos...
+                    </div>
                 </div>
-                <div class="text-muted small">
-                    <i class="bi bi-info-circle"></i> ver todos los eventos en el calendario
+                <div class="text-muted small mt-3">
+                    <i class="bi bi-info-circle"></i> 
+                    <a href="{% url 'calendario' %}" class="text-decoration-none">Ver todos los eventos en el calendario</a>
                 </div>
             </div>
         </div>
@@ -798,11 +803,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // ========== REEMPLAZAR TODO EL BLOQUE <script> EN index.html ==========
-
 // Variables globales
 let currentDate = new Date();
-let serverEvents = []; // Eventos del servidor
+let serverEvents = [];
 
 // Elementos del DOM
 const calendarGrid = document.getElementById('calendarGrid');
@@ -830,15 +833,19 @@ async function initDaysSystem() {
 
 // Configurar event listeners
 function setupEventListeners() {
-    prevMonthBtn.addEventListener('click', async () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        await renderCalendar();
-    });
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', async () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            await renderCalendar();
+        });
+    }
     
-    nextMonthBtn.addEventListener('click', async () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        await renderCalendar();
-    });
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', async () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            await renderCalendar();
+        });
+    }
 }
 
 // Cargar eventos del servidor
@@ -856,10 +863,14 @@ async function loadServerEvents() {
 
 // Renderizar calendario
 async function renderCalendar() {
+    if (!calendarGrid) return;
+    
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     
-    currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+    if (currentMonthElement) {
+        currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+    }
     
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -896,162 +907,162 @@ async function renderCalendar() {
         
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         dayElement.dataset.date = dateStr;
-        
-        // Verificar si es hoy
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            dayElement.classList.add('today');
-        }
-        
-        // Verificar si hay eventos para este día
-        const dayEvents = serverEvents.filter(event => event.fecha === dateStr);
-        if (dayEvents.length > 0) {
-            dayElement.classList.add('event-day');
-            
-            // Agregar indicador de tipo de evento (MÁS GRANDE Y VISIBLE)
-            const eventIndicator = document.createElement('div');
-            eventIndicator.className = 'event-indicator';
-            
-            // Verificar el tipo de evento (prioridad: general > personal)
-            const hasGeneralEvent = dayEvents.some(event => event.es_general);
-            const hasPersonalEvent = dayEvents.some(event => !event.es_general);
-            
-            if (hasGeneralEvent) {
-                eventIndicator.style.backgroundColor = '#FF6B6B'; // Rojo para general
-            } else if (hasPersonalEvent) {
-                eventIndicator.style.backgroundColor = '#3A8DFF'; // Azul para personal
-            }
-            
-            // Hacer el indicador MÁS GRANDE
-            eventIndicator.style.width = '8px';
-            eventIndicator.style.height = '8px';
-            eventIndicator.style.bottom = '4px';
-            
-            dayElement.appendChild(eventIndicator);
-        }
-        
-        // Agregar event listener para redirigir al calendario
-        dayElement.addEventListener('click', () => {
-            window.location.href = `/calendario/`;
-        });
-        
-        calendarGrid.appendChild(dayElement);
+    // Verificar si es hoy
+    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+    dayElement.classList.add('today');
     }
-}
-
-// Cargar próximos eventos desde el servidor
-async function loadUpcomingActivities() {
-    try {
-        // Asegurarse de tener los eventos cargados
-        if (serverEvents.length === 0) {
-            await loadServerEvents();
+    // Verificar si hay eventos para este día
+    const dayEvents = serverEvents.filter(event => event.fecha === dateStr);
+    if (dayEvents.length > 0) {
+        dayElement.classList.add('event-day');
+        
+        // Agregar indicador de tipo de evento
+        const eventIndicator = document.createElement('div');
+        eventIndicator.className = 'event-indicator';
+        
+        // Verificar el tipo de evento (prioridad: general > personal)
+        const hasGeneralEvent = dayEvents.some(event => event.es_general);
+        const hasPersonalEvent = dayEvents.some(event => !event.es_general);
+        
+        if (hasGeneralEvent) {
+            eventIndicator.style.backgroundColor = '#FF6B6B';
+        } else if (hasPersonalEvent) {
+            eventIndicator.style.backgroundColor = '#3A8DFF';
         }
         
-        // Limpiar actividades existentes
-        upcomingActivitiesEl.innerHTML = '';
+        eventIndicator.style.width = '8px';
+        eventIndicator.style.height = '8px';
+        eventIndicator.style.bottom = '4px';
         
-        // Obtener eventos futuros (ordenados por fecha)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const futureEvents = serverEvents
+        dayElement.appendChild(eventIndicator);
+    }
+    
+    // Agregar event listener para redirigir al calendario
+    dayElement.addEventListener('click', () => {
+        window.location.href = '/calendario/';
+    });
+    
+    calendarGrid.appendChild(dayElement);
+}
+}
+    // Cargar próximos eventos desde el servidor
+    async function loadUpcomingActivities() {
+        try {
+            if (serverEvents.length === 0) {
+            await loadServerEvents();
+            }
+            if (!upcomingActivitiesEl) return;
+
+            upcomingActivitiesEl.innerHTML = '';
+
+            // HOY en local, a las 00:00
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Helper local
+            const parseLocalDate = (s) => {
+            const [y, m, d] = s.split('-').map(Number);
+            return new Date(y, m - 1, d);
+            };
+
+            const futureEvents = serverEvents
             .filter(event => {
-                const eventDate = new Date(event.fecha);
+                if (!event.fecha) return false;
+                const eventDate = parseLocalDate(event.fecha);
                 eventDate.setHours(0, 0, 0, 0);
                 return eventDate >= today;
             })
-            .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-            .slice(0, 4); // Mostrar solo los próximos 4 eventos
-        
-        if (futureEvents.length === 0) {
+            .sort((a, b) => parseLocalDate(a.fecha) - parseLocalDate(b.fecha))
+            .slice(0, 10); // cambia a 20, o elimina para mostrar todos
+
+            if (futureEvents.length === 0) {
             upcomingActivitiesEl.innerHTML = `
                 <div class="text-center text-muted py-3">
-                    <i class="bi bi-calendar-x" style="font-size: 2rem;"></i><br>
-                    No hay eventos próximos programados
+                <i class="bi bi-calendar-x" style="font-size: 2rem;"></i><br>
+                No hay eventos próximos programados
                 </div>
             `;
             return;
-        }
-        
-        futureEvents.forEach(event => {
-            const eventDate = new Date(event.fecha);
+            }
+
+            futureEvents.forEach(event => {
+            // ⚠️ AQUÍ estaba tu desfase: ya no usamos new Date(event.fecha) directo
+            const eventDate = parseLocalDate(event.fecha);
             const month = monthNames[eventDate.getMonth()].substring(0, 3).toUpperCase();
             const day = eventDate.getDate();
-            
-            // Determinar el tipo de evento y colores
-            const isGeneral = event.es_general;
+
+            const isGeneral = !!event.es_general;
             const eventTypeClass = isGeneral ? 'text-danger' : 'text-primary';
             const eventTypeIcon = isGeneral ? 'fa-bullhorn' : 'fa-user';
             const eventTypeBadge = isGeneral ? 'General' : 'Personal';
             const eventTypeColor = isGeneral ? '#FF6B6B' : '#3A8DFF';
             const eventTypeBgColor = isGeneral ? '#ffebee' : '#e3f2fd';
-            
-            // Formatear horario
+
             let timeDisplay = '';
             if (event.todo_el_dia) {
                 timeDisplay = 'Todo el día';
             } else if (event.hora_inicio) {
                 timeDisplay = event.hora_inicio.substring(0, 5);
                 if (event.hora_fin) {
-                    timeDisplay += ` - ${event.hora_fin.substring(0, 5)}`;
+                timeDisplay += ` - ${event.hora_fin.substring(0, 5)}`;
                 }
             }
-            
+
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
             activityItem.style.cursor = 'pointer';
-            activityItem.onclick = () => {
-                window.location.href = '/calendario/';
-            };
-            
+            activityItem.onclick = () => window.location.href = '/calendario/';
+
             activityItem.innerHTML = `
                 <div class="activity-date" style="background: ${eventTypeBgColor};">
-                    <span class="activity-month" style="color: ${eventTypeColor};">${month}</span>
-                    <span class="activity-day" style="color: ${eventTypeColor};">${day}</span>
+                <span class="activity-month" style="color: ${eventTypeColor};">${month}</span>
+                <span class="activity-day" style="color: ${eventTypeColor};">${day}</span>
                 </div>
                 <div style="flex: 1;">
-                    <div class="fw-semibold d-flex align-items-center gap-2 flex-wrap">
-                        <i class="fas ${eventTypeIcon} ${eventTypeClass}"></i>
-                        <span>${event.titulo}</span>
-                        <span style="
-                            font-size: 0.7rem;
-                            padding: 3px 10px;
-                            border-radius: 12px;
-                            background: ${eventTypeBgColor};
-                            color: ${eventTypeColor};
-                            font-weight: 600;
-                        ">${eventTypeBadge}</span>
-                    </div>
-                    <div class="text-muted small mt-1">
-                        <i class="far fa-clock"></i> ${timeDisplay}
-                        ${event.ubicacion ? `<br><i class="fas fa-map-marker-alt"></i> ${event.ubicacion}` : ''}
-                    </div>
+                <div class="fw-semibold d-flex align-items-center gap-2 flex-wrap">
+                    <i class="fas ${eventTypeIcon} ${eventTypeClass}"></i>
+                    <span>${event.titulo}</span>
+                    <span style="
+                    font-size: 0.7rem;
+                    padding: 3px 10px;
+                    border-radius: 12px;
+                    background: ${eventTypeBgColor};
+                    color: ${eventTypeColor};
+                    font-weight: 600;
+                    ">${eventTypeBadge}</span>
+                </div>
+                <div class="text-muted small mt-1">
+                    <i class="far fa-clock"></i> ${timeDisplay}
+                    ${event.ubicacion ? `<br><i class="fas fa-map-marker-alt"></i> ${event.ubicacion}` : ''}
+                </div>
                 </div>
             `;
-            
+
             upcomingActivitiesEl.appendChild(activityItem);
-        });
-    } catch (error) {
-        console.error('Error al cargar próximos eventos:', error);
-        upcomingActivitiesEl.innerHTML = `
-            <div class="text-center text-muted py-3">
+            });
+        } catch (error) {
+            console.error('Error al cargar próximos eventos:', error);
+            if (upcomingActivitiesEl) {
+            upcomingActivitiesEl.innerHTML = `
+                <div class="text-center text-muted py-3">
                 <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i><br>
                 Error al cargar eventos
-            </div>
-        `;
-    }
+                </div>
+            `;
+            }
+        }
 }
 
-// Actualizar contadores de días (estos son datos estáticos por ahora)
+// Actualizar contadores de días
 function updateDayCounts() {
-    if (vacationDaysEl) vacationDaysEl.textContent = '10';
-    if (adminDaysEl) adminDaysEl.textContent = '5';
-    if (totalDaysEl) totalDaysEl.textContent = '15';
+if (vacationDaysEl) vacationDaysEl.textContent = '10';
+if (adminDaysEl) adminDaysEl.textContent = '5';
+if (totalDaysEl) totalDaysEl.textContent = '15';
 }
-
 // Inicializar el sistema cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    initDaysSystem();
-    updateDayCounts();
+initDaysSystem();
+updateDayCounts();
 });
-    </script>
-    {% endblock %}
+</script>
+{% endblock %}
