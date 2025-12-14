@@ -5,21 +5,284 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+<style>
+/* Estilos adicionales para el modal y la funcionalidad de foto */
+.foto-perfil-container {
+    position: relative;
+    display: inline-block;
+}
+
+.foto-perfil {
+    position: relative;
+    cursor: pointer;
+}
+
+.foto-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.foto-perfil:hover .foto-overlay {
+    display: flex;
+}
+
+.foto-overlay i {
+    font-size: 2rem;
+    color: white;
+}
+
+.btn-editar-foto {
+    background: #133c94ff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    transition: filter 0.2s;
+}
+
+.btn-editar-foto:hover {
+    filter: brightness(0.95);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #1f2937;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.file-input-container {
+    position: relative;
+}
+
+.file-input-preview {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    text-align: center;
+    background: #f8fafc;
+    transition: border-color 0.3s;
+    cursor: pointer;
+}
+
+.file-input-preview:hover {
+    border-color: #2563eb;
+}
+
+.file-input-preview.has-file {
+    border-color: #059669;
+    background: #f0fdf4;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    margin: 0 auto 0.5rem;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #059669;
+}
+
+.file-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.btn-cancelar,
+.btn-guardar {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-cancelar {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background: #4b5563;
+}
+
+.btn-guardar {
+    background: #133c94ff;
+    color: white;
+}
+
+.btn-guardar:hover {
+    filter: brightness(0.95);
+}
+
+.mensaje {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.mensaje-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.mensaje-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 5% 1rem;
+        padding: 1.5rem;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="perfil-container">
-    <h2>Mi Perfil</h2>
+    <h2><i class="fa-solid fa-user"></i> Mi Perfil</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.message != "Sesión cerrada correctamente." %}
+                <div class="mensaje mensaje-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
     <div class="perfil-card">
         <div class="perfil-info">
-            <div class="foto-perfil" aria-label="Foto de perfil">
-                {# Si el usuario tiene foto en su perfil, la mostramos, si no, ícono #}
-                {% if perfil.foto_perfil %}
-                    <img src="{{ perfil.foto_perfil }}" alt="Foto de perfil">
-                {% else %}
-                    <i class="fa-solid fa-user-circle"></i>
-                {% endif %}
+            <div class="foto-perfil-container">
+                <div class="foto-perfil" onclick="abrirModalFoto()">
+                    {% if perfil.foto_perfil %}
+                        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil">
+                    {% else %}
+                        <i class="fa-solid fa-user-circle"></i>
+                    {% endif %}
+                    <div class="foto-overlay">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                </div>
+                <button class="btn-editar-foto" onclick="abrirModalFoto()">
+                    <i class="fa-solid fa-camera"></i>
+                    {% if perfil.foto_perfil %}Cambiar foto{% else %}Agregar foto{% endif %}
+                </button>
             </div>
 
             <div class="datos">
@@ -52,6 +315,134 @@
         </div>
 
         <div class="acciones">
+
         </div>
+    </div>
 </div>
+
+<!-- Modal para editar foto de perfil -->
+<div id="modalFoto" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-camera"></i> Actualizar foto de perfil</h3>
+            <button class="close-modal" onclick="cerrarModalFoto()">&times;</button>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" action="{% url 'actualizar_foto_perfil' %}" id="formFotoPerfil">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="foto_perfil">Seleccionar imagen:</label>
+                <div class="file-input-container">
+                    <input type="file" id="foto_perfil" name="foto_perfil" 
+                            accept="image/jpeg,image/jpg,image/png" required>
+                    <div class="file-input-preview" id="filePreview">
+                        <i class="fa-solid fa-cloud-upload-alt" style="font-size: 2rem; color: #6b7280; margin-bottom: 0.5rem;"></i>
+                        <div>Haz clic para seleccionar una imagen</div>
+                        <div class="file-info">Formatos: JPG, PNG (Max. 5MB)</div>
+                    </div>
+                </div>
+                <div id="fileError" class="error-message"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancelar" onclick="cerrarModalFoto()">
+                    <i class="fa-solid fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-guardar">
+                    <i class="fa-solid fa-save"></i> Guardar foto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Funciones para el modal
+function abrirModalFoto() {
+    document.getElementById('modalFoto').style.display = 'block';
+}
+
+function cerrarModalFoto() {
+    document.getElementById('modalFoto').style.display = 'none';
+    document.getElementById('formFotoPerfil').reset();
+    resetFilePreview();
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('modalFoto');
+    if (event.target === modal) {
+        cerrarModalFoto();
+    }
+}
+
+// Preview de la imagen seleccionada
+document.getElementById('foto_perfil').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const fileError = document.getElementById('fileError');
+    const filePreview = document.getElementById('filePreview');
+    
+    fileError.textContent = '';
+    fileError.style.display = 'none';
+    
+    if (file) {
+        // Validar tamaño (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            fileError.textContent = 'La imagen no puede superar 5MB';
+            fileError.style.display = 'block';
+            e.target.value = '';
+            resetFilePreview();
+            return;
+        }
+        
+        // Validar tipo de archivo
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            fileError.textContent = 'Solo se permiten imágenes JPG o PNG';
+            fileError.style.display = 'block';
+            e.target.value = '';
+            resetFilePreview();
+            return;
+        }
+        
+        // Mostrar preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            filePreview.innerHTML = `
+                <img src="${e.target.result}" class="preview-image" alt="Preview">
+                <div class="file-name">${file.name}</div>
+                <div class="file-info">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+            `;
+            filePreview.classList.add('has-file');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        resetFilePreview();
+    }
+});
+
+function resetFilePreview() {
+    const filePreview = document.getElementById('filePreview');
+    filePreview.innerHTML = `
+        <i class="fa-solid fa-cloud-upload-alt" style="font-size: 2rem; color: #6b7280; margin-bottom: 0.5rem;"></i>
+        <div>Haz clic para seleccionar una imagen</div>
+        <div class="file-info">Formatos: JPG, PNG (Max. 5MB)</div>
+    `;
+    filePreview.classList.remove('has-file');
+}
+
+// Validación al enviar el formulario
+document.getElementById('formFotoPerfil').addEventListener('submit', function(e) {
+    const fotoInput = document.getElementById('foto_perfil');
+    const fileError = document.getElementById('fileError');
+    
+    if (!fotoInput.files || !fotoInput.files[0]) {
+        e.preventDefault();
+        fileError.textContent = 'Debes seleccionar una imagen';
+        fileError.style.display = 'block';
+        return;
+    }
+});
+</script>
 {% endblock %}

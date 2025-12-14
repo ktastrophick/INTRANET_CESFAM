@@ -6,7 +6,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
 from api_intranet.models import Usuario, Perfil
+from django.core.files.storage import default_storage
 from typing import Optional
+import os
+
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
     """Obtiene el usuario actual desde la sesión"""
@@ -33,6 +36,7 @@ def perfil(request: HttpRequest) -> HttpResponse:
 
     # Obtener o crear el perfil extendido del usuario
     perfil_obj, created = Perfil.objects.get_or_create(id_usuario=usuario)
+    
 
     context = {
         "usuario": usuario,
@@ -91,49 +95,96 @@ def editar_perfil(request: HttpRequest) -> HttpResponse:
     return render(request, "pages/editar_perfil.html", context)
 
 
-def cambiar_contrasena(request: HttpRequest) -> HttpResponse:
+def actualizar_foto_perfil(request: HttpRequest) -> HttpResponse:
     """
-    Vista para cambiar la contraseña del usuario.
+    Vista para actualizar solo la foto de perfil del usuario.
     
-    - Métodos soportados: GET, POST
+    - Método soportado: POST
+    - Valida el tipo y tamaño del archivo
+    - Elimina la foto anterior si existe
+    - Guarda la nueva foto
     """
-    usuario = get_usuario_actual(request)
-    if not usuario:
-        return redirect("login")
-
-    if request.method == "POST":
-        contrasena_actual = request.POST.get("contrasena_actual", "").strip()
-        nueva_contrasena = request.POST.get("nueva_contrasena", "").strip()
-        confirmar_contrasena = request.POST.get("confirmar_contrasena", "").strip()
-
-        # Validaciones
-        if not all([contrasena_actual, nueva_contrasena, confirmar_contrasena]):
-            messages.error(request, "Todos los campos son obligatorios.")
-            return render(request, "pages/cambiar_contrasena.html")
-
-        # Verificar contraseña actual (esto depende de cómo manejes las contraseñas)
-        if usuario.contrasena != contrasena_actual:  # Ajusta según tu sistema de autenticación
-            messages.error(request, "La contraseña actual es incorrecta.")
-            return render(request, "pages/cambiar_contrasena.html")
-
-        if nueva_contrasena != confirmar_contrasena:
-            messages.error(request, "Las nuevas contraseñas no coinciden.")
-            return render(request, "pages/cambiar_contrasena.html")
-
-        if len(nueva_contrasena) < 6:
-            messages.error(request, "La nueva contraseña debe tener al menos 6 caracteres.")
-            return render(request, "pages/cambiar_contrasena.html")
-
-        try:
-            # Actualizar contraseña
-            usuario.contrasena = nueva_contrasena
-            usuario.full_clean()
-            usuario.save()
-            
-            messages.success(request, "Contraseña cambiada exitosamente.")
-            return redirect("perfil")
-            
-        except Exception as e:
-            messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
-
-    return render(request, "pages/cambiar_contrasena.html")
+    if request.method != 'POST':
+        return redirect('perfil')
+    
+    # Verificar que el usuario esté autenticado
+    user_id = request.session.get('id_usuario')
+    if not user_id:
+        messages.error(request, 'Debes iniciar sesión para actualizar tu foto de perfil')
+        return redirect('login')
+    
+    try:
+        # Obtener el usuario
+        usuario = Usuario.objects.get(id_usuario=user_id)
+        
+        # Obtener o crear el perfil
+        perfil_obj, created = Perfil.objects.get_or_create(id_usuario=usuario)
+        
+        # Obtener el archivo de imagen
+        foto = request.FILES.get('foto_perfil')
+        
+        if not foto:
+            messages.error(request, 'No se seleccionó ninguna imagen')
+            return redirect('perfil')
+        
+        # Verificar que la foto tenga el atributo size
+        if not hasattr(foto, 'size') or foto.size is None:
+            messages.error(request, 'El archivo de imagen no es válido')
+            return redirect('perfil')
+        
+        # Validar el tamaño del archivo (5MB máximo)
+        max_size = 5 * 1024 * 1024  # 5MB en bytes
+        if foto.size > max_size:
+            messages.error(request, f'La imagen no puede superar {max_size // (1024*1024)}MB')
+            return redirect('perfil')
+        
+        # Validar que el tamaño no sea 0
+        if foto.size == 0:
+            messages.error(request, 'El archivo de imagen está vacío')
+            return redirect('perfil')
+        
+        # Validar el tipo de archivo
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+        file_type_valid = False
+        
+        # Verificar content_type primero
+        if foto.content_type and foto.content_type in allowed_types:
+            file_type_valid = True
+        else:
+            # Como fallback, verificar la extensión del archivo si tiene nombre
+            if foto.name:
+                file_name = foto.name.lower()
+                allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+                for ext in allowed_extensions:
+                    if file_name.endswith(ext):
+                        file_type_valid = True
+                        break
+        
+        if not file_type_valid:
+            messages.error(request, 'Solo se permiten imágenes JPG, PNG o GIF')
+            return redirect('perfil')
+        
+        # Si existe una foto anterior, eliminarla
+        if perfil_obj.foto_perfil:
+            try:
+                # Verificar si el archivo existe antes de intentar eliminarlo
+                if perfil_obj.foto_perfil.name and default_storage.exists(perfil_obj.foto_perfil.name):
+                    default_storage.delete(perfil_obj.foto_perfil.name)
+            except Exception as e:
+                print(f"Error al eliminar foto anterior: {e}")
+                # Continuar de todos modos para guardar la nueva foto
+        
+        # Guardar la nueva foto
+        perfil_obj.foto_perfil = foto
+        perfil_obj.save()
+        
+        messages.success(request, 'Foto de perfil actualizada correctamente')
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, 'Usuario no encontrado')
+        return redirect('login')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar la foto de perfil: {str(e)}')
+        print(f"Error en actualizar_foto_perfil: {e}")
+    
+    return redirect('perfil')

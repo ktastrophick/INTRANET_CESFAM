@@ -291,14 +291,39 @@ class Solicitud(models.Model):
 
 class Perfil(models.Model):
     id_perfil = models.AutoField(primary_key=True)
-    foto_perfil = models.CharField(max_length=255, blank=True, null=True)
+    foto_perfil = models.ImageField(
+        upload_to='perfiles/',  # Cambiado de CharField a ImageField
+        blank=True, 
+        null=True,
+        max_length=255
+    )
     descripcion = models.CharField(max_length=255, blank=True, null=True)
-    id_usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, db_column='id_usuario', blank=True, null=True)
+    id_usuario = models.ForeignKey(
+        'Usuario', 
+        on_delete=models.CASCADE, 
+        db_column='id_usuario', 
+        blank=True, 
+        null=True
+    )
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = True
         db_table = 'perfil'
+
+    def __str__(self):
+        return f"Perfil de {self.id_usuario.nombre if self.id_usuario else 'Sin usuario'}"
+
+    def clean(self):
+        """Validaciones del perfil"""
+        super().clean()
+        
+        # Validar tamaño máximo de foto (5MB)
+        if self.foto_perfil and hasattr(self.foto_perfil, 'size'):
+            if self.foto_perfil.size > 5 * 1024 * 1024:
+                raise ValidationError({
+                    'foto_perfil': 'La imagen no puede superar 5MB'
+                })
 
 class Documento(models.Model):
     id_documento = models.AutoField(primary_key=True)

@@ -59,7 +59,7 @@ urlpatterns = [
     # =============================================
     path('perfil/', perfil_views.perfil, name='perfil'),
     path('perfil/editar/', perfil_views.editar_perfil, name='editar_perfil'),
-    path('perfil/cambiar-contrasena/', perfil_views.cambiar_contrasena, name='cambiar_contrasena'),
+    path('perfil/actualizar-foto/', perfil_views.actualizar_foto_perfil, name='actualizar_foto_perfil'),
 
     # =============================================
     # LICENCIAS MÉDICAS
