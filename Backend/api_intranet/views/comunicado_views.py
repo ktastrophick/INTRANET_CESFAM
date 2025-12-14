@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from api_intranet.models import Avisos
 from api_intranet.models import get_usuario_actual
+from django.utils import timezone
 
 
 def crear_comunicado(request):
@@ -41,7 +42,7 @@ def listar_comunicados_json(request):
             "titulo": a.titulo,
             "descripcion": a.descripcion,
             "usuario": a.id_usuario.nombre if a.id_usuario else "Desconocido",
-            "fecha": a.fecha_registro.strftime("%d/%m/%Y %H:%M")
+            "fecha": timezone.localtime(a.fecha_registro).strftime("%d/%m/%Y %H:%M")
         }
         for a in avisos
     ]
