@@ -1,9 +1,7 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from api_intranet.models import Avisos
-from api_intranet.models import get_usuario_actual
-from django.utils import timezone
+from api_intranet.models import Avisos, get_usuario_actual
 
 
 def crear_comunicado(request):
@@ -29,12 +27,12 @@ def crear_comunicado(request):
 
 def listar_comunicados(request):
     avisos = Avisos.objects.select_related("id_usuario").order_by("-fecha_registro")
+    return render(request, "pages/comunicados.html", {"avisos": avisos})
 
-    return render(request, "pages/comunicados.html", {
-        "avisos": avisos
-    })
+
 def listar_comunicados_json(request):
     avisos = Avisos.objects.select_related("id_usuario").order_by("-fecha_registro")
+    usuario_actual = get_usuario_actual(request)
 
     data = [
         {
@@ -42,9 +40,39 @@ def listar_comunicados_json(request):
             "titulo": a.titulo,
             "descripcion": a.descripcion,
             "usuario": a.id_usuario.nombre if a.id_usuario else "Desconocido",
-            "fecha": timezone.localtime(a.fecha_registro).strftime("%d/%m/%Y %H:%M")
+            "fecha": timezone.localtime(a.fecha_registro).strftime("%d/%m/%Y %H:%M"),
+            "editable": usuario_actual and usuario_actual.puede_aprobar_solicitudes()
         }
         for a in avisos
     ]
-
     return JsonResponse(data, safe=False)
+
+
+def editar_comunicado(request, id_aviso):
+    if request.method != "POST":
+        return JsonResponse({"ok": False})
+
+    usuario = get_usuario_actual(request)
+    if not usuario or not usuario.puede_aprobar_solicitudes():
+        return JsonResponse({"ok": False})
+
+    aviso = get_object_or_404(Avisos, pk=id_aviso)
+    aviso.titulo = request.POST.get("titulo")
+    aviso.descripcion = request.POST.get("descripcion")
+    aviso.save()
+
+    return JsonResponse({"ok": True})
+
+
+def eliminar_comunicado(request, id_aviso):
+    if request.method != "POST":
+        return JsonResponse({"ok": False})
+
+    usuario = get_usuario_actual(request)
+    if not usuario or not usuario.puede_aprobar_solicitudes():
+        return JsonResponse({"ok": False})
+
+    aviso = get_object_or_404(Avisos, pk=id_aviso)
+    aviso.delete()
+
+    return JsonResponse({"ok": True})

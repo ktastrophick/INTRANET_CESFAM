@@ -19,13 +19,13 @@
     <div id="modal-comunicado" class="modal is-hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Nuevo comunicado</h3>
+                <h3 id="modal-title">Nuevo comunicado</h3>
                 <button class="modal-close" id="btn-cerrar-modal">&times;</button>
             </div>
 
             <form id="form-comunicado" class="form-grid">
                 {% csrf_token %}
-
+                <input type="hidden" name="id_aviso" id="id_aviso">
                 <input type="text" name="titulo" placeholder="Título del comunicado" required>
 
                 <textarea name="descripcion" placeholder="Contenido del comunicado" required></textarea>
