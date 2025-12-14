@@ -90,9 +90,9 @@ class Usuario(models.Model):
     id_departamento = models.ForeignKey(Departamento, models.DO_NOTHING, db_column='id_departamento', blank=True, null=True)
     id_cargo = models.ForeignKey(Cargo, models.DO_NOTHING, db_column='id_cargo', blank=True, null=True)
     fecha_registro = models.DateTimeField(blank=True, null=True)
-    dias_vacaciones_asignados = models.IntegerField(default=15)
-    dias_admin_asignados = models.IntegerField(default=5)
-    dias_permiso_asignados = models.IntegerField(default=2)
+    dias_vacaciones_asignados = models.IntegerField(db_column="dias_vacaciones_asignados",default=15)
+    dias_admin_asignados = models.IntegerField(db_column="dias_admin_asignados",default=5)
+    dias_permiso_asignados = models.IntegerField(db_column="dias_permiso_asignados",default=2)
 
     class Meta:
         managed = True

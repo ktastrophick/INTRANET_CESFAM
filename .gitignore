@@ -3,6 +3,8 @@ Backend/templates/pages/documentos.html
 .vscode
 /venv
 .env
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
 
