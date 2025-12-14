@@ -1066,9 +1066,9 @@ async function renderCalendar() {
 
 // Actualizar contadores de días
 function updateDayCounts() {
-if (vacationDaysEl) vacationDaysEl.textContent = '10';
-if (adminDaysEl) adminDaysEl.textContent = '5';
-if (totalDaysEl) totalDaysEl.textContent = '15';
+if (vacationDaysEl) vacationDaysEl.textContent = "{{ vacation_days|default:0}}";
+if (adminDaysEl) adminDaysEl.textContent = "{{ admin_days|default:0 }}";
+if (totalDaysEl) totalDaysEl.textContent = "{{ total_days|default:0 }}";
 }
 // Inicializar el sistema cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
