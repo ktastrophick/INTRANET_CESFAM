@@ -651,18 +651,29 @@
                 <div class="announcements-list">
                     {% if avisos %}
                         {% for aviso in avisos|slice:":3" %}
-                            <a href="#" class="announcement-item">
-                                <div class="fw-semibold">{{ aviso.titulo }}</div>
-                                <div class="text-muted small">
-                                    {{ aviso.fecha_registro|date:"d M Y" }} • 
+                            <a href="{% url 'comunicados' %}#aviso-{{ aviso.id_aviso }}"
+                            class="announcement-item">
+
+                                <div class="announcement-item__title">
+                                    {{ aviso.titulo }}
+                                </div>
+
+                                <div class="announcement-item__meta">
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ aviso.fecha_registro|date:"d M Y" }}
+                                    &nbsp;&nbsp;
+                                    <i class="bi bi-person"></i>
                                     {{ aviso.id_usuario.nombre|default:"Dirección" }}
                                 </div>
                             </a>
                         {% endfor %}
                     {% else %}
-                        <div class="announcement-item">
-                            <div class="fw-semibold">No hay comunicados recientes</div>
-                            <div class="text-muted small">Los nuevos avisos aparecerán aquí</div>
+                        <div class="announcement-item text-center">
+                            <i class="bi bi-megaphone fs-3 text-muted"></i>
+                            <div class="fw-semibold mt-2">No hay comunicados recientes</div>
+                            <div class="announcement-item__meta">
+                                Los nuevos avisos aparecerán aquí
+                            </div>
                         </div>
                     {% endif %}
                 </div>

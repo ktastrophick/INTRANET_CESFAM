@@ -5,3 +5,4 @@ Backend/templates/pages/documentos.html
 .env
 __pycache__/
 *.pyc
+Backend/proyecto_intranet/settings.py
