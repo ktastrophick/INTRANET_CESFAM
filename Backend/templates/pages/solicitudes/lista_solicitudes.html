@@ -153,6 +153,9 @@
         <table id="solicitudesTable">
             <thead>
                 <tr>
+                    {% if rol_usuario == "Director" or rol_usuario == "Jefe_depto" %}
+                        <th>Solicitante (Nombre de Usuario)</th>
+                    {% endif %}
                     <th>Tipo</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
@@ -161,7 +164,8 @@
                     <th>Aprobación Jefe</th>
                     {% endif %}
                     {% if rol_usuario == "Director" %}
-                    <th>Aprobación Director</th>
+                        <th>Aprobación Jefe de Depto.</th>
+                        <th>Aprobación Director</th>
                     {% endif %}
                     <th>Acciones</th>
                 </tr>
@@ -169,6 +173,9 @@
             <tbody>
                 {% for s in solicitudes %}
                 <tr>
+                    {% if rol_usuario == "Director" or rol_usuario == "Jefe_depto" %}
+                        <td>{{ s.id_usuario.nombre }}</td>
+                    {% endif %}
                     <td>{{ s.tipo_solicitud.nombre }}</td>
                     <td>{{ s.dia_inicio|date:"d/m/Y" }}</td>
                     <td>{{ s.dia_fin|date:"d/m/Y" }}</td>
@@ -199,6 +206,15 @@
 
                     {% if rol_usuario == "Director" %}
                     <td>
+                        {% if s.aprobacion_jefe == True %}
+                            <span style="color:#4caf50;">Aprobado</span>
+                        {% elif s.aprobacion_jefe == False %}
+                            <span style="color:#dc2626;">Rechazado</span>
+                        {% else %}
+                            <span style="color:#ff9800;">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         {% if s.aprobacion_jefe == False %}
                             <span style="color:#6c757d;"> — </span>
                         {% elif s.aprobacion_director == True %}
@@ -221,7 +237,7 @@
                         {% endif %}
 
                         <!-- Aprobación Jefe -->
-                         
+                        
                         {% if rol_usuario == "Jefe_depto" and s.aprobacion_jefe == None %}
                             <a href="{% url 'aprobar_jefe' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Jefe">
                                 <i class="fa-solid fa-check"></i>
@@ -280,10 +296,14 @@ function aplicarFiltros(){
 
     document.querySelectorAll("#solicitudesTable tbody tr").forEach(fila => {
         if (fila.cells.length < 7) return; // Saltar fila vacía
-        
-        const tipo = fila.cells[0].textContent.toLowerCase();
-        const inicio = fila.cells[1].textContent;
-        const estadoText = fila.cells[3].textContent.toLowerCase();
+        const hasSolicitanteCol = fila.cells.length >= 8;
+        const idxTipo = hasSolicitanteCol ? 1 : 0;
+        const idxInicio = hasSolicitanteCol ? 2 : 1;
+        const idxEstado = hasSolicitanteCol ? 4 : 3;
+
+        const tipo = fila.cells[idxTipo].textContent.toLowerCase();
+        const inicio = fila.cells[idxInicio].textContent;
+        const estadoText = fila.cells[idxEstado].textContent.toLowerCase();
 
         let mostrar = true;
         
