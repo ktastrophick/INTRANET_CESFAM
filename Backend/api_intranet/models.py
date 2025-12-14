@@ -194,10 +194,16 @@ class Calendario(models.Model):
     color = models.CharField(max_length=7, blank=True, null=True, help_text="Color en formato Hex (#3A8DFF)")
     todo_el_dia = models.BooleanField(default=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    ubicacion = models.CharField(max_length=200, blank=True, null=True, db_column='ubicacion')
+    es_general = models.BooleanField(default=False, db_column='es_general')
+    
+    id_usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, db_column='id_usuario', null=True)
+    id_tipoc = models.ForeignKey('TipoCalendario', on_delete=models.SET_NULL, null=True, blank=True, db_column='id_tipoc')
 
     class Meta:
         managed = True
         db_table = 'calendario'
+        ordering =['fecha', 'hora_inicio']
         
     def __str__(self) -> str:
         return f"{self.titulo} - {self.fecha}" if self.titulo and self.fecha else f"Evento {self.id_calendario}"

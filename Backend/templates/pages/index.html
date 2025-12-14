@@ -798,412 +798,260 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // ========== SISTEMA DE GESTIÓN DE DÍAS LIBRES ==========
-    // Variables globales
-    let currentDate = new Date();
-    let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
-    let vacationDays = 10;
-    let adminDays = 5;
+    // ========== REEMPLAZAR TODO EL BLOQUE <script> EN index.html ==========
+
+// Variables globales
+let currentDate = new Date();
+let serverEvents = []; // Eventos del servidor
+
+// Elementos del DOM
+const calendarGrid = document.getElementById('calendarGrid');
+const currentMonthElement = document.getElementById('currentMonth');
+const prevMonthBtn = document.getElementById('prevMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+const vacationDaysEl = document.getElementById('vacation-days');
+const adminDaysEl = document.getElementById('admin-days');
+const totalDaysEl = document.getElementById('total-days');
+const upcomingActivitiesEl = document.getElementById('upcoming-activities');
+
+// Nombres de meses en español
+const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
+
+// Inicializar la aplicación
+async function initDaysSystem() {
+    await loadServerEvents();
+    renderCalendar();
+    loadUpcomingActivities();
+    setupEventListeners();
+}
+
+// Configurar event listeners
+function setupEventListeners() {
+    prevMonthBtn.addEventListener('click', async () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        await renderCalendar();
+    });
     
-    // Elementos del DOM para el sistema de días libres
-    const calendarGrid = document.getElementById('calendarGrid');
-    const currentMonthElement = document.getElementById('currentMonth');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
-    const eventModal = document.getElementById('event-modal');
-    const closeModalBtn = document.getElementById('close-modal');
-    const cancelEventBtn = document.getElementById('cancel-event');
-    const eventForm = document.getElementById('event-form');
-    const modalTitle = document.getElementById('modal-title');
-    const eventDateInput = document.getElementById('event-date');
-    const eventIdInput = document.getElementById('event-id');
-    const eventTitleInput = document.getElementById('event-title');
-    const eventTypeInput = document.getElementById('event-type');
-    const eventTimeInput = document.getElementById('event-time');
-    const eventLocationInput = document.getElementById('event-location');
-    const eventDescriptionInput = document.getElementById('event-description');
-    const resetEventsBtn = document.getElementById('reset-events');
-    const vacationDaysEl = document.getElementById('vacation-days');
-    const adminDaysEl = document.getElementById('admin-days');
-    const totalDaysEl = document.getElementById('total-days');
-    const upcomingActivitiesEl = document.getElementById('upcoming-activities');
+    nextMonthBtn.addEventListener('click', async () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        await renderCalendar();
+    });
+}
+
+// Cargar eventos del servidor
+async function loadServerEvents() {
+    try {
+        const response = await fetch('/api/eventos/');
+        const data = await response.json();
+        serverEvents = data.results || [];
+        console.log('Eventos cargados desde el servidor:', serverEvents.length);
+    } catch (error) {
+        console.error('Error al cargar eventos:', error);
+        serverEvents = [];
+    }
+}
+
+// Renderizar calendario
+async function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     
-    // Nombres de meses en español
-    const monthNames = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
+    currentMonthElement.textContent = `${monthNames[month]} ${year}`;
     
-    // Días de la semana en español
-    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
     
-    // Inicializar la aplicación
-    function initDaysSystem() {
-        renderCalendar();
-        updateDayCounts();
-        loadUpcomingActivities();
-        setupEventListeners();
+    calendarGrid.innerHTML = '';
+    
+    // Encabezados de días de la semana
+    const dayOrder = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    dayOrder.forEach(day => {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day-header';
+        dayElement.textContent = day;
+        calendarGrid.appendChild(dayElement);
+    });
+    
+    const startingDay = firstDay.getDay();
+    const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
+    
+    // Días vacíos al inicio
+    for (let i = 0; i < adjustedStartingDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDay);
     }
     
-    // Configurar event listeners
-    function setupEventListeners() {
-        prevMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        });
-        
-        nextMonthBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        });
-        
-        closeModalBtn.addEventListener('click', closeModal);
-        cancelEventBtn.addEventListener('click', closeModal);
-        
-        eventForm.addEventListener('submit', saveEvent);
-        
-        resetEventsBtn.addEventListener('click', resetEvents);
-        
-        // Cerrar modal al hacer clic fuera
-        eventModal.addEventListener('click', (e) => {
-            if (e.target === eventModal) {
-                closeModal();
-            }
-        });
-    }
+    const today = new Date();
     
-    // Renderizar calendario
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
+    // Días del mes
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
         
-        currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        dayElement.dataset.date = dateStr;
         
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        
-        calendarGrid.innerHTML = '';
-        
-        // Encabezados de días de la semana
-        const dayOrder = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-        dayOrder.forEach(day => {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day-header';
-            dayElement.textContent = day;
-            calendarGrid.appendChild(dayElement);
-        });
-        
-        const startingDay = firstDay.getDay();
-        const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
-        
-        // Días vacíos al inicio
-        for (let i = 0; i < adjustedStartingDay; i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'calendar-day empty';
-            calendarGrid.appendChild(emptyDay);
+        // Verificar si es hoy
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            dayElement.classList.add('today');
         }
         
+        // Verificar si hay eventos para este día
+        const dayEvents = serverEvents.filter(event => event.fecha === dateStr);
+        if (dayEvents.length > 0) {
+            dayElement.classList.add('event-day');
+            
+            // Agregar indicador de tipo de evento (MÁS GRANDE Y VISIBLE)
+            const eventIndicator = document.createElement('div');
+            eventIndicator.className = 'event-indicator';
+            
+            // Verificar el tipo de evento (prioridad: general > personal)
+            const hasGeneralEvent = dayEvents.some(event => event.es_general);
+            const hasPersonalEvent = dayEvents.some(event => !event.es_general);
+            
+            if (hasGeneralEvent) {
+                eventIndicator.style.backgroundColor = '#FF6B6B'; // Rojo para general
+            } else if (hasPersonalEvent) {
+                eventIndicator.style.backgroundColor = '#3A8DFF'; // Azul para personal
+            }
+            
+            // Hacer el indicador MÁS GRANDE
+            eventIndicator.style.width = '8px';
+            eventIndicator.style.height = '8px';
+            eventIndicator.style.bottom = '4px';
+            
+            dayElement.appendChild(eventIndicator);
+        }
+        
+        // Agregar event listener para redirigir al calendario
+        dayElement.addEventListener('click', () => {
+            window.location.href = `/calendario/`;
+        });
+        
+        calendarGrid.appendChild(dayElement);
+    }
+}
+
+// Cargar próximos eventos desde el servidor
+async function loadUpcomingActivities() {
+    try {
+        // Asegurarse de tener los eventos cargados
+        if (serverEvents.length === 0) {
+            await loadServerEvents();
+        }
+        
+        // Limpiar actividades existentes
+        upcomingActivitiesEl.innerHTML = '';
+        
+        // Obtener eventos futuros (ordenados por fecha)
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
-        // Días del mes
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day';
-            dayElement.textContent = day;
-            
-            // Formatear la fecha para comparar con eventos
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            dayElement.dataset.date = dateStr;
-            
-            // Verificar si es hoy
-            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                dayElement.classList.add('today');
-            }
-            
-            // Verificar si hay eventos para este día
-            const dayEvents = events.filter(event => event.date === dateStr);
-            if (dayEvents.length > 0) {
-                dayElement.classList.add('event-day');
-                
-                // Agregar indicador de tipo de evento
-                const eventIndicator = document.createElement('div');
-                eventIndicator.className = 'event-indicator';
-                
-                // Verificar el tipo de evento (prioridad: administrativo > vacaciones)
-                const hasAdminEvent = dayEvents.some(event => event.type === 'admin');
-                const hasVacationEvent = dayEvents.some(event => event.type === 'vacation');
-                
-                if (hasAdminEvent) {
-                    eventIndicator.classList.add('admin-indicator');
-                } else if (hasVacationEvent) {
-                    eventIndicator.classList.add('vacation-indicator');
-                }
-                
-                dayElement.appendChild(eventIndicator);
-            }
-            
-            // Agregar event listener para abrir modal al hacer clic
-            dayElement.addEventListener('click', () => openModal(dateStr));
-            
-            calendarGrid.appendChild(dayElement);
-        }
-    }
-    
-    // Abrir modal para agregar/editar evento
-    function openModal(dateStr, eventId = null) {
-        // Limpiar formulario
-        eventForm.reset();
-        eventIdInput.value = '';
+        const futureEvents = serverEvents
+            .filter(event => {
+                const eventDate = new Date(event.fecha);
+                eventDate.setHours(0, 0, 0, 0);
+                return eventDate >= today;
+            })
+            .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+            .slice(0, 4); // Mostrar solo los próximos 4 eventos
         
-        // Establecer la fecha seleccionada
-        const [year, month, day] = dateStr.split('-');
-        const dateObj = new Date(year, month - 1, day);
-        const formattedDate = `${day}/${month}/${year}`;
-        
-        eventDateInput.value = dateStr;
-        
-        // Configurar título del modal
-        modalTitle.textContent = eventId ? 'Editar Evento' : `Agregar Evento - ${formattedDate}`;
-        
-        // Si es edición, cargar datos del evento
-        if (eventId) {
-            const event = events.find(e => e.id === eventId);
-            if (event) {
-                eventIdInput.value = event.id;
-                eventTitleInput.value = event.title;
-                eventTypeInput.value = event.type;
-                eventTimeInput.value = event.time || '';
-                eventLocationInput.value = event.location || '';
-                eventDescriptionInput.value = event.description || '';
-            }
-        }
-        
-        // Mostrar modal
-        eventModal.classList.add('active');
-    }
-    
-    // Cerrar modal
-    function closeModal() {
-        eventModal.classList.remove('active');
-    }
-    
-    // Guardar evento
-    function saveEvent(e) {
-        e.preventDefault();
-        
-        // Obtener valores del formulario
-        const eventId = eventIdInput.value;
-        const date = eventDateInput.value;
-        const title = eventTitleInput.value.trim();
-        const type = eventTypeInput.value;
-        const time = eventTimeInput.value;
-        const location = eventLocationInput.value.trim();
-        const description = eventDescriptionInput.value.trim();
-        
-        // Validar título
-        if (!title) {
-            alert('Por favor, ingresa un título para el evento.');
+        if (futureEvents.length === 0) {
+            upcomingActivitiesEl.innerHTML = `
+                <div class="text-center text-muted py-3">
+                    <i class="bi bi-calendar-x" style="font-size: 2rem;"></i><br>
+                    No hay eventos próximos programados
+                </div>
+            `;
             return;
         }
         
-        // Actualizar contadores de días
-        if (!eventId) {
-            // Es un evento nuevo
-            if (type === 'vacation') {
-                if (vacationDays > 0) {
-                    vacationDays--;
-                } else {
-                    alert('No tienes más días de vacaciones disponibles.');
-                    return;
-                }
-            } else if (type === 'admin') {
-                if (adminDays > 0) {
-                    adminDays--;
-                } else {
-                    alert('No tienes más días administrativos disponibles.');
-                    return;
-                }
-            }
-        } else {
-            // Es una edición, verificar si cambió el tipo
-            const oldEvent = events.find(e => e.id === eventId);
-            if (oldEvent && oldEvent.type !== type) {
-                // Restaurar el día del tipo anterior
-                if (oldEvent.type === 'vacation') {
-                    vacationDays++;
-                } else if (oldEvent.type === 'admin') {
-                    adminDays++;
-                }
-                
-                // Restar del nuevo tipo
-                if (type === 'vacation') {
-                    if (vacationDays > 0) {
-                        vacationDays--;
-                    } else {
-                        alert('No tienes más días de vacaciones disponibles.');
-                        // Revertir cambio
-                        if (oldEvent.type === 'vacation') vacationDays--;
-                        else if (oldEvent.type === 'admin') adminDays--;
-                        return;
-                    }
-                } else if (type === 'admin') {
-                    if (adminDays > 0) {
-                        adminDays--;
-                    } else {
-                        alert('No tienes más días administrativos disponibles.');
-                        // Revertir cambio
-                        if (oldEvent.type === 'vacation') vacationDays--;
-                        else if (oldEvent.type === 'admin') adminDays--;
-                        return;
-                    }
+        futureEvents.forEach(event => {
+            const eventDate = new Date(event.fecha);
+            const month = monthNames[eventDate.getMonth()].substring(0, 3).toUpperCase();
+            const day = eventDate.getDate();
+            
+            // Determinar el tipo de evento y colores
+            const isGeneral = event.es_general;
+            const eventTypeClass = isGeneral ? 'text-danger' : 'text-primary';
+            const eventTypeIcon = isGeneral ? 'fa-bullhorn' : 'fa-user';
+            const eventTypeBadge = isGeneral ? 'General' : 'Personal';
+            const eventTypeColor = isGeneral ? '#FF6B6B' : '#3A8DFF';
+            const eventTypeBgColor = isGeneral ? '#ffebee' : '#e3f2fd';
+            
+            // Formatear horario
+            let timeDisplay = '';
+            if (event.todo_el_dia) {
+                timeDisplay = 'Todo el día';
+            } else if (event.hora_inicio) {
+                timeDisplay = event.hora_inicio.substring(0, 5);
+                if (event.hora_fin) {
+                    timeDisplay += ` - ${event.hora_fin.substring(0, 5)}`;
                 }
             }
-        }
-        
-        // Crear o actualizar evento
-        if (eventId) {
-            // Actualizar evento existente
-                const eventIndex = events.findIndex(e => e.id === eventId);
-                if (eventIndex !== -1) {
-                    events[eventIndex] = {
-                        ...events[eventIndex],
-                        title,
-                        type,
-                        time,
-                        location,
-                        description
-                    };
-                }
-            } else {
-                // Crear nuevo evento
-                const newEvent = {
-                    id: Date.now().toString(),
-                    date,
-                    title,
-                    type,
-                    time,
-                    location,
-                    description
-                };
-                events.push(newEvent);
-            }
             
-            // Guardar en localStorage
-            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.style.cursor = 'pointer';
+            activityItem.onclick = () => {
+                window.location.href = '/calendario/';
+            };
             
-            // Actualizar contadores de días
-            updateDayCounts();
-            
-            // Volver a renderizar calendario
-            renderCalendar();
-            
-            // Actualizar actividades próximas
-            loadUpcomingActivities();
-            
-            // Cerrar modal
-            closeModal();
-            
-            // Mostrar confirmación
-            alert('Evento guardado exitosamente.');
-        }
-        
-        // Reiniciar eventos y contadores
-        function resetEvents() {
-            if (confirm('¿Estás seguro de que quieres reiniciar todos los eventos? Esto eliminará todos los eventos del calendario y restablecerá los contadores de días.')) {
-                events = [];
-                vacationDays = 10;
-                adminDays = 5;
-                
-                localStorage.removeItem('calendarEvents');
-                
-                updateDayCounts();
-                renderCalendar();
-                loadUpcomingActivities();
-                
-                alert('Todos los eventos han sido eliminados y los contadores restablecidos.');
-            }
-        }
-        
-        // Actualizar contadores de días
-        function updateDayCounts() {
-            vacationDaysEl.textContent = vacationDays;
-            adminDaysEl.textContent = adminDays;
-            totalDaysEl.textContent = vacationDays + adminDays;
-        }
-        
-        // Cargar actividades próximas
-        function loadUpcomingActivities() {
-            // Limpiar actividades existentes
-            upcomingActivitiesEl.innerHTML = '';
-            
-            // Obtener eventos futuros (ordenados por fecha)
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const futureEvents = events
-                .filter(event => {
-                    const eventDate = new Date(event.date);
-                    eventDate.setHours(0, 0, 0, 0);
-                    return eventDate >= today;
-                })
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .slice(0, 4); // Mostrar solo los próximos 4 eventos
-            
-            if (futureEvents.length === 0) {
-                upcomingActivitiesEl.innerHTML = `
-                    <div class="text-center text-muted py-3">
-                        <i class="bi bi-calendar-x"></i><br>
-                        No hay eventos programados
+            activityItem.innerHTML = `
+                <div class="activity-date" style="background: ${eventTypeBgColor};">
+                    <span class="activity-month" style="color: ${eventTypeColor};">${month}</span>
+                    <span class="activity-day" style="color: ${eventTypeColor};">${day}</span>
+                </div>
+                <div style="flex: 1;">
+                    <div class="fw-semibold d-flex align-items-center gap-2 flex-wrap">
+                        <i class="fas ${eventTypeIcon} ${eventTypeClass}"></i>
+                        <span>${event.titulo}</span>
+                        <span style="
+                            font-size: 0.7rem;
+                            padding: 3px 10px;
+                            border-radius: 12px;
+                            background: ${eventTypeBgColor};
+                            color: ${eventTypeColor};
+                            font-weight: 600;
+                        ">${eventTypeBadge}</span>
                     </div>
-                `;
-                return;
-            }
+                    <div class="text-muted small mt-1">
+                        <i class="far fa-clock"></i> ${timeDisplay}
+                        ${event.ubicacion ? `<br><i class="fas fa-map-marker-alt"></i> ${event.ubicacion}` : ''}
+                    </div>
+                </div>
+            `;
             
-            futureEvents.forEach(event => {
-                const eventDate = new Date(event.date);
-                const month = monthNames[eventDate.getMonth()].substring(0, 3).toUpperCase();
-                const day = eventDate.getDate();
-                
-                // Determinar el tipo de evento
-                const eventTypeClass = event.type === 'vacation' ? 'text-success' : 
-                                        event.type === 'admin' ? 'text-danger' : 'text-primary';
-                const eventTypeIcon = event.type === 'vacation' ? 'fa-umbrella-beach' : 
-                                        event.type === 'admin' ? 'fa-briefcase' : 'fa-calendar';
-                
-                const activityItem = document.createElement('div');
-                activityItem.className = 'activity-item';
-                
-                activityItem.innerHTML = `
-                    <div class="activity-date">
-                        <span class="activity-month">${month}</span>
-                        <span class="activity-day">${day}</span>
-                    </div>
-                    <div>
-                        <div class="fw-semibold d-flex align-items-center gap-1">
-                            <i class="fas ${eventTypeIcon} ${eventTypeClass}"></i>
-                            ${event.title}
-                        </div>
-                        <div class="text-muted small">
-                            ${event.time ? event.time + ' • ' : ''}
-                            ${event.location || 'Sin ubicación especificada'}
-                        </div>
-                    </div>
-                `;
-                
-                upcomingActivitiesEl.appendChild(activityItem);
-            });
-        }
-        
-        // ========== SIDEBAR DERECHA TOGGLE ==========
-
-        // Inicializar el sistema de días libres
-        document.addEventListener('DOMContentLoaded', initDaysSystem);
-        
-        // Inicializar carrusel de Bootstrap
-        const newsCarousel = new bootstrap.Carousel(document.getElementById('newsCarousel'), {
-            interval: 5000,
-            wrap: true
+            upcomingActivitiesEl.appendChild(activityItem);
         });
+    } catch (error) {
+        console.error('Error al cargar próximos eventos:', error);
+        upcomingActivitiesEl.innerHTML = `
+            <div class="text-center text-muted py-3">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i><br>
+                Error al cargar eventos
+            </div>
+        `;
+    }
+}
+
+// Actualizar contadores de días (estos son datos estáticos por ahora)
+function updateDayCounts() {
+    if (vacationDaysEl) vacationDaysEl.textContent = '10';
+    if (adminDaysEl) adminDaysEl.textContent = '5';
+    if (totalDaysEl) totalDaysEl.textContent = '15';
+}
+
+// Inicializar el sistema cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    initDaysSystem();
+    updateDayCounts();
+});
     </script>
     {% endblock %}

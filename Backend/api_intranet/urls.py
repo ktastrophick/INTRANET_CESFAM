@@ -37,6 +37,7 @@ urlpatterns = [
     path("comunicados/", comunicado_views.listar_comunicados, name="comunicados"),
     path("comunicados/crear/", comunicado_views.crear_comunicado, name="crear_comunicado"),
     path("comunicados/listar/", comunicado_views.listar_comunicados_json, name="comunicados_listar"),
+    path("calendario/tipos/",calendario_views.tipos_evento_api, name="tipos_evento_api"),
 
 
 
