@@ -80,32 +80,50 @@ def index(request: HttpRequest) -> HttpResponse:
         documentos_count = Documento.objects.filter(subido_por=usuario).count()
 
         # Solicitudes pendientes del usuario
+        from datetime import timedelta
         from api_intranet.models import Solicitud, EstadoSolicitud
 
+        # Estados reales de tu BD
         estado_pendiente = EstadoSolicitud.objects.get(nombre="Pendiente")
-        estado_aprobada = EstadoSolicitud.objects.get(nombre="Aprobada")
-        estado_rechazada = EstadoSolicitud.objects.get(nombre="Rechazada")
+        estado_aprobado  = EstadoSolicitud.objects.get(nombre="Aprobado")
+        estado_rechazado = EstadoSolicitud.objects.get(nombre="Rechazado")
 
-        solicitudes_pendientes = Solicitud.objects.filter(
-            id_usuario=usuario,
-            estado_solicitud=estado_pendiente
-        ).count()
+        qs_user = Solicitud.objects.filter(id_usuario=usuario)
+        
+        solicitudes_recibidas = qs_user.count()
+        solicitudes_pendientes = qs_user.filter(estado_solicitud=estado_pendiente).count()
+        solicitudes_aceptadas  = qs_user.filter(estado_solicitud=estado_aprobado).count()
+        solicitudes_rechazadas = qs_user.filter(estado_solicitud=estado_rechazado).count()
+        
+        # ====== DÍAS CONSUMIDOS (solo aprobadas por Director) ======
+        aprobadas_final = qs_user.filter(
+            estado_solicitud=estado_aprobado,
+            aprobacion_jefe=True,
+            aprobacion_director=True,
+        ).exclude(dia_inicio__isnull=True).exclude(dia_fin__isnull=True)
 
-        solicitudes_aceptadas = Solicitud.objects.filter(
-            id_usuario=usuario,
-            estado_solicitud=estado_aprobada
-        ).count()
+        dias_vacaciones_consumidos = 0
+        dias_admin_consumidos = 0
+        dias_permiso_consumidos = 0
 
-        solicitudes_rechazadas = Solicitud.objects.filter(
-            id_usuario=usuario,
-            estado_solicitud=estado_rechazada
-        ).count()
+        for s in aprobadas_final:
+            dias = (s.dia_fin - s.dia_inicio).days + 1
 
-        solicitudes_recibidas = (
-            solicitudes_pendientes +
-            solicitudes_aceptadas +
-            solicitudes_rechazadas
-        )
+            if s.tipo_solicitud.nombre == "Vacaciones":
+                dias_vacaciones_consumidos += dias
+            elif s.tipo_solicitud.nombre == "Día administrativo":
+                dias_admin_consumidos += dias
+            elif s.tipo_solicitud.nombre == "Permiso especial":
+                dias_permiso_consumidos += dias
+
+        # ====== DISPONIBLES ======
+        vacaciones_disponibles = usuario.dias_vacaciones_asignados - dias_vacaciones_consumidos
+        admin_disponibles = usuario.dias_admin_asignados - dias_admin_consumidos
+        permiso_disponibles = usuario.dias_permiso_asignados - dias_permiso_consumidos
+
+        total_disponibles = vacaciones_disponibles + admin_disponibles + permiso_disponibles
+        
+        
         # --- FIN BLOQUE SOLICITUDES ---
 
         # Licencias activas del usuario
@@ -114,7 +132,7 @@ def index(request: HttpRequest) -> HttpResponse:
             id_usuario=usuario,
             dia_inicio__lte=date.today(),
             dia_fin__gte=date.today()
-        ).count
+        ).count()
         # Eventos próximos del usuario (próximos 7 días)
         from datetime import date, timedelta
         eventos_proximos = Calendario.objects.filter(
@@ -130,10 +148,16 @@ def index(request: HttpRequest) -> HttpResponse:
             "usuario": usuario,
             "avisos": avisos,
             "documentos_count": documentos_count,
+            "solicitudes_recibidas": solicitudes_recibidas,
             "solicitudes_pendientes": solicitudes_pendientes,
+            "solicitudes_aceptadas": solicitudes_aceptadas,
+            "solicitudes_rechazadas": solicitudes_rechazadas,
+            "vacation_days": vacaciones_disponibles,
+            "admin_days": admin_disponibles,
+            "total_days": total_disponibles,
             "licencias_activas": licencias_activas,
             "eventos_proximos": eventos_proximos,
-            "eventos_proximos_count": eventos_proximos.count(),
+            "eventos_proximos_count": eventos_proximos,
             "rol": usuario.id_rol.nombre if usuario.id_rol else "Funcionario",
         }
         

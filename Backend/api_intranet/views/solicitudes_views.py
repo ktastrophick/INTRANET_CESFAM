@@ -52,7 +52,7 @@ def lista_solicitudes(request: HttpRequest) -> HttpResponse:
     context = {
         "solicitudes": solicitudes,
         "usuario": usuario,
-        "rol": rol
+        "rol_usuario": rol
     }
     return render(request, "pages/solicitudes/lista_solicitudes.html", context)
 
