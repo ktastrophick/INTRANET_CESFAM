@@ -11,8 +11,8 @@ from .models import Usuario, Perfil
 def rol_usuario(request):
     """
     Inyecta en el contexto:
-        - rol_usuario: tomado directamente de la sesión
-        - usuario_sistema: opcional (si quieres mantenerlo)
+      - rol_usuario: tomado directamente de la sesión
+      - usuario_sistema: opcional (si quieres mantenerlo)
     """
     usuario_sistema = None
     rol = request.session.get("usuario_rol")  # <-- AQUÍ está el rol correcto
@@ -29,8 +29,8 @@ def perfil_usuario(request):
     del usuario en todas las plantillas.
     
     Inyecta en el contexto:
-        - perfil_foto: URL de la foto de perfil (si existe)
-        - perfil_obj: objeto Perfil completo (si existe)
+      - perfil_foto: URL de la foto de perfil (si existe)
+      - perfil_obj: objeto Perfil completo (si existe)
     """
     context = {
         'perfil_foto': None,
