@@ -6,7 +6,290 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/comunicados.css' %}">
 {% endblock %}
+<style>
+/* ===============================
+   TÍTULO DE PÁGINA
+================================ */
+.page-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
 
+/* ===============================
+   TARJETAS GENERALES
+================================ */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ===============================
+   FORMULARIO
+================================ */
+.form-card {
+    margin-bottom: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.form-grid input,
+.form-grid textarea {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.95rem;
+}
+
+.form-grid textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus {
+    outline: none;
+    border-color: #0B2C4A;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ===============================
+    BOTÓN
+================================ */
+.btn-primary {
+    align-self: flex-start;
+    background: #0B2C4A;
+    color: white;
+    border: none;
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #1e40af;
+}
+
+/* ===============================
+   LISTA DE COMUNICADOS
+================================ */
+.comunicados-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+/* ===============================
+   CARD DE COMUNICADO
+================================ */
+.comunicado-card {
+    background: #edf0f7;
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    border-left: 4px solid #0B2C4A;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comunicado-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.comunicado-card h4 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.1rem;
+    color: #111827;
+}
+
+.comunicado-card p {
+    margin: 0.2rem 0 0.8rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.comunicado-card small {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.comunicado-card.highlight {
+    outline: 2px solid #0B2C4A;
+    background-color: #f0f7ff;
+    transition: background-color 0.5s ease;
+}
+
+/* ===============================
+    ESTADO VACÍO
+================================ */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* ===============================
+    ANIMACIÓN SUAVE
+================================ */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comunicado-header {
+    display: flex;
+    justify-content: space-between; /* título izquierda, acciones derecha */
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Evita que el título empuje los botones */
+.comunicado-header h4 {
+    margin: 0;
+    flex: 1;
+}
+
+/* Acciones alineadas a la derecha */
+.acciones {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* ===============================
+    MODAL
+================================ */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.is-hidden {
+    display: none;
+}
+
+
+.modal-content {
+    background: #ffffff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 520px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+    HEADER MODAL
+================================ */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.modal-close:hover {
+    color: #111827;
+}
+
+/* ===============================
+    BOTONES SECUNDARIOS
+================================ */
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+.acciones {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-edit,
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.btn-edit i {
+    color: #0B2C4A;
+}
+
+.btn-delete i {
+    color: #dc2626;
+}
+
+.btn-edit:hover i,
+.btn-delete:hover i {
+    transform: scale(1.15);
+}
+
+</style>
 {% block content %}
 
 <h2 class="page-title">Comunicados</h2>
@@ -49,6 +332,160 @@
     </div>
 </section>
 
-<script src="{% static 'js/comunicados.js' %}"></script>
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    cargarComunicados();
+
+    const btnAbrir = document.getElementById("btn-abrir-comunicado");
+    const modal = document.getElementById("modal-comunicado");
+    const btnCerrar = document.getElementById("btn-cerrar-modal");
+    const btnCancelar = document.getElementById("btn-cancelar");
+    const form = document.getElementById("form-comunicado");
+
+    // --- MODAL ---
+    if (btnAbrir && modal) {
+        btnAbrir.addEventListener("click", () => {
+            modal.classList.remove("is-hidden");
+        });
+    }
+
+    [btnCerrar, btnCancelar].forEach(btn => {
+        btn?.addEventListener("click", () => {
+            modal.classList.add("is-hidden");
+        });
+    });
+
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.add("is-hidden");
+        }
+    });
+
+    // --- FORMULARIO ---
+    form?.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById("id_aviso").value;
+        const formData = new FormData(this);
+
+        const url = id
+            ? `/comunicados/editar/${id}/`
+            : `/comunicados/crear/`;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+            },
+            body: formData
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.ok) {
+                this.reset();
+                document.getElementById("id_aviso").value = "";
+                document.getElementById("modal-title").innerText = "Nuevo comunicado";
+                modal.classList.add("is-hidden");
+                cargarComunicados();
+            }
+        });
+    });
+
+});
+
+// --- LISTADO ---
+function cargarComunicados() {
+    fetch("/comunicados/listar/")
+        .then(resp => resp.json())
+        .then(data => {
+            const lista = document.getElementById("lista-comunicados");
+            const empty = document.getElementById("comunicados-empty");
+
+            lista.innerHTML = "";
+
+            if (!data.length) {
+                empty.hidden = false;
+                return;
+            }
+
+            empty.hidden = true;
+
+            data.forEach(c => {
+                const li = document.createElement("li");
+                li.className = "comunicado-card fade-in";
+                li.id = `aviso-${c.id}`;
+
+                li.innerHTML = `
+                    <div class="comunicado-header">
+                        <h4>${c.titulo}</h4>
+
+                        ${c.editable ? `
+                        <div class="acciones">
+                            <button class="btn-edit" data-id="${c.id}">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-delete" data-id="${c.id}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>` : ""}
+                    </div>
+
+                    <p>${c.descripcion}</p>
+                    <small>Publicado por ${c.usuario} — ${c.fecha}</small>
+                `;
+
+                lista.appendChild(li);
+            });
+
+            //  scroll por hash
+            const hash = window.location.hash;
+            if (hash) {
+                const target = document.querySelector(hash);
+                if (target) {
+                    const offset = 200;
+                    const pos = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                    window.scrollTo({ top: pos, behavior: "smooth" });
+
+                    target.classList.add("highlight");
+                    setTimeout(() => target.classList.remove("highlight"), 2000);
+                }
+            }
+        })
+        .catch(err => console.error("Error cargando comunicados:", err));
+}
+
+
+document.addEventListener("click", e => {
+    const editBtn = e.target.closest(".btn-edit");
+    if (!editBtn) return;
+
+    const card = editBtn.closest(".comunicado-card");
+
+    document.getElementById("id_aviso").value = editBtn.dataset.id;
+    document.querySelector("[name=titulo]").value = card.querySelector("h4").innerText;
+    document.querySelector("[name=descripcion]").value = card.querySelector("p").innerText;
+
+    document.getElementById("modal-title").innerText = "Editar comunicado";
+    document.getElementById("modal-comunicado").classList.remove("is-hidden");
+});
+
+document.addEventListener("click", e => {
+    const delBtn = e.target.closest(".btn-delete");
+    if (!delBtn) return;
+
+    if (!confirm("¿Eliminar este comunicado?")) return;
+
+    fetch(`/comunicados/eliminar/${delBtn.dataset.id}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+        }
+    }).then(() => cargarComunicados());
+});
+
+
+</script>
 
 {% endblock %}

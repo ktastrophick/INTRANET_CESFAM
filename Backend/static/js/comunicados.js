@@ -103,7 +103,7 @@ function cargarComunicados() {
                 lista.appendChild(li);
             });
 
-            // 👇 scroll por hash
+            //  scroll por hash
             const hash = window.location.hash;
             if (hash) {
                 const target = document.querySelector(hash);

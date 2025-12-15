@@ -966,7 +966,7 @@ async function renderCalendar() {
 
             upcomingActivitiesEl.innerHTML = '';
 
-            // HOY en local, a las 00:00
+            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
@@ -984,7 +984,7 @@ async function renderCalendar() {
                 return eventDate >= today;
             })
             .sort((a, b) => parseLocalDate(a.fecha) - parseLocalDate(b.fecha))
-            .slice(0, 10); // cambia a 20, o elimina para mostrar todos
+            .slice(0, 10); 
 
             if (futureEvents.length === 0) {
             upcomingActivitiesEl.innerHTML = `
@@ -997,7 +997,6 @@ async function renderCalendar() {
             }
 
             futureEvents.forEach(event => {
-            // ⚠️ AQUÍ estaba tu desfase: ya no usamos new Date(event.fecha) directo
             const eventDate = parseLocalDate(event.fecha);
             const month = monthNames[eventDate.getMonth()].substring(0, 3).toUpperCase();
             const day = eventDate.getDate();
