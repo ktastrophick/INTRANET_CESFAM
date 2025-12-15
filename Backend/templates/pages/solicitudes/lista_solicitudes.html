@@ -153,18 +153,18 @@
         <table id="solicitudesTable">
             <thead>
                 <tr>
-                    {% if rol_usuario == "Director" or rol_usuario == "Jefe_depto" %}
-                        <th>Solicitante (Nombre de Usuario)</th>
+                    {% if rol_usuario == "Director" or rol_usuario == "Jefe de Departamento" %}
+                        <th>Solicitante</th>
                     {% endif %}
                     <th>Tipo</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
                     <th>Estado</th>
-                    {% if rol_usuario == "Jefe_depto" %}
+                    {% if rol_usuario == "Jefe de Departamento" %}
                     <th>Aprobación Jefe</th>
                     {% endif %}
                     {% if rol_usuario == "Director" %}
-                        <th>Aprobación Jefe de Depto.</th>
+                        <th>Aprobación Jefe de Departamento.</th>
                         <th>Aprobación Director</th>
                     {% endif %}
                     <th>Acciones</th>
@@ -173,7 +173,7 @@
             <tbody>
                 {% for s in solicitudes %}
                 <tr>
-                    {% if rol_usuario == "Director" or rol_usuario == "Jefe_depto" %}
+                    {% if rol_usuario == "Director" or rol_usuario == "Jefe de Departamento" %}
                         <td>{{ s.id_usuario.nombre }}</td>
                     {% endif %}
                     <td>{{ s.tipo_solicitud.nombre }}</td>
@@ -192,7 +192,7 @@
                         {% endif %}
                     </td>
 
-                    {% if rol_usuario == "Jefe_depto" %}
+                    {% if rol_usuario == "Jefe de Departamento" %}
                     <td>
                         {% if s.aprobacion_jefe == True %}
                             <span style="color:#4caf50;"> Aprobado</span>
@@ -238,7 +238,7 @@
 
                         <!-- Aprobación Jefe -->
                         
-                        {% if rol_usuario == "Jefe_depto" and s.aprobacion_jefe == None %}
+                        {% if rol_usuario == "Jefe de Departamento" and s.aprobacion_jefe == None %}
                             <a href="{% url 'aprobar_jefe' s.id_solicitud %}" class="action-btn approve" title="Aprobar como Jefe">
                                 <i class="fa-solid fa-check"></i>
                             </a>

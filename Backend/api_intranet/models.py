@@ -167,7 +167,7 @@ class Usuario(models.Model):
     def puede_aprobar_solicitudes(self) -> bool:
         return bool(
             self.id_rol and 
-            self.id_rol.nombre in ['Director', 'Subdirector', 'Jefe_depto']
+            self.id_rol.nombre in ['Director', 'Subdirector', 'Jefe de Departamento']
         )
 
 

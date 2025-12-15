@@ -195,7 +195,14 @@
             <div class="funcionario-item">
                 <div class="funcionario-info-container">
                     <div class="funcionario-img">
-                        <i class="fa-solid fa-user-circle" style="font-size:60px; color:#0B2C4A;;"></i>
+                        {% with p=f.perfil_set.all|first %}
+                            {% if p and p.foto_perfil %}
+                            <img src="{{ p.foto_perfil.url }}" alt="Foto {{ f.nombre }}"
+                                style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+                            {% else %}
+                            <i class="fa-solid fa-user-circle" style="font-size:60px; color:#0B2C4A;"></i>
+                            {% endif %}
+                        {% endwith %}
                     </div>
 
                     <div class="funcionario-info">
@@ -204,6 +211,7 @@
                         <p><strong>Correo:</strong> {{ f.correo }}</p>
                         <p><strong>Teléfono:</strong> {{ f.telefono }}</p>
                         <p><strong>Cargo:</strong> {{ f.id_cargo.nombre }}</p>
+                        <p><strong>Departamento:</strong> {{ f.id_departamento.nombre }}</p>
                     </div>
                 </div>
 

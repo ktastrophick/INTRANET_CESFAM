@@ -5,6 +5,7 @@ from api_intranet.models import Usuario, RolUsuario, Departamento, Cargo
 from django.contrib.auth.decorators import login_required
 from typing import Optional
 from django.db import transaction
+from django.core.exceptions import ValidationError 
 
 def get_usuario_actual(request: HttpRequest) -> Optional[Usuario]:
     """Obtiene el usuario actual desde la sesión"""
@@ -45,7 +46,14 @@ def lista_funcionarios(request: HttpRequest) -> HttpResponse:
         funcionarios = funcionarios.filter(id_cargo_id=cargo_filter)
 
     # Optimizar consultas
-    funcionarios = funcionarios.select_related('id_rol', 'id_departamento', 'id_cargo').order_by('nombre')
+    funcionarios = (
+        funcionarios
+        .select_related('id_rol', 'id_departamento', 'id_cargo')
+        .prefetch_related('perfil_set')
+        .order_by('nombre')
+    )
+
+
 
     # Datos para filtros
     cargos = Cargo.objects.all()
@@ -145,7 +153,7 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
 
                         # 3) Quitar jefatura al jefe anterior
                         jefe_anterior = Usuario.objects.filter(
-                            id_rol__nombre="Jefe_depto",
+                            id_rol__nombre="Jefe de Departamento",
                             id_departamento=depto
                         ).exclude(id_usuario=funcionario.id_usuario).first()
 
@@ -172,17 +180,11 @@ def form_funcionario(request: HttpRequest) -> HttpResponse:
         "cargos": cargos
     })
 
-
-
-from django.db import transaction
-
 def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
-    """Editar funcionario existente (solo Admin)"""
     usuario = get_usuario_actual(request)
     if not usuario:
         return redirect("login")
 
-    # Solo Admin puede editar funcionarios
     rol_nombre = getattr(usuario.id_rol, 'nombre', '') if usuario.id_rol else ''
     if rol_nombre != "Director":
         messages.error(request, "No tienes permisos para editar funcionarios.")
@@ -196,9 +198,11 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
 
     if request.method == "POST":
         try:
-            # -------------------
-            # Leer inputs
-            # -------------------
+            # ⭐ CAPTURAR VALORES ORIGINALES PRIMERO (antes de modificar)
+            rut_original = funcionario.rut
+            dv_original = (funcionario.dv or "").upper().strip()
+            
+            # Ahora sí procesar los inputs
             rut_str = request.POST.get("rut")
             dv_input = request.POST.get("dv", "")
             nombre_input = request.POST.get("nombre", "")
@@ -210,70 +214,69 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
             id_departamento = request.POST.get("id_departamento")
             id_cargo = request.POST.get("id_cargo")
 
-            # -------------------
-            # Aplicar cambios en el objeto (antes de validar)
-            # -------------------
             if rut_str and rut_str.isdigit():
                 funcionario.rut = int(rut_str)
 
-            funcionario.dv = dv_input.upper().strip() if dv_input else funcionario.dv
-            funcionario.nombre = nombre_input.strip() if nombre_input else funcionario.nombre
+            if dv_input:
+                funcionario.dv = dv_input.upper().strip()
+
+            if nombre_input:
+                funcionario.nombre = nombre_input.strip()
+
             funcionario.telefono = telefono_input.strip() or None
             funcionario.correo = correo_input.strip() or None
+
             if nueva_contrasena:
                 funcionario.contrasena = nueva_contrasena
 
-            # Asignar FK provisionales (objetos o None)
-            # Rol
-            if id_rol and id_rol.isdigit():
-                try:
-                    rol_obj = RolUsuario.objects.get(pk=int(id_rol))
-                    funcionario.id_rol = rol_obj
-                except RolUsuario.DoesNotExist:
-                    funcionario.id_rol = None
-            else:
-                funcionario.id_rol = None
-
-            # Departamento
-            if id_departamento and id_departamento.isdigit():
-                funcionario.id_departamento = Departamento.objects.filter(pk=int(id_departamento)).first()
-            else:
-                funcionario.id_departamento = None
-
-            # Cargo
-            if id_cargo and id_cargo.isdigit():
-                funcionario.id_cargo = Cargo.objects.filter(pk=int(id_cargo)).first()
-            else:
-                funcionario.id_cargo = None
-
-            # -------------------
-            # Validar y guardar dentro de una transacción
-            # -------------------
+            # -------- FK CORRECTAS (sin _id) --------
+            funcionario.id_rol = RolUsuario.objects.filter(pk=id_rol).first() if id_rol else None
+            funcionario.id_departamento = Departamento.objects.filter(pk=id_departamento).first() if id_departamento else None
+            funcionario.id_cargo = Cargo.objects.filter(pk=id_cargo).first() if id_cargo else None
+            
             with transaction.atomic():
-                funcionario.full_clean()
+                # Determinar si RUT o DV cambiaron comparando con originales
+                rut_cambio = (funcionario.rut != rut_original)
+                dv_cambio = (funcionario.dv != dv_original)
+
+                # Solo validar rut/dv si realmente cambiaron
+                if rut_cambio or dv_cambio:
+                    # Si cambió, validar todo incluyendo RUT/DV
+                    funcionario.full_clean()
+                else:
+                    # Si NO cambió, validar campos individuales SIN llamar a clean()
+                    # porque el método clean() del modelo valida RUT/DV sin importar exclude
+                    funcionario.clean_fields(exclude=["rut", "dv"])
+                    # NO llamamos a funcionario.clean() para evitar validación de RUT/DV
+                    funcionario.validate_unique()
+
                 funcionario.save()
 
-                # --------- LÓGICA DE JEFE DE DEPARTAMENTO ---------
-                # Ejecutar solamente si el rol asignado es Jefe_depto (id_rol == 3)
-                if funcionario.id_rol and funcionario.id_rol.nombre == "Jefe_depto":
+                # -------- LÓGICA JEFE DE DEPARTAMENTO --------
+                if funcionario.id_rol and funcionario.id_rol.nombre == "Jefe de Departamento":
 
-                    # 1) Si este funcionario era jefe en otro departamento distinto, limpiarlo
-                    otro_depto = Departamento.objects.filter(jefe_departamento=funcionario).exclude(
-                        pk=(funcionario.id_departamento.id_departamento if funcionario.id_departamento else None)
+                    otro_depto = Departamento.objects.filter(
+                        jefe_departamento=funcionario
+                    ).exclude(
+                        pk=funcionario.id_departamento.pk if funcionario.id_departamento else None
                     ).first()
+
                     if otro_depto:
                         otro_depto.jefe_departamento = None
                         otro_depto.save()
 
-                    # 2) Actualizar el departamento actual para que apunte a este funcionario
                     if funcionario.id_departamento:
                         depto = funcionario.id_departamento
+
+                        if depto.jefe_departamento and depto.jefe_departamento != funcionario:
+                            depto.jefe_departamento = None
+                            depto.save()
+
                         depto.jefe_departamento = funcionario
                         depto.save()
 
-                        # 3) Quitar rol de Jefe al jefe anterior de este departamento (si existe y no es este funcionario)
                         jefe_anterior = Usuario.objects.filter(
-                            id_rol__nombre="Jefe_depto",
+                            id_rol__nombre="Jefe de Departamento",
                             id_departamento=depto
                         ).exclude(id_usuario=funcionario.id_usuario).first()
 
@@ -282,35 +285,41 @@ def editar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
                             jefe_anterior.save()
 
                 else:
-                    # Si ya no es Jefe_depto, asegurarse de que el departamento deje de apuntar a este usuario
-                    departamentos_que_apuntan = Departamento.objects.filter(jefe_departamento=funcionario)
-                    for d in departamentos_que_apuntan:
+                    for d in Departamento.objects.filter(jefe_departamento=funcionario):
                         d.jefe_departamento = None
                         d.save()
 
             messages.success(request, f"Funcionario {funcionario.nombre} actualizado exitosamente.")
             return redirect("lista_funcionarios")
 
+        except ValidationError as e:
+            print("VALIDATION ERROR:", e.message_dict if hasattr(e, "message_dict") else str(e))
+            detalle = e.message_dict if hasattr(e, "message_dict") else str(e)
+            messages.error(request, f"Error de validación: {detalle}")
+            return render(request, "pages/funcionarios/editar_funcionario.html", {
+                "funcionario": funcionario,
+                "roles": roles,
+                "departamentos": departamentos,
+                "cargos": cargos,
+            })
+
         except Exception as e:
+            print("ERROR:", str(e))
             messages.error(request, f"Error al actualizar funcionario: {str(e)}")
-            # continuar al render final para mostrar formulario con datos actuales
+            return render(request, "pages/funcionarios/editar_funcionario.html", {
+                "funcionario": funcionario,
+                "roles": roles,
+                "departamentos": departamentos,
+                "cargos": cargos,
+            })
 
-    # GET request - mostrar formulario con datos actuales
-    return render(
-        request,
-        "pages/funcionarios/editar_funcionario.html",
-        {
-            "funcionario": funcionario,
-            "roles": roles,
-            "departamentos": departamentos,
-            "cargos": cargos,
-        }
-    )
-
-
-
-
-
+    return render(request, "pages/funcionarios/editar_funcionario.html", {
+        "funcionario": funcionario,
+        "roles": roles,
+        "departamentos": departamentos,
+        "cargos": cargos,
+    })
+    
 def eliminar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
     """Eliminar funcionario (solo Admin)"""
     usuario = get_usuario_actual(request)
@@ -333,6 +342,7 @@ def eliminar_funcionario(request: HttpRequest, id_usuario: int) -> HttpResponse:
     if request.method == "POST":
         try:
             nombre_funcionario = funcionario.nombre
+            Departamento.objects.filter(jefe_departamento=funcionario).update(jefe_departamento=None)
             funcionario.delete()
             messages.success(request, f"Funcionario {nombre_funcionario} eliminado exitosamente.")
             return redirect("lista_funcionarios")

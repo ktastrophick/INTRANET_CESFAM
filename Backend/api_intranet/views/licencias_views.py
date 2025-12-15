@@ -245,7 +245,7 @@ def detalle_licencia(request: HttpRequest, id_licencia: int) -> HttpResponse:
     puede_ver = (
         licencia.id_usuario.id_usuario == usuario.id_usuario or
         rol_usuario in ["Subdirector", "Director"] or
-        (rol_usuario == "Jefe_depto" and 
+        (rol_usuario == "Jefe de Departamento" and 
             licencia.id_usuario.id_departamento == usuario.id_departamento)
     )
 

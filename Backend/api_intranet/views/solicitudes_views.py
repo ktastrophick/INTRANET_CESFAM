@@ -30,7 +30,7 @@ def lista_solicitudes(request: HttpRequest) -> HttpResponse:
     if rol == "Funcionario":
         # Funcionario ve solo sus propias solicitudes
         solicitudes = Solicitud.objects.filter(id_usuario=usuario)
-    elif rol == "Jefe_depto":
+    elif rol == "Jefe de Departamento":
         # Jefe ve solicitudes de su departamento
         if usuario.id_departamento:
             solicitudes = Solicitud.objects.filter(
@@ -64,7 +64,7 @@ def aprobar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
         return redirect("login")
 
     # Verificar que sea jefe de departamento
-    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe_depto":
+    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe de Departamento":
         messages.error(request, "No tienes permisos para aprobar solicitudes.")
         return redirect("lista_solicitudes")
 
@@ -100,7 +100,7 @@ def rechazar_jefe(request: HttpRequest, id_solicitud: int) -> HttpResponse:
         return redirect("login")
 
     # Verificar que sea jefe de departamento
-    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe_depto":
+    if not usuario.puede_aprobar_solicitudes() or usuario.id_rol.nombre != "Jefe de Departamento":
         messages.error(request, "No tienes permisos para rechazar solicitudes.")
         return redirect("lista_solicitudes")
 
